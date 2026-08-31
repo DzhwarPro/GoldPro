@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Sniper Pro - Fixed Chart</title>
+    <title>Gold Sniper Pro - Fixed Button</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
         
-        /* Dark Mode */
         body.dark { background: #000000; color: #e0e0e0; }
         body.dark .card { background: #050505; border: 1px solid #1a1a1a; }
         body.dark .mtf-status, body.dark .confidence-meter, body.dark .timer-box, body.dark .status-box, body.dark .analysis-reason { background: #0a0a0a; border: 1px solid #1a1a1a; }
         body.dark .source-badge { background: #0a0a0a; border: 1px solid #007bff; color: #007bff; }
         
-        /* Light Mode */
         body.light { background: #ffffff; color: #1a1a1a; }
         body.light .card { background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         body.light .mtf-status, body.light .confidence-meter, body.light .timer-box { background: #f5f5f5; border: 1px solid #e0e0e0; }
@@ -74,12 +72,14 @@
         
         .status-box { border-radius: 10px; padding: 12px; margin: 10px 0; font-size: 13px; text-align: center; }
         
+        /* دوگمەکە لە شوێنی خۆی دەمێنێتەوە */
         .prediction-btn { 
             width: 100%; padding: 18px; border: none; border-radius: 10px; 
             font-size: 20px; font-weight: bold; cursor: pointer; 
-            background: linear-gradient(135deg, #d4a017, #f0c040); color: #fff; margin-top: 10px; 
+            background: linear-gradient(135deg, #d4a017, #f0c040); color: #fff; margin-top: 10px;
+            position: relative;
         }
-        .prediction-btn:disabled { opacity: 0.3; background: #999; cursor: not-allowed; }
+        .prediction-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
         .prediction-btn.ready { 
             background: linear-gradient(135deg, #00c853, #00e676); 
             animation: pulse 1.5s infinite;
@@ -162,7 +162,9 @@
                 </div>
             </div>
             
-            <button id="predictionBtn" class="prediction-btn" onclick="startCycle()"> دەستپێکردن</button>
+            <!-- دوگمەکە لەم شوێنەدا دەمێنێتەوە -->
+            <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()">🚀 دەستپێکردن</button>
+            
             <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
             <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
@@ -178,8 +180,8 @@
     let autoRestartTimeout = null;
     let currentTheme = 'dark';
     let volatilityLevel = 'low';
+    let buttonState = 'idle'; // idle, predicting, collecting, ready
 
-    // === FIX: چاککردنی گۆڕینی ڕەنگی چارت ===
     function toggleTheme() {
         const body = document.body;
         if (currentTheme === 'dark') {
@@ -197,28 +199,23 @@
 
     function reloadChart(theme) {
         const container = document.getElementById('tradingview_chart');
-        // سڕینەوەی تەواوی چارتی کۆن
         container.innerHTML = ''; 
-        
         const bgColor = theme === 'dark' ? '#000000' : '#ffffff';
-        
-        // دروستکردنی چارتی نوێ بە ڕەنگی نوێ
         new TradingView.widget({ 
-            "autosize": true, 
-            "symbol": "OANDA:XAUUSD", 
-            "interval": "5", 
-            "timezone": "Etc/UTC", 
-            "theme": theme, // گۆڕینی ڕاستەوخۆی ثیم
-            "style": "1", 
-            "locale": "ar", 
-            "toolbar_bg": bgColor, // گۆڕینی ڕەنگی Toolbar
-            "enable_publishing": false, 
-            "hide_top_toolbar": false, 
-            "hide_legend": false, 
-            "save_image": false, 
-            "container_id": "tradingview_chart", 
+            "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5", 
+            "timezone": "Etc/UTC", "theme": theme, "style": "1", "locale": "ar", 
+            "toolbar_bg": bgColor, "enable_publishing": false, "hide_top_toolbar": false, 
+            "hide_legend": false, "save_image": false, "container_id": "tradingview_chart", 
             "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
         });
+    }
+
+    // کاتی کرتەکردن لەسەر دوگمەکە
+    function handleButtonClick() {
+        if (buttonState === 'idle' || buttonState === 'ready') {
+            startCycle();
+        }
+        // ئەگەر لە قۆناغی predicting یان collecting بێت، هیچ ناکات
     }
 
     async function fetchGoldPrice() {
@@ -325,7 +322,9 @@
         if (predictionActive || collectingData) return;
         if (priceHistory.length < 60) { alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە'); return; }
         if (autoRestartTimeout) { clearTimeout(autoRestartTimeout); autoRestartTimeout = null; }
+        
         predictionActive = true;
+        buttonState = 'predicting';
         updatePhaseBadge('prediction');
         
         const m1Data = priceHistory.slice(-12);   
@@ -390,9 +389,12 @@
         statusBox.style.display = 'block';
         statusBox.textContent = '🎯 پێشبینی چالاکە - چاوەڕوانی ئەنجام...';
         timerLabel.textContent = 'کاتی بەسەرچوونی پێشبینی';
+        
+        // دوگمەکە ناچالاک دەبێت بەڵام لە شوێنی خۆی دەمێنێتەوە
         btn.disabled = true;
-        btn.textContent = '⏳ شیکاری چالاکە...';
+        btn.textContent = '⏳ پێشبینی چالاکە...';
         btn.classList.remove('ready');
+        
         document.getElementById('volatilityIndicator').style.display = 'none';
         
         startCountdown(300);
@@ -402,6 +404,7 @@
     function startDataCollection() {
         predictionActive = false;
         collectingData = true;
+        buttonState = 'collecting';
         updatePhaseBadge('collecting');
         
         const card = document.getElementById('predictionCard');
@@ -412,17 +415,19 @@
         const btn = document.getElementById('predictionBtn');
         
         card.className = 'prediction-card collecting';
-        arrow.textContent = '';
+        arrow.textContent = '📡';
         text.textContent = 'کۆکردنەوەی داتای تازە...';
         timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
+        
+        // دوگمەکە هێشتا ناچالاکە
         btn.disabled = true;
         btn.classList.remove('ready');
         
         let collectionTime = 120;
         if (volatilityLevel === 'high') {
             collectionTime = 300;
-            statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا درێژتر دەبێتەوە (٥ خولەک)';
-            btn.textContent = ' چاوەڕوانی ئارامبوونی بازاڕ...';
+            statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا (٥ خولەک)';
+            btn.textContent = '⏳ چاوەڕوانی ئارامبوونی بازاڕ...';
             updatePhaseBadge('volatile');
         } else if (volatilityLevel === 'medium') {
             collectionTime = 180;
@@ -435,6 +440,8 @@
         statusBox.style.display = 'block';
         
         startCountdown(collectionTime);
+        
+        // دوای تەواوبوونی کۆکردنەوە، دوگمەکە چالاک دەبێتەوە
         autoRestartTimeout = setTimeout(() => {
             collectingData = false;
             enableStartButton();
@@ -447,8 +454,11 @@
         const timerLabel = document.getElementById('timerLabel');
         const timerValue = document.getElementById('timerValue');
         
+        buttonState = 'ready';
+        
+        // دوگمەکە چالاک دەبێتەوە بەڵام لە شوێنی خۆی دەمێنێتەوە
         btn.disabled = false;
-        btn.textContent = '🚀 ئامادەیە - کرتە بکە بۆ دەستپێکردن';
+        btn.textContent = '🚀 دەستپێکردن';
         btn.classList.add('ready');
         
         statusBox.style.display = 'block';
@@ -484,7 +494,7 @@
     }
 
     window.onload = function() {
-        reloadChart('dark'); // دەستپێکردن بە چارتی ڕەش
+        reloadChart('dark');
         fetchGoldPrice();
         setInterval(fetchGoldPrice, 5000);
     };
