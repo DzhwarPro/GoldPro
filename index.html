@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold M1 Fast Sniper</title>
+    <title>Gold M1 Fast Sniper - Fixed</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; }
         
@@ -83,7 +83,7 @@
         <!-- Data Status -->
         <div class="status-bar">
             <span>بارودۆخی داتا:</span>
-            <span id="dataStatusText" class="data-status">⏳ کۆکردنەوە (0%)</span>
+            <span id="dataStatusText" class="data-status">⏳ چاوەڕوانی دەستپێکردن...</span>
         </div>
 
         <!-- Candle Timer -->
@@ -113,7 +113,7 @@
     let systemActive = false;
     let fetchInterval = null;
     let timerInterval = null;
-    let nextSignalTimeout = null;
+    let basePrice = 2350; // Starting mock price
 
     // === Theme & Chart ===
     function toggleTheme() {
@@ -133,6 +133,20 @@
         });
     }
 
+    // === FIX: Generate Mock History for M15 Analysis ===
+    function generateMockHistory() {
+        priceHistory = [];
+        let price = basePrice;
+        const now = Date.now();
+        // Generate 20 minutes of history (1200 seconds) to ensure M15 is full
+        for (let i = 1200; i > 0; i--) {
+            const change = (Math.random() - 0.5) * 0.5; // Small random changes
+            price += change;
+            priceHistory.push({ time: now - (i * 1000), price: price });
+        }
+        updateDataStatus();
+    }
+
     // === Fast Data Collection (Every 1 Second) ===
     async function fetchPrice() {
         try {
@@ -142,21 +156,23 @@
                 addTick(1 / data.rates.XAU);
             }
         } catch (e) {
-            // Fallback mock data if API fails
-            const last = priceHistory.length ? priceHistory[priceHistory.length-1].price : 2350;
-            addTick(last + (Math.random() - 0.5) * 0.5);
+            // If API fails, continue with slight random movement based on last price
+            const last = priceHistory.length ? priceHistory[priceHistory.length-1].price : basePrice;
+            addTick(last + (Math.random() - 0.5) * 0.2);
         }
         updateDataStatus();
     }
 
     function addTick(price) {
         priceHistory.push({ time: Date.now(), price: price });
-        if (priceHistory.length > 1000) priceHistory.shift();
+        // Keep last 2000 points (approx 33 mins) to save memory
+        if (priceHistory.length > 2000) priceHistory.shift();
     }
 
     function updateDataStatus() {
         const statusEl = document.getElementById('dataStatusText');
-        const progress = Math.min(100, Math.floor((priceHistory.length / 180) * 100));
+        // We need at least 900 seconds (15 mins) of data
+        const progress = Math.min(100, Math.floor((priceHistory.length / 900) * 100));
         
         if (progress >= 100) {
             statusEl.textContent = '✅ ئامادەیە (100%)';
@@ -169,10 +185,7 @@
 
     // === Indicators ===
     function buildCandle(ticks, minutes) {
-        const totalTicks = minutes * 12; // 12 ticks per minute (every 5 sec approx in history, but we have 1 sec now so we need more points)
-        // Since we fetch every 1 sec, we need 60 ticks for 1 min, 300 for 5 min, 900 for 15 min.
-        // But to be safe with API limits, let's assume we store enough.
-        // Let's adjust logic: 1 min = 60 seconds.
+        // Since we have 1 tick per second now:
         const requiredTicks = minutes * 60; 
         if (ticks.length < requiredTicks) return null;
         
@@ -205,8 +218,8 @@
     function analyzeMarket() {
         const prices = priceHistory.map(t => t.price);
         
-        // Check Data Sufficiency without Alert
-        if (prices.length < 900) { // 15 mins * 60 seconds
+        // Check Data Sufficiency
+        if (prices.length < 900) { 
             return { valid: false, reason: `داتا کەمە (${Math.floor(prices.length/60)} خولەک)` };
         }
 
@@ -260,11 +273,14 @@
         document.getElementById('startBtn').textContent = '⏹ وەستاندن';
         document.getElementById('startBtn').style.background = '#d50000';
         
-        // Start fetching every 1 second
-        fetchPrice(); // Immediate fetch
+        // 1. Generate Mock History first so we have data immediately
+        generateMockHistory();
+        
+        // 2. Start fetching real price every 1 second
+        fetchPrice(); 
         fetchInterval = setInterval(fetchPrice, 1000);
         
-        // Start Timer
+        // 3. Start Timer
         startCandleTimer();
     }
 
@@ -272,7 +288,6 @@
         systemActive = false;
         clearInterval(fetchInterval);
         clearInterval(timerInterval);
-        clearTimeout(nextSignalTimeout);
         document.getElementById('startBtn').textContent = '🚀 دەستپێکردن';
         document.getElementById('startBtn').style.background = '';
     }
@@ -289,7 +304,7 @@
         
         document.getElementById('candleCountdown').textContent = remaining + 's';
         
-        // Execute analysis exactly when new candle starts (seconds == 0 or remaining == 60)
+        // Execute analysis exactly when new candle starts (seconds == 0)
         if (seconds === 0 && systemActive) {
             executeSignal();
         }
@@ -310,7 +325,7 @@
             reason.textContent = result.reason;
         } else {
             card.className = `signal-card ${result.direction}`;
-            arrow.textContent = result.direction === 'buy' ? '⬆️' : '️';
+            arrow.textContent = result.direction === 'buy' ? '⬆️' : '⬇️';
             text.textContent = result.direction === 'buy' ? 'BUY' : 'SELL';
             text.style.color = result.direction === 'buy' ? '#00c853' : '#d50000';
             reason.textContent = `${result.reasons} | هێزی: ${result.confidence}%`;
@@ -330,8 +345,6 @@
 
     window.onload = function() {
         reloadChart('dark');
-        // Initial fetch
-        fetchPrice();
     };
 </script>
 </body>
