@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Real API</title>
+<title>Gold Sniper Pro - Fast Data</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
 
@@ -154,7 +154,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             <div id="apiStatus" class="api-status">⏳ چاوەڕوانی API...</div>
             
             <div class="filter-box">
-                <div class="filter-title"> ١٢ فلتەری شیکاری تەکنیکی</div>
+                <div class="filter-title">🔍 ١٢ فلتەری شیکاری تەکنیکی</div>
                 <div class="filter-grid">
                     <div class="filter-item"><span class="filter-name">RSI (14)</span><span id="fRSI" class="filter-value filter-signal-neutral">-</span></div>
                     <div class="filter-item"><span class="filter-name">MACD</span><span id="fMACD" class="filter-value filter-signal-neutral">-</span></div>
@@ -182,7 +182,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
 
             <div class="confidence-meter">
-                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ١ فلتەر)</div>
+                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ١٢ فلتەر)</div>
                 <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
             </div>
             
@@ -199,7 +199,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <div id="volatilityIndicator" class="volatility-indicator vol-low" style="display:none;">
                     <span id="volatilityText">بازاڕ ئارامە</span>
                 </div>
-                <div id="dataStatus" class="data-status data-simulated">⏳ چاوەڕوانی داتا...</div>
+                <div id="dataStatus" class="data-status data-simulated"> چاوەڕوانی داتا...</div>
             </div>
             
             <div class="btn-group">
@@ -207,13 +207,13 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوە</button>
             </div>
             
-            <div class="accuracy-badge">📊 ١٢ فلتەری پڕۆفێشناڵ</div>
+            <div class="accuracy-badge"> ١٢ فلتەری پڕۆفێشناڵ</div>
             
             <div class="honesty-notice">
-                ️ <strong>تێبینی ڕاستگۆیانە:</strong> هیچ بەرنامەیەک ناتوانێت بازاڕ بە ٩٩٪ ڕاستی پێشبینی بکات. ئەم بەرنامەیە ١ فلتەری تەکنیکی بەکاردەهێنێت بۆ باشترین پێشبینی.
+                ️ <strong>تێبینی ڕاستگۆیانە:</strong> هیچ بەرنامەیەک ناتوانێت بازاڕ بە ٩٪ ڕاستی پێشبینی بکات. ئەم بەرنامەیە ١٢ فلتەری تەکنیکی بەکاردەهێنێت بۆ باشترین پێشبینی.
             </div>
             
-            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
+            <div class="cycle-info"> ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
 </div>
@@ -234,11 +234,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     let tvWidget = null;
     let apiConnected = false;
 
-    // ==========================================
-    // ✅ API Key - ئامادەیە
-    // ==========================================
     const GOLD_API_KEY = 'bd4ea3df-622c-4923-aa69-889316f9e3d7';
-    // ==========================================
 
     function toggleTheme() {
         const body = document.body;
@@ -334,9 +330,9 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 
     function updateDataStatus() {
         const statusEl = document.getElementById('dataStatus');
-        if (priceHistory.length < 60) {
+        if (priceHistory.length < 15) {
             statusEl.className = 'data-status data-simulated';
-            statusEl.textContent = ` کۆکردنەوەی داتا (${priceHistory.length}/60)...`;
+            statusEl.textContent = `⏳ کۆکردنەوەی داتا (${priceHistory.length}/15)...`;
         } else {
             statusEl.className = apiConnected ? 'data-status data-real' : 'data-status data-simulated';
             statusEl.textContent = apiConnected ? `✅ ${priceHistory.length} خاڵی داتای ڕاستەقینە` : `📊 ${priceHistory.length} خاڵی داتای هاوشێوە`;
@@ -355,7 +351,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const volText = document.getElementById('volatilityText');
         
         if (maxChange > 5 || avgChange > 2) { volatilityLevel = 'high'; volIndicator.className = 'volatility-indicator vol-high'; volText.textContent = '⚠️ بازاڕ زۆر نائارامە'; }
-        else if (maxChange > 2 || avgChange > 1) { volatilityLevel = 'medium'; volIndicator.className = 'volatility-indicator vol-medium'; volText.textContent = '⚡ بازاڕ نائارامە'; }
+        else if (maxChange > 2 || avgChange > 1) { volatilityLevel = 'medium'; volIndicator.className = 'volatility-indicator vol-medium'; volText.textContent = ' بازاڕ نائارامە'; }
         else { volatilityLevel = 'low'; volIndicator.className = 'volatility-indicator vol-low'; volText.textContent = '✅ بازاڕ ئارامە'; }
         volIndicator.style.display = 'inline-flex';
     }
@@ -518,7 +514,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     }
 
     function analyzeAll() {
-        if (priceHistory.length < 60) return { score: 0, signals: {}, confidence: 0 };
+        if (priceHistory.length < 15) return { score: 0, signals: {}, confidence: 0 };
         
         const prices = priceHistory;
         const current = prices[prices.length - 1];
@@ -598,8 +594,8 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 
     function startCycle() {
         if (predictionActive || collectingData) return;
-        if (priceHistory.length < 60) { 
-            alert(`تکایە چاوەڕێ بکە. ئێستا: ${priceHistory.length}/60`); 
+        if (priceHistory.length < 15) { 
+            alert(`تکایە چاوەڕێ بکە. ئێستا: ${priceHistory.length}/15`); 
             return; 
         }
         if (autoRestartTimeout) { clearTimeout(autoRestartTimeout); autoRestartTimeout = null; }
@@ -628,7 +624,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         if (analysis.signals.vwap.signal === 'up') reasons.push("VWAP: سەرەوەی نرخی دادپەروەر");
         if (analysis.signals.mom.signal === 'up') reasons.push("Momentum: ئەرێنی");
         
-        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
+        const reasonText = " هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
 
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
@@ -648,7 +644,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         statusBox.style.display = 'block'; statusBox.textContent = '🎯 پێشبینی چالاکە...';
         timerLabel.textContent = 'کاتی بەسەرچوونی پێشبینی';
         
-        btn.disabled = true; btn.textContent = ' پێشبینی چالاکە...'; btn.classList.remove('ready');
+        btn.disabled = true; btn.textContent = '⏳ پێشبینی چالاکە...'; btn.classList.remove('ready');
         document.getElementById('volatilityIndicator').style.display = 'none';
         
         startCountdown(300);
@@ -664,7 +660,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const timerLabel = document.getElementById('timerLabel');
         const btn = document.getElementById('predictionBtn');
         
-        card.className = 'prediction-card collecting'; arrow.textContent = '📡'; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
+        card.className = 'prediction-card collecting'; arrow.textContent = ''; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
         btn.disabled = true; btn.classList.remove('ready');
         
         let collectionTime = 120;
@@ -717,7 +713,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const reasonBox = document.getElementById('analysisReason');
         const timerLabel = document.getElementById('timerLabel');
         
-        card.className = 'prediction-card waiting'; arrow.textContent = ''; text.textContent = 'چاوەڕێبە...';
+        card.className = 'prediction-card waiting'; arrow.textContent = '⏳'; text.textContent = 'چاوەڕێبە...';
         btn.disabled = false; btn.textContent = '🚀 دەستپێکردن'; btn.classList.remove('ready');
         document.getElementById('timerValue').textContent = '05:00';
         confFill.style.width = '0%'; confFill.textContent = '0%';
@@ -738,7 +734,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         setInterval(async () => {
             const realPrice = await getRealGoldPrice();
             processNewPrice(realPrice, apiConnected);
-        }, 300000); // ٥ خولەک (٣٠,٠٠٠ میلی چرکە) - بۆ پاراستنی API limit
+        }, 20000); // 20 چرکە (20,000 میلی چرکە)
     }
 
     window.onload = function() {
