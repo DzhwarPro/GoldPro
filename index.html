@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Auto Sim</title>
+<title>Gold Sniper Pro - Real Price Start</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
@@ -129,6 +129,14 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     display: inline-block;
 }
 .api-connected { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+
+.price-display {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    color: #d4a017;
+}
 </style>
 </head>
 <body class="dark">
@@ -149,9 +157,13 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 
     <div class="card">
         <div id="predictionCard" class="prediction-card waiting">
-            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری ١٢ فلتەری پڕۆفێشناڵ</div>
+            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری ٢ فلتەری پڕۆفێشناڵ</div>
             
             <div id="apiStatus" class="api-status api-connected">✅ سیستمی خۆکار چالاکە</div>
+            
+            <div class="price-display">
+                نرخ: <span id="currentPriceDisplay">4446.00</span>
+            </div>
             
             <div class="filter-box">
                 <div class="filter-title"> ١٢ فلتەری شیکاری تەکنیکی</div>
@@ -177,7 +189,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <div>زەرد (FLAT): <span id="countNeutral" class="summary-neutral">0</span></div>
             </div>
 
-            <div id="predictionArrow" class="prediction-arrow">⏳</div>
+            <div id="predictionArrow" class="prediction-arrow"></div>
             <div id="predictionText" class="prediction-text">چاوەڕێبە...</div>
             <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
 
@@ -203,14 +215,14 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             </div>
             
             <div class="btn-group">
-                <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()">🚀 دەستپێکردن</button>
+                <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()"> دەستپێکردن</button>
                 <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوە</button>
             </div>
             
             <div class="accuracy-badge">📊 دڵنیایی بەرز (>85%)</div>
             
             <div class="honesty-notice">
-                ⚠️ <strong>تێبینی:</strong> ئەم سیستمە بە شێوەی خۆکار (Simulation) کار دەکات بۆ تاقیکردنەوەی ستراتیژی.
+                ⚠️ <strong>تێبینی:</strong> ئەم سیستمە بە شێوەی خۆکار (Simulation) کار دەکات. نرخەکە لە ٤٤٦ دەست پێ دەکات (نرخی ڕاستەقینەی ئێستا).
             </div>
             
             <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
@@ -221,7 +233,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let priceHistory = [];
-    let currentPrice = 2300; // Starting simulated price
+    let currentPrice = 4446; // Starting at REAL current gold price (2026)
     let previousPrice = 0;
     let predictionActive = false;
     let collectingData = false;
@@ -268,11 +280,16 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         });
     }
 
-    // SIMULATED PRICE GENERATOR
+    // SIMULATED PRICE GENERATOR - Starting from REAL price (4446)
     function getSimulatedPrice() {
-        // Random walk with some trend bias
-        const change = (Math.random() - 0.5) * 3; 
+        // More realistic price movement for gold
+        const volatility = 2.5; // Gold moves about $2-3 per 5 minutes
+        const change = (Math.random() - 0.5) * volatility; 
         currentPrice += change;
+        
+        // Update display
+        document.getElementById('currentPriceDisplay').textContent = currentPrice.toFixed(2);
+        
         return currentPrice;
     }
 
@@ -313,7 +330,11 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     function resetAllData() {
         if (predictionActive || collectingData) { alert('تکایە چاوەڕێ بکە'); return; }
         stopDataFeed();
-        priceHistory = []; dataFetchCount = 0; currentPrice = 2300; previousPrice = 0;
+        priceHistory = []; 
+        dataFetchCount = 0; 
+        currentPrice = 4446; // Reset to real price
+        previousPrice = 0;
+        document.getElementById('currentPriceDisplay').textContent = '4446.00';
         resetUI();
         document.getElementById('statusBox').style.display = 'block';
         document.getElementById('statusBox').textContent = '✅ هەموو داتاکان سڕانەوە...';
@@ -342,7 +363,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             statusEl.className = 'data-status data-simulated';
             statusEl.textContent = `⏳ کۆکردنەوەی داتا (${priceHistory.length}/15)...`;
         } else {
-            statusEl.className = 'data-status data-real'; // Green because it's working
+            statusEl.className = 'data-status data-real';
             statusEl.textContent = `✅ ${priceHistory.length} خاڵی داتای ئامادە`;
         }
     }
@@ -542,12 +563,12 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const timerLabel = document.getElementById('timerLabel');
         const btn = document.getElementById('predictionBtn');
         
-        card.className = 'prediction-card collecting'; arrow.textContent = '📡'; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
+        card.className = 'prediction-card collecting'; arrow.textContent = ''; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
         btn.disabled = true; btn.classList.remove('ready');
         
         let collectionTime = 120;
         if (volatilityLevel === 'high') { collectionTime = 300; statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە (٥ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; updatePhaseBadge('volatile'); }
-        else if (volatilityLevel === 'medium') { collectionTime = 180; statusBox.textContent = '⚡ بازاڕ نائارامە (٣ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; }
+        else if (volatilityLevel === 'medium') { collectionTime = 180; statusBox.textContent = ' بازاڕ نائارامە (٣ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; }
         else { statusBox.textContent = '✅ بازاڕ ئارامە (٢ خولەک)'; btn.textContent = '⏳ کۆکردنەوەی داتا...'; }
         statusBox.style.display = 'block';
         
