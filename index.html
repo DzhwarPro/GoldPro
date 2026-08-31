@@ -210,7 +210,15 @@
             color: #fff; 
             margin-top: 10px; 
         }
-        .prediction-btn:disabled { opacity: 0.4; background: #999; }
+        .prediction-btn:disabled { opacity: 0.3; background: #999; cursor: not-allowed; }
+        .prediction-btn.ready { 
+            background: linear-gradient(135deg, #00c853, #00e676); 
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
         
         .accuracy-badge { 
             display: inline-block; 
@@ -265,11 +273,35 @@
             height: 8px;
             border-radius: 50%;
             background: #007bff;
-            animation: pulse 1.5s infinite;
+            animation: blink 1.5s infinite;
         }
-        @keyframes pulse {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+        @keyframes blink {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .phase-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .phase-prediction {
+            background: rgba(212,160,23,0.2);
+            color: #d4a017;
+            border: 1px solid #d4a017;
+        }
+        .phase-collecting {
+            background: rgba(0,123,255,0.2);
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        .phase-ready {
+            background: rgba(0,200,83,0.2);
+            color: #00c853;
+            border: 1px solid #00c853;
         }
     </style>
 </head>
@@ -289,26 +321,6 @@
             <div class="tradingview-widget-container" style="height:100%;width:100%">
                 <div id="tradingview_chart" style="height:100%;width:100%"></div>
             </div>
-            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-            <script type="text/javascript">
-            let chartTheme = 'dark';
-            new TradingView.widget({ 
-                "autosize": true, 
-                "symbol": "OANDA:XAUUSD", 
-                "interval": "5", 
-                "timezone": "Etc/UTC", 
-                "theme": chartTheme, 
-                "style": "1", 
-                "locale": "ar", 
-                "toolbar_bg": chartTheme === 'dark' ? '#000000' : '#ffffff', 
-                "enable_publishing": false, 
-                "hide_top_toolbar": false, 
-                "hide_legend": false, 
-                "save_image": false, 
-                "container_id": "tradingview_chart", 
-                "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
-            });
-            </script>
         </div>
     </div>
 
@@ -337,6 +349,7 @@
             <div class="timer-box">
                 <div class="timer-label" id="timerLabel">کاتی ماوە</div>
                 <div id="timerValue" class="timer-value">05:00</div>
+                <div id="phaseBadge" class="phase-badge phase-prediction">قۆناغی پێشبینی</div>
                 <div class="sync-indicator">
                     <div class="sync-dot"></div>
                     <span>هاوکاتکراو لەگەڵ چارت</span>
@@ -345,7 +358,7 @@
             
             <button id="predictionBtn" class="prediction-btn" onclick="startCycle()">🚀 دەستپێکردن</button>
             <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
-            <div class="cycle-info">🔄 دوای  خولەک، ٢ خولەک داتا کۆدەکاتەوە، پاشان خۆکارانە دەست پێ دەکاتەوە</div>
+            <div class="cycle-info">🔄  خولەک پێشبینی →  خولەک کۆکردنەوەی داتا → دەستپێکردنەوە</div>
         </div>
     </div>
 </div>
@@ -357,7 +370,7 @@
     let countdownInterval = null;
     let autoRestartTimeout = null;
     let currentTheme = 'dark';
-    let chartInstance = null;
+    let chartInitialized = false;
 
     // گۆڕینی ڕەنگ
     function toggleTheme() {
@@ -368,47 +381,43 @@
             body.classList.remove('dark');
             body.classList.add('light');
             currentTheme = 'light';
-            // گۆڕینی چارت بۆ ڕووناک
-            if (chartInstance) {
-                chartContainer.innerHTML = '';
-                chartInstance = new TradingView.widget({ 
-                    "autosize": true, 
-                    "symbol": "OANDA:XAUUSD", 
-                    "interval": "5", 
-                    "timezone": "Etc/UTC", 
-                    "theme": "light", 
-                    "style": "1", 
-                    "locale": "ar", 
-                    "toolbar_bg": "#ffffff", 
-                    "enable_publishing": false, 
-                    "hide_top_toolbar": false, 
-                    "container_id": "tradingview_chart", 
-                    "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
-                });
-            }
+            // گۆڕینی چارت بۆ ڕووناک - سپی تەواو
+            initChart('light');
         } else {
             body.classList.remove('light');
             body.classList.add('dark');
             currentTheme = 'dark';
             // گۆڕینی چارت بۆ ڕەش
-            if (chartInstance) {
-                chartContainer.innerHTML = '';
-                chartInstance = new TradingView.widget({ 
-                    "autosize": true, 
-                    "symbol": "OANDA:XAUUSD", 
-                    "interval": "5", 
-                    "timezone": "Etc/UTC", 
-                    "theme": "dark", 
-                    "style": "1", 
-                    "locale": "ar", 
-                    "toolbar_bg": "#000000", 
-                    "enable_publishing": false, 
-                    "hide_top_toolbar": false, 
-                    "container_id": "tradingview_chart", 
-                    "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
-                });
-            }
+            initChart('dark');
         }
+    }
+
+    // دروستکردنی چارت
+    function initChart(theme) {
+        const container = document.getElementById('tradingview_chart');
+        container.innerHTML = '';
+        
+        const bgColor = theme === 'dark' ? '#000000' : '#ffffff';
+        const textColor = theme === 'dark' ? '#e0e0e0' : '#1a1a1a';
+        
+        new TradingView.widget({ 
+            "autosize": true, 
+            "symbol": "OANDA:XAUUSD", 
+            "interval": "5", 
+            "timezone": "Etc/UTC", 
+            "theme": theme, 
+            "style": "1", 
+            "locale": "ar", 
+            "toolbar_bg": bgColor, 
+            "enable_publishing": false, 
+            "hide_top_toolbar": false, 
+            "hide_legend": false, 
+            "save_image": false, 
+            "container_id": "tradingview_chart", 
+            "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
+        });
+        
+        chartInitialized = true;
     }
 
     // وەرگرتنی نرخ
@@ -490,7 +499,7 @@
         return { score, signal, strength };
     }
 
-    // دەستپێکردنی سایکل - هاوکات لەگەڵ چارت
+    // دەستپێکردنی سایکل
     function startCycle() {
         if (predictionActive || collectingData) return;
         if (priceHistory.length < 60) {
@@ -504,6 +513,7 @@
         }
         
         predictionActive = true;
+        updatePhaseBadge('prediction');
         
         const m1Data = priceHistory.slice(-12);   
         const m5Data = priceHistory.slice(-60);   
@@ -515,7 +525,7 @@
 
         const updateTFUI = (id, res) => {
             const el = document.getElementById(id);
-            el.textContent = res.signal === 'up' ? '⬆️ UP' : res.signal === 'down' ? '️ DOWN' : ' FLAT';
+            el.textContent = res.signal === 'up' ? '⬆️ UP' : res.signal === 'down' ? '⬇️ DOWN' : ' FLAT';
             el.className = `tf-val ${res.signal === 'up' ? 'tf-up' : res.signal === 'down' ? 'tf-down' : 'tf-neutral'}`;
         };
         updateTFUI('tf1', tf1Res);
@@ -544,7 +554,7 @@
         if (tf1Res.signal === 'up') reasons.push("M1: کاتی BUY");
         if (tf1Res.signal === 'down') reasons.push("M1: کاتی SELL");
         
-        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
+        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "️ بازاڕ نائارامە");
 
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
@@ -557,7 +567,7 @@
 
         if (direction === 'bullish') {
             card.className = 'prediction-card bullish';
-            arrow.textContent = '⬆️';
+            arrow.textContent = '️';
             text.textContent = 'بارز دەبێتەوە (BUY)';
         } else {
             card.className = 'prediction-card bearish';
@@ -576,41 +586,83 @@
         
         btn.disabled = true;
         btn.textContent = '⏳ شیکاری چالاکە...';
+        btn.classList.remove('ready');
         
-        startCountdown(300);
+        startCountdown(300); // 5 خولەک
         
+        // دوای 5 خولەک، دەست پێ بکات بە کۆکردنەوەی داتا
         autoRestartTimeout = setTimeout(() => {
             startDataCollection();
         }, 300000);
     }
 
+    // کۆکردنەوەی داتا بۆ 2 خولەک
     function startDataCollection() {
         predictionActive = false;
         collectingData = true;
+        updatePhaseBadge('collecting');
         
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
         const text = document.getElementById('predictionText');
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
+        const btn = document.getElementById('predictionBtn');
         
         card.className = 'prediction-card collecting';
-        arrow.textContent = '';
+        arrow.textContent = '📡';
         text.textContent = 'کۆکردنەوەی داتای تازە...';
-        statusBox.textContent = '⏳ چاوەڕوانی داتای تازە...';
+        statusBox.textContent = '⏳ چاوەڕوانی داتای تازە بۆ پێشبینی داهاتوو...';
         timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
         
-        startCountdown(120);
+        btn.disabled = true;
+        btn.textContent = '⏳ چاوەڕوانی داتا...';
+        btn.classList.remove('ready');
         
+        startCountdown(120); // 2 خولەک
+        
+        // دوای 2 خولەک، دوگمە چالاک بکە
         autoRestartTimeout = setTimeout(() => {
             collectingData = false;
-            resetUI();
-            setTimeout(() => {
-                if (priceHistory.length >= 60 && !predictionActive) {
-                    startCycle();
-                }
-            }, 1000);
+            enableStartButton();
         }, 120000);
+    }
+
+    // چالاککردنی دوگمەی دەستپێکردن
+    function enableStartButton() {
+        const btn = document.getElementById('predictionBtn');
+        const statusBox = document.getElementById('statusBox');
+        const timerLabel = document.getElementById('timerLabel');
+        const timerValue = document.getElementById('timerValue');
+        
+        btn.disabled = false;
+        btn.textContent = '🚀 ئامادەیە - دەستپێکردن';
+        btn.classList.add('ready');
+        
+        statusBox.style.display = 'block';
+        statusBox.textContent = '✅ داتا تازە کرایەوە - ئامادەیە بۆ پێشبینی نوێ';
+        statusBox.style.background = currentTheme === 'dark' ? 'rgba(0,255,136,0.1)' : 'rgba(0,200,83,0.15)';
+        statusBox.style.color = currentTheme === 'dark' ? '#00ff88' : '#00c853';
+        statusBox.style.border = `1px solid ${currentTheme === 'dark' ? '#00ff88' : '#00c853'}`;
+        
+        timerLabel.textContent = 'کاتی ماوە';
+        timerValue.textContent = '05:00';
+        
+        updatePhaseBadge('ready');
+    }
+
+    function updatePhaseBadge(phase) {
+        const badge = document.getElementById('phaseBadge');
+        if (phase === 'prediction') {
+            badge.className = 'phase-badge phase-prediction';
+            badge.textContent = 'قۆناغی پێشبینی';
+        } else if (phase === 'collecting') {
+            badge.className = 'phase-badge phase-collecting';
+            badge.textContent = 'کۆکردنەوەی داتا';
+        } else if (phase === 'ready') {
+            badge.className = 'phase-badge phase-ready';
+            badge.textContent = 'ئامادەیە';
+        }
     }
 
     function startCountdown(seconds) {
@@ -641,6 +693,7 @@
         text.textContent = 'چاوەڕێبە...';
         btn.disabled = false;
         btn.textContent = '🚀 دەستپێکردن';
+        btn.classList.remove('ready');
         document.getElementById('timerValue').textContent = '05:00';
         confFill.style.width = '0%';
         confFill.textContent = '0%';
@@ -654,9 +707,12 @@
         });
 
         if (countdownInterval) clearInterval(countdownInterval);
+        updatePhaseBadge('prediction');
     }
 
+    // دەستپێکردن
     window.onload = function() {
+        initChart('dark');
         fetchGoldPrice();
         setInterval(fetchGoldPrice, 5000);
     };
