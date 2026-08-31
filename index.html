@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Sniper Pro - Manual Start</title>
+    <title>Gold Sniper Pro - Fixed Chart</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
         
+        /* Dark Mode */
         body.dark { background: #000000; color: #e0e0e0; }
         body.dark .card { background: #050505; border: 1px solid #1a1a1a; }
-        body.dark .chart-wrapper { background: #000000; border: 1px solid #1a1a1a; }
         body.dark .mtf-status, body.dark .confidence-meter, body.dark .timer-box, body.dark .status-box, body.dark .analysis-reason { background: #0a0a0a; border: 1px solid #1a1a1a; }
         body.dark .source-badge { background: #0a0a0a; border: 1px solid #007bff; color: #007bff; }
         
+        /* Light Mode */
         body.light { background: #ffffff; color: #1a1a1a; }
         body.light .card { background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        body.light .chart-wrapper { background: #ffffff; border: 1px solid #e0e0e0; }
         body.light .mtf-status, body.light .confidence-meter, body.light .timer-box { background: #f5f5f5; border: 1px solid #e0e0e0; }
         body.light .status-box { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
         body.light .analysis-reason { background: #f9f9f9; border: 1px solid #e0e0e0; color: #333; }
         body.light .source-badge { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
 
         .container { max-width: 100%; margin: 0 auto; padding: 10px; }
-        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         
@@ -37,7 +36,7 @@
         .theme-toggle:hover { transform: rotate(180deg); }
         
         .card { border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-        .chart-wrapper { width: 100%; height: 380px; border-radius: 10px; overflow: hidden; }
+        .chart-wrapper { width: 100%; height: 380px; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
         
         .prediction-card { border-radius: 10px; padding: 20px; text-align: center; border: 2px solid; }
         .prediction-card.bullish { border-color: #00c853; background: rgba(0,200,83,0.08); }
@@ -85,10 +84,7 @@
             background: linear-gradient(135deg, #00c853, #00e676); 
             animation: pulse 1.5s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         
         .accuracy-badge { 
             display: inline-block; background: rgba(0,200,83,0.15); border: 1px solid #00c853; 
@@ -110,15 +106,7 @@
         .phase-ready { background: rgba(0,200,83,0.2); color: #00c853; border: 1px solid #00c853; }
         .phase-volatile { background: rgba(255,152,0,0.2); color: #ff9800; border: 1px solid #ff9800; }
         
-        .volatility-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 4px 12px;
-            border-radius: 12px;
-        }
+        .volatility-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 8px; padding: 4px 12px; border-radius: 12px; }
         .vol-low { background: rgba(0,200,83,0.15); color: #00c853; }
         .vol-medium { background: rgba(255,152,0,0.15); color: #ff9800; }
         .vol-high { background: rgba(213,0,0,0.15); color: #d50000; }
@@ -128,17 +116,15 @@
 
 <div class="container">
     <div class="header">
-        <h1> Gold Sniper Pro</h1>
-        <button class="theme-toggle" onclick="toggleTheme()" title="گۆڕینی ڕەنگ">🌓</button>
+        <h1>🎯 Gold Sniper Pro</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="گۆڕینی ڕەنگ"></button>
     </div>
     
     <div class="source-badge">📡 M1 + M5 + M15 | چارتی M5 | دەستپێکردنی دەستی</div>
 
     <div class="card">
         <div class="chart-wrapper">
-            <div class="tradingview-widget-container" style="height:100%;width:100%">
-                <div id="tradingview_chart" style="height:100%;width:100%"></div>
-            </div>
+            <div id="tradingview_chart" style="height:100%;width:100%"></div>
         </div>
     </div>
 
@@ -176,13 +162,14 @@
                 </div>
             </div>
             
-            <button id="predictionBtn" class="prediction-btn" onclick="startCycle()">🚀 دەستپێکردن</button>
-            <div class="accuracy-badge"> مۆتۆری Pro Sniper</div>
-            <div class="cycle-info">️ ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
+            <button id="predictionBtn" class="prediction-btn" onclick="startCycle()"> دەستپێکردن</button>
+            <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
+            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
 </div>
 
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let priceHistory = [];
     let predictionActive = false;
@@ -190,36 +177,48 @@
     let countdownInterval = null;
     let autoRestartTimeout = null;
     let currentTheme = 'dark';
-    let chartInitialized = false;
-    let volatilityLevel = 'low'; // low, medium, high
+    let volatilityLevel = 'low';
 
+    // === FIX: چاککردنی گۆڕینی ڕەنگی چارت ===
     function toggleTheme() {
         const body = document.body;
         if (currentTheme === 'dark') {
             body.classList.remove('dark');
             body.classList.add('light');
             currentTheme = 'light';
-            initChart('light');
+            reloadChart('light');
         } else {
             body.classList.remove('light');
             body.classList.add('dark');
             currentTheme = 'dark';
-            initChart('dark');
+            reloadChart('dark');
         }
     }
 
-    function initChart(theme) {
+    function reloadChart(theme) {
         const container = document.getElementById('tradingview_chart');
-        container.innerHTML = '';
+        // سڕینەوەی تەواوی چارتی کۆن
+        container.innerHTML = ''; 
+        
         const bgColor = theme === 'dark' ? '#000000' : '#ffffff';
+        
+        // دروستکردنی چارتی نوێ بە ڕەنگی نوێ
         new TradingView.widget({ 
-            "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5", 
-            "timezone": "Etc/UTC", "theme": theme, "style": "1", "locale": "ar", 
-            "toolbar_bg": bgColor, "enable_publishing": false, "hide_top_toolbar": false, 
-            "hide_legend": false, "save_image": false, "container_id": "tradingview_chart", 
+            "autosize": true, 
+            "symbol": "OANDA:XAUUSD", 
+            "interval": "5", 
+            "timezone": "Etc/UTC", 
+            "theme": theme, // گۆڕینی ڕاستەوخۆی ثیم
+            "style": "1", 
+            "locale": "ar", 
+            "toolbar_bg": bgColor, // گۆڕینی ڕەنگی Toolbar
+            "enable_publishing": false, 
+            "hide_top_toolbar": false, 
+            "hide_legend": false, 
+            "save_image": false, 
+            "container_id": "tradingview_chart", 
             "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
         });
-        chartInitialized = true;
     }
 
     async function fetchGoldPrice() {
@@ -241,7 +240,6 @@
         checkVolatility();
     }
 
-    // پشکنینی نائارامی بازاڕ
     function checkVolatility() {
         if (priceHistory.length < 20) return;
         const recent = priceHistory.slice(-20);
@@ -325,10 +323,7 @@
 
     function startCycle() {
         if (predictionActive || collectingData) return;
-        if (priceHistory.length < 60) {
-            alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە');
-            return;
-        }
+        if (priceHistory.length < 60) { alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە'); return; }
         if (autoRestartTimeout) { clearTimeout(autoRestartTimeout); autoRestartTimeout = null; }
         predictionActive = true;
         updatePhaseBadge('prediction');
@@ -423,16 +418,15 @@
         btn.disabled = true;
         btn.classList.remove('ready');
         
-        // دیاریکردنی کاتی کۆکردنەوە بەپێی نائارامی بازاڕ
-        let collectionTime = 120; // بنەڕەت: 2 خولەک
+        let collectionTime = 120;
         if (volatilityLevel === 'high') {
-            collectionTime = 300; // 5 خولەک بۆ بازاڕی زۆر نائارام
-            statusBox.textContent = '️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا درێژتر دەبێتەوە (٥ خولەک)';
-            btn.textContent = '⏳ چاوەڕوانی ئارامبوونی بازاڕ...';
+            collectionTime = 300;
+            statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا درێژتر دەبێتەوە (٥ خولەک)';
+            btn.textContent = ' چاوەڕوانی ئارامبوونی بازاڕ...';
             updatePhaseBadge('volatile');
         } else if (volatilityLevel === 'medium') {
-            collectionTime = 180; // 3 خولەک بۆ بازاڕی نائارام
-            statusBox.textContent = ' بازاڕ نائارامە - کۆکردنەوەی داتا (٣ خولەک)';
+            collectionTime = 180;
+            statusBox.textContent = '⚡ بازاڕ نائارامە - کۆکردنەوەی داتا (٣ خولەک)';
             btn.textContent = '⏳ چاوەڕوانی ئارامبوون...';
         } else {
             statusBox.textContent = '✅ بازاڕ ئارامە - کۆکردنەوەی داتا (٢ خولەک)';
@@ -441,8 +435,6 @@
         statusBox.style.display = 'block';
         
         startCountdown(collectionTime);
-        
-        // دوای تەواوبوونی کۆکردنەوە، دوگمە چالاک بکە (بەڵام خۆکارانە دەست پێ مەکە)
         autoRestartTimeout = setTimeout(() => {
             collectingData = false;
             enableStartButton();
@@ -492,7 +484,7 @@
     }
 
     window.onload = function() {
-        initChart('dark');
+        reloadChart('dark'); // دەستپێکردن بە چارتی ڕەش
         fetchGoldPrice();
         setInterval(fetchGoldPrice, 5000);
     };
