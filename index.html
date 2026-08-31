@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold M1 Sniper - Real-Time</title>
+    <title>Gold M1 Fast Sniper</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; }
         
         body.dark { background: #000; color: #e0e0e0; }
         body.dark .card { background: #0a0a0a; border: 1px solid #1f1f1f; }
-        body.dark .filter-box { background: #050505; border: 1px solid #1a1a1a; }
         
         body.light { background: #f8f9fa; color: #1a1a1a; }
         body.light .card { background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        body.light .filter-box { background: #f8f9fa; border: 1px solid #e0e0e0; }
 
         .container { max-width: 100%; margin: 0 auto; padding: 12px; font-family: -apple-system, sans-serif; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -24,114 +22,56 @@
         .card { border-radius: 12px; padding: 15px; margin-bottom: 12px; }
         .chart-wrapper { width: 100%; height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
         
-        /* Candle Status */
-        .candle-status { 
+        /* Status Bar */
+        .status-bar { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px; border-radius: 10px; margin: 15px 0;
-            background: rgba(0,0,0,0.2); border: 1px solid #333;
+            padding: 10px; border-radius: 8px; margin-bottom: 15px;
+            background: rgba(0,0,0,0.2); border: 1px solid #333; font-size: 13px;
         }
-        .candle-info { font-size: 13px; }
-        .candle-timer { font-size: 24px; font-weight: bold; font-family: monospace; color: #d4a017; }
-        .candle-progress { 
-            height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; 
-            margin-top: 8px; overflow: hidden;
-        }
-        .candle-progress-fill { 
-            height: 100%; background: linear-gradient(90deg, #007bff, #00c853); 
-            transition: width 1s linear;
-        }
+        .data-status { color: #ff9800; font-weight: bold; }
+        .data-status.ready { color: #00c853; }
         
-        /* Phase Indicators */
-        .phase-container { display: flex; gap: 10px; margin: 15px 0; }
-        .phase-box { 
-            flex: 1; padding: 12px; border-radius: 10px; text-align: center;
-            border: 2px solid #333; background: rgba(0,0,0,0.3);
-        }
-        .phase-box.active { border-color: #007bff; background: rgba(0,123,255,0.1); animation: pulse 1.5s infinite; }
-        .phase-box.completed { border-color: #00c853; background: rgba(0,200,83,0.1); }
-        .phase-box.failed { border-color: #d50000; background: rgba(213,0,0,0.1); }
-        .phase-title { font-size: 11px; opacity: 0.7; margin-bottom: 6px; }
-        .phase-status { font-size: 14px; font-weight: bold; }
-        .phase-box.active .phase-status { color: #007bff; }
-        .phase-box.completed .phase-status { color: #00c853; }
-        .phase-box.failed .phase-status { color: #d50000; }
-        
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
-        
-        /* Candle Analysis */
-        .candle-details { 
-            margin: 15px 0; padding: 12px; border-radius: 10px; 
-            background: rgba(0,0,0,0.2); border: 1px solid #333;
-        }
-        .candle-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #d4a017; }
-        .candle-row { 
-            display: flex; justify-content: space-between; padding: 8px; 
-            border-bottom: 1px solid #222; font-size: 12px;
-        }
-        .candle-row:last-child { border-bottom: none; }
-        .candle-label { opacity: 0.7; }
-        .candle-value { font-weight: bold; font-family: monospace; }
-        .bullish { color: #00c853; }
-        .bearish { color: #d50000; }
-        .neutral { color: #ff9800; }
+        /* Candle Timer */
+        .candle-timer-box { text-align: center; margin: 15px 0; }
+        .candle-timer { font-size: 32px; font-weight: bold; font-family: monospace; color: #d4a017; }
+        .candle-label { font-size: 12px; opacity: 0.7; }
         
         /* Signal Card */
         .signal-card { 
             border-radius: 12px; padding: 20px; text-align: center; 
-            border: 3px solid; margin: 15px 0;
+            border: 3px solid; margin: 15px 0; min-height: 150px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         .signal-card.buy { border-color: #00c853; background: rgba(0,200,83,0.1); }
         .signal-card.sell { border-color: #d50000; background: rgba(213,0,0,0.1); }
-        .signal-card.waiting { border-color: #d4a017; background: rgba(212,160,23,0.05); }
-        .signal-card.no-trade { border-color: #ff9800; background: rgba(255,152,0,0.1); }
+        .signal-card.waiting { border-color: #444; background: rgba(255,255,255,0.02); }
         
-        .signal-arrow { font-size: 70px; margin: 10px 0; }
-        .signal-text { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .signal-arrow { font-size: 60px; margin-bottom: 10px; }
+        .signal-text { font-size: 24px; font-weight: bold; }
         .signal-card.buy .signal-text { color: #00c853; }
         .signal-card.sell .signal-text { color: #d50000; }
-        .signal-card.waiting .signal-text { color: #d4a017; }
-        .signal-card.no-trade .signal-text { color: #ff9800; }
+        .signal-card.waiting .signal-text { color: #888; }
         
-        .reason-box { 
-            padding: 12px; border-radius: 8px; font-size: 13px; 
-            margin: 10px 0; border-right: 3px solid #d4a017; 
-            text-align: right; line-height: 1.6; background: rgba(0,0,0,0.2);
-        }
-        
-        .confidence-meter { margin: 15px 0; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); }
-        .confidence-bar { height: 28px; background: rgba(0,0,0,0.3); border-radius: 14px; overflow: hidden; margin-top: 8px; }
-        .confidence-fill { height: 100%; background: linear-gradient(90deg, #00c853, #00e676); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 13px; transition: width 0.8s; }
+        .reason-text { font-size: 12px; margin-top: 10px; opacity: 0.8; line-height: 1.5; }
         
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .btn { flex: 1; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; }
         .btn-start { background: linear-gradient(135deg, #d4a017, #f0c040); }
-        .btn-start.ready { background: linear-gradient(135deg, #00c853, #00e676); animation: pulse 1.5s infinite; }
-        .btn-start:disabled { opacity: 0.4; background: #555; cursor: not-allowed; animation: none; }
+        .btn-start:disabled { opacity: 0.5; background: #555; cursor: not-allowed; }
         .btn-reset { background: linear-gradient(135deg, #ff6b35, #ff4444); }
         
         .source-badge { text-align: center; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 15px; font-weight: bold; background: rgba(0,123,255,0.1); border: 1px solid #007bff; color: #007bff; }
-        .cycle-info { font-size: 11px; margin-top: 10px; text-align: center; opacity: 0.6; }
-        
-        .next-signal-info {
-            text-align: center;
-            padding: 10px;
-            background: rgba(0,123,255,0.1);
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 13px;
-            color: #007bff;
-        }
     </style>
 </head>
 <body class="dark">
 
 <div class="container">
     <div class="header">
-        <h1> Gold M1 Sniper</h1>
+        <h1> Gold M1 Fast</h1>
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
     
-    <div class="source-badge">📡 M1 Chart | M5+M15 Analysis | هەر مۆمی M1 سیگناڵ</div>
+    <div class="source-badge">📡 M1 Chart | M5+M15 Analysis | هەر ١ خولەک سیگناڵ</div>
 
     <div class="card">
         <div class="chart-wrapper">
@@ -140,59 +80,29 @@
     </div>
 
     <div class="card">
-        <!-- Candle Status -->
-        <div class="candle-status">
-            <div class="candle-info">
-                <div style="font-size:11px; opacity:0.7;">مۆمی ئێستای M1</div>
-                <div id="candleTime" style="font-size:16px; font-weight:bold; margin-top:4px;">--:--</div>
-            </div>
-            <div class="candle-timer" id="candleCountdown">60</div>
-        </div>
-        <div class="candle-progress">
-            <div class="candle-progress-fill" id="candleProgress" style="width: 0%"></div>
+        <!-- Data Status -->
+        <div class="status-bar">
+            <span>بارودۆخی داتا:</span>
+            <span id="dataStatusText" class="data-status">⏳ کۆکردنەوە (0%)</span>
         </div>
 
-        <!-- Phase Indicators -->
-        <div class="phase-container">
-            <div class="phase-box" id="phase1">
-                <div class="phase-title">M5 + M15</div>
-                <div class="phase-status" id="phase1Status">چاوەڕێ</div>
-            </div>
-            <div class="phase-box" id="phase2">
-                <div class="phase-title">M1 Signal</div>
-                <div class="phase-status" id="phase2Status">چاوەڕێ</div>
-            </div>
+        <!-- Candle Timer -->
+        <div class="candle-timer-box">
+            <div class="candle-label">کاتی ماوە بۆ مۆمی داهاتوو</div>
+            <div class="candle-timer" id="candleCountdown">--</div>
         </div>
 
-        <!-- Candle Analysis Details -->
-        <div class="candle-details" id="candleDetails" style="display:none;">
-            <div class="candle-title">📊 شیکاری مۆمەکان</div>
-            <div id="candleAnalysisContent"></div>
-        </div>
-
-        <!-- Next Signal Info -->
-        <div class="next-signal-info" id="nextSignalInfo" style="display:none;">
-            سیگناڵی داهاتوو لە: <strong id="nextSignalTime">--:--</strong>
-        </div>
-
-        <!-- Signal Card -->
+        <!-- Signal Display -->
         <div id="signalCard" class="signal-card waiting">
-            <div id="signalArrow" class="signal-arrow"></div>
-            <div id="signalText" class="signal-text">چاوەڕێبە بۆ مۆمی M1...</div>
-            <div id="reasonBox" class="reason-box" style="display:none;"></div>
-        </div>
-
-        <div class="confidence-meter">
-            <div style="font-size:12px; opacity:0.7;">هێزی سیگناڵ</div>
-            <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
+            <div id="signalArrow" class="signal-arrow">⏳</div>
+            <div id="signalText" class="signal-text">چاوەڕوانی مۆمی M1...</div>
+            <div id="reasonText" class="reason-text"></div>
         </div>
         
         <div class="btn-group">
-            <button id="startBtn" class="btn btn-start" onclick="startSystem()">🚀 دەستپێکردن</button>
-            <button id="resetBtn" class="btn btn-reset" onclick="resetSystem()">🔄 ڕیسێت</button>
+            <button id="startBtn" class="btn btn-start" onclick="toggleSystem()">🚀 دەستپێکردن</button>
+            <button id="resetBtn" class="btn btn-reset" onclick="fullReset()">🔄 ڕیسێت</button>
         </div>
-        
-        <div class="cycle-info">⚠️ هەر 1 خولەک جارێک سیگناڵی نوێ | شیکاری M5+M15 بۆ ئاراستە</div>
     </div>
 </div>
 
@@ -201,10 +111,9 @@
     let priceHistory = [];
     let currentTheme = 'dark';
     let systemActive = false;
-    let candleInterval = null;
-    let analysisTimeout = null;
-    let currentCandleStart = null;
-    let nextSignalTime = null;
+    let fetchInterval = null;
+    let timerInterval = null;
+    let nextSignalTimeout = null;
 
     // === Theme & Chart ===
     function toggleTheme() {
@@ -220,11 +129,11 @@
             "timezone": "Etc/UTC", "theme": theme, "style": "1", "locale": "ar",
             "toolbar_bg": theme === 'dark' ? '#000' : '#fff',
             "container_id": "tradingview_chart",
-            "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies"]
+            "studies": ["RSI@tv-basicstudies"]
         });
     }
 
-    // === Data Collection ===
+    // === Fast Data Collection (Every 1 Second) ===
     async function fetchPrice() {
         try {
             const res = await fetch('https://api.metalpriceapi.com/v1/latest?api_key=55da3a9ecdb23ffd4370123283fdb61b&base=USD&currencies=XAU');
@@ -233,44 +142,57 @@
                 addTick(1 / data.rates.XAU);
             }
         } catch (e) {
+            // Fallback mock data if API fails
             const last = priceHistory.length ? priceHistory[priceHistory.length-1].price : 2350;
-            addTick(last + (Math.random() - 0.5) * 2);
+            addTick(last + (Math.random() - 0.5) * 0.5);
         }
+        updateDataStatus();
     }
 
     function addTick(price) {
         priceHistory.push({ time: Date.now(), price: price });
-        if (priceHistory.length > 500) priceHistory.shift();
+        if (priceHistory.length > 1000) priceHistory.shift();
     }
 
-    // === Candle Builder ===
+    function updateDataStatus() {
+        const statusEl = document.getElementById('dataStatusText');
+        const progress = Math.min(100, Math.floor((priceHistory.length / 180) * 100));
+        
+        if (progress >= 100) {
+            statusEl.textContent = '✅ ئامادەیە (100%)';
+            statusEl.className = 'data-status ready';
+        } else {
+            statusEl.textContent = ` کۆکردنەوە (${progress}%)`;
+            statusEl.className = 'data-status';
+        }
+    }
+
+    // === Indicators ===
     function buildCandle(ticks, minutes) {
-        const totalTicks = minutes * 12;
-        if (ticks.length < totalTicks) return null;
-        const slice = ticks.slice(-totalTicks);
+        const totalTicks = minutes * 12; // 12 ticks per minute (every 5 sec approx in history, but we have 1 sec now so we need more points)
+        // Since we fetch every 1 sec, we need 60 ticks for 1 min, 300 for 5 min, 900 for 15 min.
+        // But to be safe with API limits, let's assume we store enough.
+        // Let's adjust logic: 1 min = 60 seconds.
+        const requiredTicks = minutes * 60; 
+        if (ticks.length < requiredTicks) return null;
+        
+        const slice = ticks.slice(-requiredTicks);
         const open = slice[0].price;
         const close = slice[slice.length-1].price;
         const high = Math.max(...slice.map(t => t.price));
         const low = Math.min(...slice.map(t => t.price));
         const body = Math.abs(close - open);
         const range = high - low;
-        const upperWick = high - Math.max(open, close);
-        const lowerWick = Math.min(open, close) - low;
         const bodyRatio = range > 0 ? body / range : 0;
         
         return {
-            open, close, high, low, body, range,
-            upperWick, lowerWick, bodyRatio,
+            open, close, high, low, body, range, bodyRatio,
             isBullish: close > open,
-            isBearish: close < open,
-            isDoji: bodyRatio < 0.1,
             isStrong: bodyRatio > 0.6,
-            isHammer: lowerWick > body * 2 && upperWick < body * 0.5,
-            isShootingStar: upperWick > body * 2 && lowerWick < body * 0.5
+            isDoji: bodyRatio < 0.1
         };
     }
 
-    // === EMA Calculation ===
     function getEMA(prices, period) {
         if (prices.length < period) return null;
         const k = 2 / (period + 1);
@@ -279,310 +201,137 @@
         return ema;
     }
 
-    // === M5 + M15 Analysis ===
-    function analyzeHigherTimeframes() {
+    // === Analysis Logic ===
+    function analyzeMarket() {
         const prices = priceHistory.map(t => t.price);
-        if (prices.length < 200) return { valid: false, direction: null, reasons: ["داتا کەمە"] };
+        
+        // Check Data Sufficiency without Alert
+        if (prices.length < 900) { // 15 mins * 60 seconds
+            return { valid: false, reason: `داتا کەمە (${Math.floor(prices.length/60)} خولەک)` };
+        }
 
         const candleM15 = buildCandle(priceHistory, 15);
         const candleM5 = buildCandle(priceHistory, 5);
         
-        if (!candleM15 || !candleM5) return { valid: false, direction: null, reasons: ["مۆمەکان تەواو نین"] };
+        if (!candleM15 || !candleM5) return { valid: false, reason: "مۆمەکان تەواو نین" };
 
         const current = prices[prices.length - 1];
-        const ema9_M15 = getEMA(prices.slice(-180), 9);
-        const ema21_M15 = getEMA(prices.slice(-180), 21);
+        const ema9_M15 = getEMA(prices.slice(-900), 9);
         
         let score = 0;
         let reasons = [];
-        let direction = null;
 
         // M15 Analysis
-        if (candleM15.isStrong && candleM15.isBullish) { score += 3; reasons.push("M15: مۆمی بەهێزی سەرەوە"); }
-        else if (candleM15.isStrong && candleM15.isBearish) { score -= 3; reasons.push("M15: مۆمی بەهێزی خوارەوە"); }
-        else if (candleM15.isDoji) { reasons.push("M15: Doji"); score = 0; }
+        if (candleM15.isStrong && candleM15.isBullish) { score += 3; reasons.push("M15 بەهێزە ⬆️"); }
+        else if (candleM15.isStrong && candleM15.isBearish) { score -= 3; reasons.push("M15 بەهێزە ⬇️"); }
         
-        if (current > ema9_M15 && current > ema21_M15) { score += 2; reasons.push("M15: لەسەر EMA"); }
-        else if (current < ema9_M15 && current < ema21_M15) { score -= 2; reasons.push("M15: لەژێر EMA"); }
+        if (current > ema9_M15) { score += 2; reasons.push("لەسەر EMA"); }
+        else { score -= 2; reasons.push("لەژێر EMA"); }
 
         // M5 Analysis
-        if (candleM5.isStrong && candleM5.isBullish) { score += 2; reasons.push("M5: مۆمی بەهێزی سەرەوە"); }
-        else if (candleM5.isStrong && candleM5.isBearish) { score -= 2; reasons.push("M5: مۆمی بەهێزی خوارەوە"); }
-        
-        if (candleM5.isHammer && score > 0) { score += 1; reasons.push("M5: Hammer"); }
-        if (candleM5.isShootingStar && score < 0) { score -= 1; reasons.push("M5: Shooting Star"); }
+        if (candleM5.isStrong && candleM5.isBullish) { score += 2; reasons.push("M5 سەرەوە"); }
+        else if (candleM5.isStrong && candleM5.isBearish) { score -= 2; reasons.push("M5 خوارەوە"); }
 
         // Decision
-        if (score >= 5) direction = 'buy';
-        else if (score <= -5) direction = 'sell';
-        
+        let direction = null;
+        if (score >= 4) direction = 'buy';
+        else if (score <= -4) direction = 'sell';
+
         return {
             valid: direction !== null,
             direction,
             score,
-            reasons,
-            candleM15,
-            candleM5,
-            details: {
-                m15: { type: candleM15.isBullish ? 'Bullish' : 'Bearish', strength: candleM15.bodyRatio.toFixed(2), pattern: candleM15.isDoji ? 'Doji' : candleM15.isHammer ? 'Hammer' : candleM15.isShootingStar ? 'Shooting Star' : 'Normal' },
-                m5: { type: candleM5.isBullish ? 'Bullish' : 'Bearish', strength: candleM5.bodyRatio.toFixed(2), pattern: candleM5.isDoji ? 'Doji' : candleM5.isHammer ? 'Hammer' : candleM5.isShootingStar ? 'Shooting Star' : 'Normal' }
-            }
+            reasons: reasons.join(' | '),
+            confidence: Math.min(95, 70 + Math.abs(score) * 5)
         };
     }
 
-    // === M1 Candle Analysis ===
-    function analyzeM1Candle(expectedDirection) {
-        const prices = priceHistory.map(t => t.price);
-        if (prices.length < 12) return { valid: false, reasons: ["M1 داتا کەمە"] };
-
-        const candleM1 = buildCandle(priceHistory, 1);
-        if (!candleM1) return { valid: false, reasons: ["M1 مۆم تەواو نییە"] };
-
-        const recentPrices = prices.slice(-12);
-        const momentum = recentPrices[recentPrices.length-1] - recentPrices[0];
-        
-        let valid = false;
-        let reasons = [];
-
-        if (expectedDirection === 'buy') {
-            if (candleM1.isBullish && candleM1.bodyRatio > 0.5) {
-                valid = true;
-                reasons.push("M1: مۆمی سەرەوەی بەهێز");
-            }
-            if (momentum > 0.3) {
-                valid = true;
-                reasons.push("M1: مۆمێنتەمی بەهێز");
-            }
-            if (candleM1.isHammer) {
-                valid = true;
-                reasons.push("M1: Hammer");
-            }
-        } else if (expectedDirection === 'sell') {
-            if (candleM1.isBearish && candleM1.bodyRatio > 0.5) {
-                valid = true;
-                reasons.push("M1: مۆمی خوارەوەی بەهێز");
-            }
-            if (momentum < -0.3) {
-                valid = true;
-                reasons.push("M1: مۆمێنتەمی نەرێنی");
-            }
-            if (candleM1.isShootingStar) {
-                valid = true;
-                reasons.push("M1: Shooting Star");
-            }
+    // === System Control ===
+    function toggleSystem() {
+        if (systemActive) {
+            stopSystem();
+        } else {
+            startSystem();
         }
-
-        return { valid, reasons, candleM1, momentum };
     }
 
-    // === UI Updates ===
-    function updatePhase(phase, status, state) {
-        const el = document.getElementById(`phase${phase}`);
-        const statusEl = document.getElementById(`phase${phase}Status`);
-        el.className = `phase-box ${state}`;
-        statusEl.textContent = status;
-    }
-
-    function showCandleDetails(details) {
-        const container = document.getElementById('candleDetails');
-        const content = document.getElementById('candleAnalysisContent');
+    function startSystem() {
+        systemActive = true;
+        document.getElementById('startBtn').textContent = '⏹ وەستاندن';
+        document.getElementById('startBtn').style.background = '#d50000';
         
-        content.innerHTML = `
-            <div class="candle-row">
-                <span class="candle-label">M15 - ئاراستە:</span>
-                <span class="candle-value ${details.m15.type === 'Bullish' ? 'bullish' : 'bearish'}">${details.m15.type}</span>
-            </div>
-            <div class="candle-row">
-                <span class="candle-label">M15 - هێزی مۆم:</span>
-                <span class="candle-value">${(details.m15.strength * 100).toFixed(0)}%</span>
-            </div>
-            <div class="candle-row">
-                <span class="candle-label">M15 - شێوە:</span>
-                <span class="candle-value neutral">${details.m15.pattern}</span>
-            </div>
-            <div class="candle-row">
-                <span class="candle-label">M5 - ئاراستە:</span>
-                <span class="candle-value ${details.m5.type === 'Bullish' ? 'bullish' : 'bearish'}">${details.m5.type}</span>
-            </div>
-            <div class="candle-row">
-                <span class="candle-label">M5 - هێزی مۆم:</span>
-                <span class="candle-value">${(details.m5.strength * 100).toFixed(0)}%</span>
-            </div>
-            <div class="candle-row">
-                <span class="candle-label">M5 - شێوە:</span>
-                <span class="candle-value neutral">${details.m5.pattern}</span>
-            </div>
-        `;
-        container.style.display = 'block';
+        // Start fetching every 1 second
+        fetchPrice(); // Immediate fetch
+        fetchInterval = setInterval(fetchPrice, 1000);
+        
+        // Start Timer
+        startCandleTimer();
     }
 
-    function showSignal(direction, confidence, reasons) {
+    function stopSystem() {
+        systemActive = false;
+        clearInterval(fetchInterval);
+        clearInterval(timerInterval);
+        clearTimeout(nextSignalTimeout);
+        document.getElementById('startBtn').textContent = '🚀 دەستپێکردن';
+        document.getElementById('startBtn').style.background = '';
+    }
+
+    function startCandleTimer() {
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const remaining = 60 - seconds;
+        
+        document.getElementById('candleCountdown').textContent = remaining + 's';
+        
+        // Execute analysis exactly when new candle starts (seconds == 0 or remaining == 60)
+        if (seconds === 0 && systemActive) {
+            executeSignal();
+        }
+    }
+
+    function executeSignal() {
+        const result = analyzeMarket();
         const card = document.getElementById('signalCard');
         const arrow = document.getElementById('signalArrow');
         const text = document.getElementById('signalText');
-        const reasonBox = document.getElementById('reasonBox');
-        const confFill = document.getElementById('confidenceFill');
-
-        card.className = `signal-card ${direction}`;
+        const reason = document.getElementById('reasonText');
         
-        if (direction === 'buy') {
-            arrow.textContent = '⬆️';
-            text.textContent = 'BUY - بارز دەبێتەوە';
-            confFill.style.background = 'linear-gradient(90deg, #00c853, #00e676)';
-        } else if (direction === 'sell') {
-            arrow.textContent = '⬇️';
-            text.textContent = 'SELL - نزم دەبێتەوە';
-            confFill.style.background = 'linear-gradient(90deg, #d50000, #ff1744)';
-        } else if (direction === 'no-trade') {
-            arrow.textContent = '🚫';
-            text.textContent = 'ترید مەکە';
-            confFill.style.background = '#ff9800';
+        if (!result.valid) {
+            card.className = 'signal-card waiting';
+            arrow.textContent = '⚠️';
+            text.textContent = 'سیگناڵ نییە';
+            text.style.color = '#ff9800';
+            reason.textContent = result.reason;
         } else {
-            arrow.textContent = '';
-            text.textContent = 'چاوەڕوانی M1...';
-            confFill.style.background = '#007bff';
-        }
-
-        confFill.style.width = confidence + '%';
-        confFill.textContent = confidence + '%';
-
-        if (reasons.length > 0) {
-            reasonBox.style.display = 'block';
-            reasonBox.textContent = reasons.join(' | ');
-        } else {
-            reasonBox.style.display = 'none';
+            card.className = `signal-card ${result.direction}`;
+            arrow.textContent = result.direction === 'buy' ? '⬆️' : '️';
+            text.textContent = result.direction === 'buy' ? 'BUY' : 'SELL';
+            text.style.color = result.direction === 'buy' ? '#00c853' : '#d50000';
+            reason.textContent = `${result.reasons} | هێزی: ${result.confidence}%`;
         }
     }
 
-    // === Candle Timer ===
-    function updateCandleTimer() {
-        const now = Date.now();
-        const secondsInMinute = 60;
-        const currentSecond = Math.floor((now / 1000) % secondsInMinute);
-        const remaining = secondsInMinute - currentSecond;
-        const progress = ((secondsInMinute - remaining) / secondsInMinute) * 100;
-        
-        document.getElementById('candleCountdown').textContent = remaining;
-        document.getElementById('candleProgress').style.width = progress + '%';
-        
-        const nowDate = new Date();
-        const minutes = String(nowDate.getMinutes()).padStart(2, '0');
-        const seconds = String(nowDate.getSeconds()).padStart(2, '0');
-        document.getElementById('candleTime').textContent = `${minutes}:${seconds}`;
-    }
-
-    // === Main System ===
-    function startSystem() {
-        if (systemActive) return;
-        if (priceHistory.length < 200) {
-            alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە (حداقل 15 خولەک)');
-            return;
-        }
-
-        systemActive = true;
-        const btn = document.getElementById('startBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ چالاکە...';
-        
-        updatePhase(1, 'شیکاری...', 'active');
-        updatePhase(2, 'چاوەڕێ...', '');
-        
-        // Start candle timer
-        candleInterval = setInterval(updateCandleTimer, 1000);
-        updateCandleTimer();
-        
-        // Wait for next M1 candle to close
-        const now = new Date();
-        const secondsToNextMinute = 60 - now.getSeconds();
-        
-        document.getElementById('nextSignalInfo').style.display = 'block';
-        const nextMinute = new Date(now.getTime() + secondsToNextMinute * 1000);
-        document.getElementById('nextSignalTime').textContent = 
-            `${String(nextMinute.getMinutes()).padStart(2,'0')}:${String(nextMinute.getSeconds()).padStart(2,'0')}`;
-        
-        analysisTimeout = setTimeout(() => {
-            performAnalysis();
-        }, secondsToNextMinute * 1000);
-    }
-
-    function performAnalysis() {
-        // Phase 1: M5 + M15
-        const result1 = analyzeHigherTimeframes();
-        
-        if (result1.details) {
-            showCandleDetails(result1.details);
-        }
-
-        if (!result1.valid) {
-            updatePhase(1, 'ڕەتکرایەوە', 'failed');
-            updatePhase(2, '-', '');
-            showSignal('no-trade', 0, result1.reasons);
-            resetAfterSignal();
-            return;
-        }
-
-        updatePhase(1, 'تەواو', 'completed');
-        updatePhase(2, 'M1...', 'active');
-        
-        // Phase 2: M1 Analysis
-        setTimeout(() => {
-            const result2 = analyzeM1Candle(result1.direction);
-            
-            if (result2.valid) {
-                updatePhase(2, 'سیگناڵ!', 'completed');
-                const confidence = 85 + Math.floor(Math.random() * 10);
-                showSignal(result1.direction, confidence, [...result1.reasons, ...result2.reasons]);
-            } else {
-                updatePhase(2, 'No Trade', 'failed');
-                showSignal('no-trade', 0, [...result1.reasons, 'M1 سیگناڵی نەدا']);
-            }
-            
-            resetAfterSignal();
-        }, 2000);
-    }
-
-    function resetAfterSignal() {
-        const btn = document.getElementById('startBtn');
-        btn.disabled = false;
-        btn.textContent = '🚀 سیگناڵی داهاتوو';
-        btn.classList.add('ready');
-        
-        // Auto-start next signal after 5 seconds
-        setTimeout(() => {
-            if (systemActive) {
-                resetSystem(false);
-                startSystem();
-            }
-        }, 5000);
-    }
-
-    function resetSystem(fullReset = true) {
-        if (candleInterval) clearInterval(candleInterval);
-        if (analysisTimeout) clearTimeout(analysisTimeout);
-        
-        if (fullReset) {
-            systemActive = false;
-            priceHistory = [];
-        }
-        
-        document.getElementById('candleDetails').style.display = 'none';
-        showSignal('waiting', 0, []);
-        document.getElementById('nextSignalInfo').style.display = 'none';
-        
-        updatePhase(1, 'M5 + M15', '');
-        updatePhase(2, 'M1 Signal', '');
-        
-        const btn = document.getElementById('startBtn');
-        btn.disabled = false;
-        btn.textContent = '🚀 دەستپێکردن';
-        btn.classList.remove('ready');
+    function fullReset() {
+        stopSystem();
+        priceHistory = [];
+        updateDataStatus();
+        document.getElementById('signalCard').className = 'signal-card waiting';
+        document.getElementById('signalArrow').textContent = '⏳';
+        document.getElementById('signalText').textContent = 'چاوەڕوانی مۆمی M1...';
+        document.getElementById('reasonText').textContent = '';
+        document.getElementById('candleCountdown').textContent = '--';
     }
 
     window.onload = function() {
         reloadChart('dark');
+        // Initial fetch
         fetchPrice();
-        setInterval(fetchPrice, 5000);
-        setInterval(updateCandleTimer, 1000);
     };
 </script>
 </body>
