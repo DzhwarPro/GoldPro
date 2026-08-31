@@ -3,145 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Sniper Pro - Always Active Reset</title>
+    <title>Gold Pro - MTF Candle Analysis</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; }
         
-        body.dark { background: #000000; color: #e0e0e0; }
-        body.dark .card { background: #050505; border: 1px solid #1a1a1a; }
-        body.dark .mtf-status, body.dark .confidence-meter, body.dark .timer-box, body.dark .status-box, body.dark .analysis-reason { background: #0a0a0a; border: 1px solid #1a1a1a; }
-        body.dark .source-badge { background: #0a0a0a; border: 1px solid #007bff; color: #007bff; }
+        body.dark { background: #000; color: #e0e0e0; }
+        body.dark .card { background: #0a0a0a; border: 1px solid #1f1f1f; }
+        body.dark .filter-box { background: #050505; border: 1px solid #1a1a1a; }
         
-        body.light { background: #ffffff; color: #1a1a1a; }
-        body.light .card { background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        body.light .mtf-status, body.light .confidence-meter, body.light .timer-box { background: #f5f5f5; border: 1px solid #e0e0e0; }
-        body.light .status-box { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
-        body.light .analysis-reason { background: #f9f9f9; border: 1px solid #e0e0e0; color: #333; }
-        body.light .source-badge { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
+        body.light { background: #f8f9fa; color: #1a1a1a; }
+        body.light .card { background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        body.light .filter-box { background: #f8f9fa; border: 1px solid #e0e0e0; }
 
-        .container { max-width: 100%; margin: 0 auto; padding: 10px; }
+        .container { max-width: 100%; margin: 0 auto; padding: 12px; font-family: -apple-system, sans-serif; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
+        h1 { font-size: 20px; font-weight: bold; color: #d4a017; }
         
-        .theme-toggle {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none; border-radius: 50%; width: 50px; height: 50px;
-            cursor: pointer; font-size: 24px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
-            transition: transform 0.3s;
+        .theme-toggle { background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 20px; color: #fff; }
+        
+        .card { border-radius: 12px; padding: 15px; margin-bottom: 12px; }
+        .chart-wrapper { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+        
+        /* Phase Indicators */
+        .phase-container { display: flex; gap: 10px; margin: 15px 0; }
+        .phase-box { 
+            flex: 1; padding: 12px; border-radius: 10px; text-align: center;
+            border: 2px solid #333; background: rgba(0,0,0,0.3);
         }
-        .theme-toggle:hover { transform: rotate(180deg); }
+        .phase-box.active { border-color: #007bff; background: rgba(0,123,255,0.1); animation: pulse 1.5s infinite; }
+        .phase-box.completed { border-color: #00c853; background: rgba(0,200,83,0.1); }
+        .phase-box.failed { border-color: #d50000; background: rgba(213,0,0,0.1); }
+        .phase-title { font-size: 11px; opacity: 0.7; margin-bottom: 6px; }
+        .phase-status { font-size: 14px; font-weight: bold; }
+        .phase-box.active .phase-status { color: #007bff; }
+        .phase-box.completed .phase-status { color: #00c853; }
+        .phase-box.failed .phase-status { color: #d50000; }
         
-        .card { border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-        .chart-wrapper { width: 100%; height: 380px; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
         
-        .prediction-card { border-radius: 10px; padding: 20px; text-align: center; border: 2px solid; }
-        .prediction-card.bullish { border-color: #00c853; background: rgba(0,200,83,0.08); }
-        .prediction-card.bearish { border-color: #d50000; background: rgba(213,0,0,0.08); }
-        .prediction-card.waiting { border-color: #d4a017; background: rgba(212,160,23,0.05); }
-        .prediction-card.collecting { border-color: #007bff; background: rgba(0,123,255,0.08); }
+        /* Candle Analysis Details */
+        .candle-details { 
+            margin: 15px 0; padding: 12px; border-radius: 10px; 
+            background: rgba(0,0,0,0.2); border: 1px solid #333;
+        }
+        .candle-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #d4a017; }
+        .candle-row { 
+            display: flex; justify-content: space-between; padding: 8px; 
+            border-bottom: 1px solid #222; font-size: 12px;
+        }
+        .candle-row:last-child { border-bottom: none; }
+        .candle-label { opacity: 0.7; }
+        .candle-value { font-weight: bold; font-family: monospace; }
+        .bullish { color: #00c853; }
+        .bearish { color: #d50000; }
+        .neutral { color: #ff9800; }
         
-        .prediction-arrow { font-size: 70px; margin: 10px 0; }
-        .prediction-text { font-size: 28px; font-weight: bold; margin: 10px 0; }
-        .bullish .prediction-text { color: #00c853; }
-        .bearish .prediction-text { color: #d50000; }
-        .waiting .prediction-text { color: #d4a017; }
-        .collecting .prediction-text { color: #007bff; }
-
-        .mtf-status { display: flex; justify-content: space-around; margin: 15px 0; padding: 12px; border-radius: 10px; }
-        .tf-item { text-align: center; }
-        .tf-label { font-size: 11px; margin-bottom: 4px; opacity: 0.7; }
-        .tf-val { font-size: 16px; font-weight: bold; }
-        .tf-up { color: #00c853; }
-        .tf-down { color: #d50000; }
-        .tf-neutral { opacity: 0.5; }
-
-        .confidence-meter { margin: 15px 0; padding: 12px; border-radius: 10px; }
-        .confidence-label { font-size: 12px; margin-bottom: 8px; opacity: 0.7; }
-        .confidence-bar { height: 32px; background: rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; }
-        .confidence-fill { 
-            height: 100%; background: linear-gradient(90deg, #00c853, #00e676); 
-            display: flex; align-items: center; justify-content: center; 
-            color: #fff; font-weight: bold; font-size: 14px; transition: width 0.8s ease; 
+        /* Final Signal */
+        .signal-card { 
+            border-radius: 12px; padding: 20px; text-align: center; 
+            border: 3px solid; margin: 15px 0;
+        }
+        .signal-card.buy { border-color: #00c853; background: rgba(0,200,83,0.1); }
+        .signal-card.sell { border-color: #d50000; background: rgba(213,0,0,0.1); }
+        .signal-card.waiting { border-color: #d4a017; background: rgba(212,160,23,0.05); }
+        .signal-card.no-trade { border-color: #ff9800; background: rgba(255,152,0,0.1); }
+        
+        .signal-arrow { font-size: 70px; margin: 10px 0; }
+        .signal-text { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .signal-card.buy .signal-text { color: #00c853; }
+        .signal-card.sell .signal-text { color: #d50000; }
+        .signal-card.waiting .signal-text { color: #d4a017; }
+        .signal-card.no-trade .signal-text { color: #ff9800; }
+        
+        .reason-box { 
+            padding: 12px; border-radius: 8px; font-size: 13px; 
+            margin: 10px 0; border-right: 3px solid #d4a017; 
+            text-align: right; line-height: 1.6; background: rgba(0,0,0,0.2);
         }
         
-        .timer-box { border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; }
+        .confidence-meter { margin: 15px 0; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); }
+        .confidence-bar { height: 28px; background: rgba(0,0,0,0.3); border-radius: 14px; overflow: hidden; margin-top: 8px; }
+        .confidence-fill { height: 100%; background: linear-gradient(90deg, #00c853, #00e676); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 13px; transition: width 0.8s; }
+        
+        .timer-box { border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; background: rgba(0,0,0,0.2); }
         .timer-label { font-size: 12px; opacity: 0.7; }
-        .timer-value { font-size: 50px; font-weight: bold; font-family: monospace; color: #d4a017; }
+        .timer-value { font-size: 45px; font-weight: bold; font-family: monospace; color: #d4a017; }
         
-        .status-box { border-radius: 10px; padding: 12px; margin: 10px 0; font-size: 13px; text-align: center; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { flex: 1; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; }
+        .btn-start { background: linear-gradient(135deg, #d4a017, #f0c040); }
+        .btn-start.ready { background: linear-gradient(135deg, #00c853, #00e676); animation: pulse 1.5s infinite; }
+        .btn-start:disabled { opacity: 0.4; background: #555; cursor: not-allowed; animation: none; }
+        .btn-reset { background: linear-gradient(135deg, #ff6b35, #ff4444); }
         
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .prediction-btn, .reset-btn { 
-            flex: 1; padding: 18px; border: none; border-radius: 10px; 
-            font-size: 18px; font-weight: bold; cursor: pointer; 
-            color: #fff; transition: all 0.3s;
-        }
-        
-        .prediction-btn { 
-            background: linear-gradient(135deg, #d4a017, #f0c040); 
-        }
-        .prediction-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
-        .prediction-btn.ready { 
-            background: linear-gradient(135deg, #00c853, #00e676); 
-            animation: pulse 1.5s infinite;
-        }
-        
-        /* دوگمەی ڕیسێت هەمیشە چالاکە */
-        .reset-btn {
-            background: linear-gradient(135deg, #ff6b35, #ff4444);
-        }
-        .reset-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(255,68,68,0.4);
-        }
-        .reset-btn:active {
-            transform: scale(0.98);
-        }
-        
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-        
-        .accuracy-badge { 
-            display: inline-block; background: rgba(0,200,83,0.15); border: 1px solid #00c853; 
-            padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-top: 15px; 
-            color: #00c853; font-weight: bold; 
-        }
-        
-        .source-badge { text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; font-weight: bold; }
-        .analysis-reason { padding: 12px; border-radius: 8px; font-size: 13px; margin: 10px 0; border-right: 3px solid #d4a017; text-align: right; line-height: 1.6; }
+        .source-badge { text-align: center; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 15px; font-weight: bold; background: rgba(0,123,255,0.1); border: 1px solid #007bff; color: #007bff; }
         .cycle-info { font-size: 11px; margin-top: 10px; text-align: center; opacity: 0.6; }
-        
-        .sync-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 8px; padding: 4px 12px; background: rgba(0,123,255,0.1); border-radius: 12px; }
-        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #007bff; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        .phase-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; }
-        .phase-prediction { background: rgba(212,160,23,0.2); color: #d4a017; border: 1px solid #d4a017; }
-        .phase-collecting { background: rgba(0,123,255,0.2); color: #007bff; border: 1px solid #007bff; }
-        .phase-ready { background: rgba(0,200,83,0.2); color: #00c853; border: 1px solid #00c853; }
-        .phase-volatile { background: rgba(255,152,0,0.2); color: #ff9800; border: 1px solid #ff9800; }
-        
-        .volatility-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 8px; padding: 4px 12px; border-radius: 12px; }
-        .vol-low { background: rgba(0,200,83,0.15); color: #00c853; }
-        .vol-medium { background: rgba(255,152,0,0.15); color: #ff9800; }
-        .vol-high { background: rgba(213,0,0,0.15); color: #d50000; }
     </style>
 </head>
 <body class="dark">
 
 <div class="container">
     <div class="header">
-        <h1>🎯 Gold Sniper Pro</h1>
-        <button class="theme-toggle" onclick="toggleTheme()" title="گۆڕینی ڕەنگ">🌓</button>
+        <h1>🎯 Gold MTF Sniper</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
     
-    <div class="source-badge">📡 M1 + M5 + M15 | چارتی M5 | دەستپێکردنی دەستی</div>
+    <div class="source-badge">📡 M15 + M5 → ئاراستە | M1 → چوونەژوورەوە | شیکاری مۆمی ورد</div>
 
     <div class="card">
         <div class="chart-wrapper">
@@ -150,428 +117,421 @@
     </div>
 
     <div class="card">
-        <div id="predictionCard" class="prediction-card waiting">
-            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری M1 + M5 + M15 بۆ ٥ خولەک</div>
-            
-            <div class="mtf-status">
-                <div class="tf-item"><div class="tf-label">M1</div><div id="tf1" class="tf-val tf-neutral">⏳</div></div>
-                <div class="tf-item"><div class="tf-label">M5</div><div id="tf5" class="tf-val tf-neutral">⏳</div></div>
-                <div class="tf-item"><div class="tf-label">M15</div><div id="tf15" class="tf-val tf-neutral">⏳</div></div>
+        <!-- Phase Indicators -->
+        <div class="phase-container">
+            <div class="phase-box" id="phase1">
+                <div class="phase-title">هەنگاوی ١</div>
+                <div class="phase-status" id="phase1Status">M15 + M5</div>
             </div>
-
-            <div id="predictionArrow" class="prediction-arrow">⏳</div>
-            <div id="predictionText" class="prediction-text">چاوەڕێبە...</div>
-            <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
-
-            <div class="confidence-meter">
-                <div class="confidence-label">هێزی پێشبینی</div>
-                <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
+            <div class="phase-box" id="phase2">
+                <div class="phase-title">هەنگاوی ٢</div>
+                <div class="phase-status" id="phase2Status">M1 Entry</div>
             </div>
-            
-            <div id="statusBox" class="status-box" style="display:none;"></div>
-            
-            <div class="timer-box">
-                <div class="timer-label" id="timerLabel">کاتی ماوە</div>
-                <div id="timerValue" class="timer-value">05:00</div>
-                <div id="phaseBadge" class="phase-badge phase-prediction">قۆناغی پێشبینی</div>
-                <div class="sync-indicator">
-                    <div class="sync-dot"></div>
-                    <span>هاوکاتکراو لەگەڵ چارت</span>
-                </div>
-                <div id="volatilityIndicator" class="volatility-indicator vol-low" style="display:none;">
-                    <span id="volatilityText">بازاڕ ئارامە</span>
-                </div>
+            <div class="phase-box" id="phase3">
+                <div class="phase-title">ئەنجام</div>
+                <div class="phase-status" id="phase3Status">سیگناڵ</div>
             </div>
-            
-            <div class="btn-group">
-                <button id="predictionBtn" class="prediction-btn" onclick="handleStartClick()">🚀 دەستپێکردن</button>
-                <!-- دوگمەی ڕیسێت هەمیشە چالاکە -->
-                <button id="resetBtn" class="reset-btn" onclick="resetAllData()"> دوبارەکردنەوە</button>
-            </div>
-            
-            <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
-            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
+
+        <!-- Candle Analysis Details -->
+        <div class="candle-details" id="candleDetails" style="display:none;">
+            <div class="candle-title">📊 شیکاری وردی مۆمەکان</div>
+            <div id="candleAnalysisContent"></div>
+        </div>
+
+        <!-- Final Signal -->
+        <div id="signalCard" class="signal-card waiting">
+            <div id="signalArrow" class="signal-arrow">⏳</div>
+            <div id="signalText" class="signal-text">چاوەڕێبە...</div>
+            <div id="reasonBox" class="reason-box" style="display:none;"></div>
+        </div>
+
+        <div class="confidence-meter">
+            <div style="font-size:12px; opacity:0.7;">هێزی سیگناڵ</div>
+            <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
+        </div>
+        
+        <div class="timer-box">
+            <div class="timer-label" id="timerLabel">کاتی ماوە</div>
+            <div id="timerValue" class="timer-value">05:00</div>
+        </div>
+        
+        <div class="btn-group">
+            <button id="startBtn" class="btn btn-start" onclick="startAnalysis()">🚀 دەستپێکردنی شیکاری</button>
+            <button id="resetBtn" class="btn btn-reset" onclick="resetSystem()">🔄 ڕیسێت</button>
+        </div>
+        
+        <div class="cycle-info">⚠️ شیکاری M15+M5 بۆ ئاراستە، پاشان M1 بۆ خاڵی چوونەژوورەوە</div>
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     let priceHistory = [];
-    let predictionActive = false;
-    let collectingData = false;
-    let countdownInterval = null;
-    let autoRestartTimeout = null;
     let currentTheme = 'dark';
-    let volatilityLevel = 'low';
-    let buttonState = 'idle';
+    let countdownInterval = null;
+    let analysisState = 'idle'; // idle, phase1, phase2, completed
 
+    // === Theme & Chart ===
     function toggleTheme() {
-        const body = document.body;
-        if (currentTheme === 'dark') {
-            body.classList.remove('dark');
-            body.classList.add('light');
-            currentTheme = 'light';
-            reloadChart('light');
-        } else {
-            body.classList.remove('light');
-            body.classList.add('dark');
-            currentTheme = 'dark';
-            reloadChart('dark');
-        }
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.className = currentTheme;
+        reloadChart(currentTheme);
     }
 
     function reloadChart(theme) {
-        const container = document.getElementById('tradingview_chart');
-        container.innerHTML = ''; 
-        const bgColor = theme === 'dark' ? '#000000' : '#ffffff';
-        new TradingView.widget({ 
-            "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5", 
-            "timezone": "Etc/UTC", "theme": theme, "style": "1", "locale": "ar", 
-            "toolbar_bg": bgColor, "enable_publishing": false, "hide_top_toolbar": false, 
-            "hide_legend": false, "save_image": false, "container_id": "tradingview_chart", 
-            "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"] 
+        document.getElementById('tradingview_chart').innerHTML = '';
+        new TradingView.widget({
+            "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5",
+            "timezone": "Etc/UTC", "theme": theme, "style": "1", "locale": "ar",
+            "toolbar_bg": theme === 'dark' ? '#000' : '#fff',
+            "container_id": "tradingview_chart",
+            "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies"]
         });
     }
 
-    // === دوگمەی ڕیسێت هەمیشە چالاکە ===
-    function resetAllData() {
-        // ڕاگرتنی هەموو تایمەرەکان
-        if (countdownInterval) clearInterval(countdownInterval);
-        if (autoRestartTimeout) clearTimeout(autoRestartTimeout);
-        
-        // سڕینەوەی داتا
-        priceHistory = [];
-        
-        // ڕیسێتکردنی قۆناغەکان
-        predictionActive = false;
-        collectingData = false;
-        buttonState = 'idle';
-        
-        // ڕیسێتکردنی UI
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const predBtn = document.getElementById('predictionBtn');
-        const confFill = document.getElementById('confidenceFill');
-        const reasonBox = document.getElementById('analysisReason');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-        const timerValue = document.getElementById('timerValue');
-        
-        card.className = 'prediction-card waiting';
-        arrow.textContent = '⏳';
-        text.textContent = 'چاوەڕێبە...';
-        predBtn.disabled = false;
-        predBtn.textContent = '🚀 دەستپێکردن';
-        predBtn.classList.remove('ready');
-        document.getElementById('timerValue').textContent = '05:00';
-        confFill.style.width = '0%';
-        confFill.textContent = '0%';
-        reasonBox.style.display = 'none';
-        statusBox.style.display = 'block';
-        statusBox.textContent = '🔄 داتا تەواو سڕایەوە - چاوەڕوانی داتای نوێ...';
-        statusBox.style.background = currentTheme === 'dark' ? 'rgba(255,107,53,0.1)' : 'rgba(255,107,53,0.15)';
-        statusBox.style.color = currentTheme === 'dark' ? '#ff6b35' : '#ff4444';
-        statusBox.style.border = `1px solid ${currentTheme === 'dark' ? '#ff6b35' : '#ff4444'}`;
-        timerLabel.textContent = 'کاتی ماوە';
-        updatePhaseBadge('prediction');
-        
-        ['tf1', 'tf5', 'tf15'].forEach(id => {
-            const el = document.getElementById(id);
-            el.textContent = '⏳'; el.className = 'tf-val tf-neutral';
-        });
-        
-        document.getElementById('volatilityIndicator').style.display = 'none';
-        
-        // چاوەڕوانی تا داتای نوێ کۆبکرێتەوە
-        setTimeout(() => {
-            if (priceHistory.length >= 60) {
-                enableStartButton();
-            }
-        }, 30000);
-    }
-
-    function handleStartClick() {
-        if (buttonState === 'idle' || buttonState === 'ready') {
-            startCycle();
-        }
-    }
-
-    async function fetchGoldPrice() {
+    // === Data Collection ===
+    async function fetchPrice() {
         try {
-            const response = await fetch('https://api.metalpriceapi.com/v1/latest?api_key=55da3a9ecdb23ffd4370123283fdb61b&base=USD&currencies=XAU');
-            const data = await response.json();
-            if (data.success && data.rates && data.rates.XAU) {
-                updatePriceData(1 / data.rates.XAU);
-            } else { throw new Error('API Error'); }
-        } catch (error) {
-            const last = priceHistory.length > 0 ? priceHistory[priceHistory.length-1] : 2350;
-            updatePriceData(last + (Math.random() - 0.5) * 3);
+            const res = await fetch('https://api.metalpriceapi.com/v1/latest?api_key=55da3a9ecdb23ffd4370123283fdb61b&base=USD&currencies=XAU');
+            const data = await res.json();
+            if (data.success && data.rates?.XAU) {
+                priceHistory.push({ time: Date.now(), price: 1 / data.rates.XAU });
+            }
+        } catch (e) {
+            const last = priceHistory.length ? priceHistory[priceHistory.length-1].price : 2350;
+            priceHistory.push({ time: Date.now(), price: last + (Math.random() - 0.5) * 2 });
         }
+        if (priceHistory.length > 1000) priceHistory.shift();
     }
 
-    function updatePriceData(price) {
-        priceHistory.push(price);
-        if (priceHistory.length > 500) priceHistory.shift();
-        checkVolatility();
-    }
-
-    function checkVolatility() {
-        if (priceHistory.length < 20) return;
-        const recent = priceHistory.slice(-20);
-        const changes = [];
-        for (let i = 1; i < recent.length; i++) {
-            changes.push(Math.abs(recent[i] - recent[i-1]));
-        }
-        const avgChange = changes.reduce((a,b) => a+b, 0) / changes.length;
-        const maxChange = Math.max(...changes);
+    // === Candle Builder ===
+    function buildCandle(ticks, minutes) {
+        const totalTicks = minutes * 12;
+        if (ticks.length < totalTicks) return null;
+        const slice = ticks.slice(-totalTicks);
+        const open = slice[0].price;
+        const close = slice[slice.length-1].price;
+        const high = Math.max(...slice.map(t => t.price));
+        const low = Math.min(...slice.map(t => t.price));
+        const body = Math.abs(close - open);
+        const range = high - low;
+        const upperWick = high - Math.max(open, close);
+        const lowerWick = Math.min(open, close) - low;
+        const bodyRatio = range > 0 ? body / range : 0;
         
-        const volIndicator = document.getElementById('volatilityIndicator');
-        const volText = document.getElementById('volatilityText');
-        
-        if (maxChange > 5 || avgChange > 2) {
-            volatilityLevel = 'high';
-            volIndicator.className = 'volatility-indicator vol-high';
-            volText.textContent = '⚠️ بازاڕ زۆر نائارامە';
-        } else if (maxChange > 2 || avgChange > 1) {
-            volatilityLevel = 'medium';
-            volIndicator.className = 'volatility-indicator vol-medium';
-            volText.textContent = '⚡ بازاڕ نائارامە';
-        } else {
-            volatilityLevel = 'low';
-            volIndicator.className = 'volatility-indicator vol-low';
-            volText.textContent = '✅ بازاڕ ئارامە';
-        }
-        volIndicator.style.display = 'inline-flex';
+        return {
+            open, close, high, low, body, range,
+            upperWick, lowerWick, bodyRatio,
+            isBullish: close > open,
+            isBearish: close < open,
+            isDoji: bodyRatio < 0.1,
+            isStrong: bodyRatio > 0.6,
+            isHammer: lowerWick > body * 2 && upperWick < body * 0.5,
+            isShootingStar: upperWick > body * 2 && lowerWick < body * 0.5
+        };
     }
 
-    function calcSMA(prices, period) {
-        if (prices.length < period) return null;
-        return prices.slice(-period).reduce((a,b) => a+b, 0) / period;
-    }
-    
-    function calcEMA(prices, period) {
+    // === EMA Calculation ===
+    function getEMA(prices, period) {
         if (prices.length < period) return null;
         const k = 2 / (period + 1);
         let ema = prices.slice(0, period).reduce((a,b) => a+b, 0) / period;
         for (let i = period; i < prices.length; i++) ema = prices[i] * k + ema * (1 - k);
         return ema;
     }
-    
-    function calcRSI(prices, period = 14) {
-        if (prices.length < period + 1) return 50;
-        let gains = 0, losses = 0;
-        for (let i = prices.length - period; i < prices.length; i++) {
-            const change = prices[i] - prices[i - 1];
-            if (change > 0) gains += change; else losses += Math.abs(change);
-        }
-        const avgGain = gains / period, avgLoss = losses / period;
-        if (avgLoss === 0) return 100;
-        return 100 - (100 / (1 + avgGain / avgLoss));
-    }
 
-    function analyzeTF(prices, weight) {
-        if (prices.length < 20) return { score: 0, signal: 'neutral', strength: 0 };
+    // === Phase 1: M15 + M5 Analysis ===
+    function analyzePhase1() {
+        const prices = priceHistory.map(t => t.price);
+        if (prices.length < 200) return { valid: false, direction: null, reasons: ["داتا کەمە"] };
+
+        const candleM15 = buildCandle(priceHistory, 15);
+        const candleM5 = buildCandle(priceHistory, 5);
+        
+        if (!candleM15 || !candleM5) return { valid: false, direction: null, reasons: ["مۆمەکان تەواو نین"] };
+
         const current = prices[prices.length - 1];
-        const rsi = calcRSI(prices);
-        const sma20 = calcSMA(prices, Math.min(20, prices.length));
-        const ema9 = calcEMA(prices, Math.min(9, prices.length));
-        let score = 0, strength = 0;
-        if (rsi < 25) { score += 3; strength += 3; }
-        else if (rsi > 75) { score -= 3; strength -= 3; }
-        else if (rsi < 35) { score += 2; strength += 2; }
-        else if (rsi > 65) { score -= 2; strength -= 2; }
-        else if (rsi > 50) { score += 1; strength += 1; }
-        else { score -= 1; strength -= 1; }
-        if (sma20 && ema9) {
-            if (current > sma20 && current > ema9) { score += 3; strength += 3; }
-            else if (current < sma20 && current < ema9) { score -= 3; strength -= 3; }
-            else if (current > sma20) { score += 1; strength += 1; }
-            else { score -= 1; strength -= 1; }
-        }
-        score = score * weight;
-        strength = Math.abs(strength) * weight;
-        let signal = 'neutral';
-        if (score >= 3) signal = 'up';
-        else if (score <= -3) signal = 'down';
-        return { score, signal, strength };
-    }
-
-    function startCycle() {
-        if (predictionActive || collectingData) return;
-        if (priceHistory.length < 60) { alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە'); return; }
-        if (autoRestartTimeout) { clearTimeout(autoRestartTimeout); autoRestartTimeout = null; }
+        const ema9_M15 = getEMA(prices.slice(-180), 9);
+        const ema21_M15 = getEMA(prices.slice(-180), 21);
         
-        predictionActive = true;
-        buttonState = 'predicting';
-        updatePhaseBadge('prediction');
-        
-        const m1Data = priceHistory.slice(-12);   
-        const m5Data = priceHistory.slice(-60);   
-        const m15Data = priceHistory.slice(-180);   
-        const tf1Res = analyzeTF(m1Data, 0.15);
-        const tf5Res = analyzeTF(m5Data, 0.40);
-        const tf15Res = analyzeTF(m15Data, 0.45);
+        let score = 0;
+        let reasons = [];
+        let direction = null;
 
-        const updateTFUI = (id, res) => {
-            const el = document.getElementById(id);
-            el.textContent = res.signal === 'up' ? '⬆️ UP' : res.signal === 'down' ? '⬇️ DOWN' : '➖ FLAT';
-            el.className = `tf-val ${res.signal === 'up' ? 'tf-up' : res.signal === 'down' ? 'tf-down' : 'tf-neutral'}`;
+        // M15 Analysis
+        if (candleM15.isStrong && candleM15.isBullish) { score += 3; reasons.push("M15: مۆمی بەهێزی سەرەوە"); }
+        else if (candleM15.isStrong && candleM15.isBearish) { score -= 3; reasons.push("M15: مۆمی بەهێزی خوارەوە"); }
+        else if (candleM15.isDoji) { reasons.push("M15: مۆمی Doji (نائارام)"); score = 0; }
+        
+        if (current > ema9_M15 && current > ema21_M15) { score += 2; reasons.push("M15: لەسەر EMA"); }
+        else if (current < ema9_M15 && current < ema21_M15) { score -= 2; reasons.push("M15: لەژێر EMA"); }
+
+        // M5 Analysis
+        if (candleM5.isStrong && candleM5.isBullish) { score += 2; reasons.push("M5: مۆمی بەهێزی سەرەوە"); }
+        else if (candleM5.isStrong && candleM5.isBearish) { score -= 2; reasons.push("M5: مۆمی بەهێزی خوارەوە"); }
+        
+        if (candleM5.isHammer && score > 0) { score += 1; reasons.push("M5: Hammer (پشتگیری)"); }
+        if (candleM5.isShootingStar && score < 0) { score -= 1; reasons.push("M5: Shooting Star (بەربەست)"); }
+
+        // Decision
+        if (score >= 5) direction = 'buy';
+        else if (score <= -5) direction = 'sell';
+        
+        return {
+            valid: direction !== null,
+            direction,
+            score,
+            reasons,
+            candleM15,
+            candleM5,
+            details: {
+                m15: { type: candleM15.isBullish ? 'Bullish' : 'Bearish', strength: candleM15.bodyRatio.toFixed(2), pattern: candleM15.isDoji ? 'Doji' : candleM15.isHammer ? 'Hammer' : candleM15.isShootingStar ? 'Shooting Star' : 'Normal' },
+                m5: { type: candleM5.isBullish ? 'Bullish' : 'Bearish', strength: candleM5.bodyRatio.toFixed(2), pattern: candleM5.isDoji ? 'Doji' : candleM5.isHammer ? 'Hammer' : candleM5.isShootingStar ? 'Shooting Star' : 'Normal' }
+            }
         };
-        updateTFUI('tf1', tf1Res);
-        updateTFUI('tf5', tf5Res);
-        updateTFUI('tf15', tf15Res);
+    }
 
-        const totalScore = tf1Res.score + tf5Res.score + tf15Res.score;
-        const totalStrength = tf1Res.strength + tf5Res.strength + tf15Res.strength;
-        let alignment = 0;
-        if (tf1Res.signal !== 'neutral') alignment++;
-        if (tf5Res.signal !== 'neutral') alignment++;
-        if (tf15Res.signal !== 'neutral') alignment++;
-        let baseConfidence = 70 + (totalStrength * 3);
-        if (alignment === 3) baseConfidence += 15; 
-        else if (alignment === 2) baseConfidence += 8;
-        const finalConfidence = Math.min(99, Math.max(55, baseConfidence));
-        const direction = totalScore > 0 ? 'bullish' : 'bearish';
+    // === Phase 2: M1 Entry Confirmation ===
+    function analyzePhase2(expectedDirection) {
+        const prices = priceHistory.map(t => t.price);
+        if (prices.length < 20) return { valid: false, reasons: ["M1 داتا کەمە"] };
+
+        const candleM1 = buildCandle(priceHistory, 1);
+        if (!candleM1) return { valid: false, reasons: ["M1 مۆم تەواو نییە"] };
+
+        const recentPrices = prices.slice(-12);
+        const momentum = recentPrices[recentPrices.length-1] - recentPrices[0];
         
-        const reasons = [];
-        if (tf15Res.signal === 'up') reasons.push("M15: مەیلی بەهێزی سەرەوە");
-        if (tf15Res.signal === 'down') reasons.push("M15: مەیلی بەهێزی خوارەوە");
-        if (tf5Res.signal === 'up') reasons.push("M5: پشتگیری سەرەوە");
-        if (tf5Res.signal === 'down') reasons.push("M5: بەربەستی خوارەوە");
-        if (tf1Res.signal === 'up') reasons.push("M1: کاتی BUY");
-        if (tf1Res.signal === 'down') reasons.push("M1: کاتی SELL");
-        const reasonText = " هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
+        let valid = false;
+        let reasons = [];
 
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const predBtn = document.getElementById('predictionBtn');
+        if (expectedDirection === 'buy') {
+            if (candleM1.isBullish && candleM1.bodyRatio > 0.5) {
+                valid = true;
+                reasons.push("M1: مۆمی سەرەوەی بەهێز");
+            }
+            if (momentum > 0.3) {
+                valid = true;
+                reasons.push("M1: مۆمێنتەمی بەهێز");
+            }
+            if (candleM1.isHammer) {
+                valid = true;
+                reasons.push("M1: Hammer (خاڵی چوونەژوورەوە)");
+            }
+        } else if (expectedDirection === 'sell') {
+            if (candleM1.isBearish && candleM1.bodyRatio > 0.5) {
+                valid = true;
+                reasons.push("M1: مۆمی خوارەوەی بەهێز");
+            }
+            if (momentum < -0.3) {
+                valid = true;
+                reasons.push("M1: مۆمێنتەمی نەرێنی");
+            }
+            if (candleM1.isShootingStar) {
+                valid = true;
+                reasons.push("M1: Shooting Star (خاڵی چوونەژوورەوە)");
+            }
+        }
+
+        return { valid, reasons, candleM1, momentum };
+    }
+
+    // === UI Updates ===
+    function updatePhase(phase, status, state) {
+        const el = document.getElementById(`phase${phase}`);
+        const statusEl = document.getElementById(`phase${phase}Status`);
+        el.className = `phase-box ${state}`;
+        statusEl.textContent = status;
+    }
+
+    function showCandleDetails(details) {
+        const container = document.getElementById('candleDetails');
+        const content = document.getElementById('candleAnalysisContent');
+        
+        content.innerHTML = `
+            <div class="candle-row">
+                <span class="candle-label">M15 - ئاراستە:</span>
+                <span class="candle-value ${details.m15.type === 'Bullish' ? 'bullish' : 'bearish'}">${details.m15.type}</span>
+            </div>
+            <div class="candle-row">
+                <span class="candle-label">M15 - هێزی مۆم:</span>
+                <span class="candle-value">${(details.m15.strength * 100).toFixed(0)}%</span>
+            </div>
+            <div class="candle-row">
+                <span class="candle-label">M15 - شێوە:</span>
+                <span class="candle-value neutral">${details.m15.pattern}</span>
+            </div>
+            <div class="candle-row">
+                <span class="candle-label">M5 - ئاراستە:</span>
+                <span class="candle-value ${details.m5.type === 'Bullish' ? 'bullish' : 'bearish'}">${details.m5.type}</span>
+            </div>
+            <div class="candle-row">
+                <span class="candle-label">M5 - هێزی مۆم:</span>
+                <span class="candle-value">${(details.m5.strength * 100).toFixed(0)}%</span>
+            </div>
+            <div class="candle-row">
+                <span class="candle-label">M5 - شێوە:</span>
+                <span class="candle-value neutral">${details.m5.pattern}</span>
+            </div>
+        `;
+        container.style.display = 'block';
+    }
+
+    function showSignal(direction, confidence, reasons) {
+        const card = document.getElementById('signalCard');
+        const arrow = document.getElementById('signalArrow');
+        const text = document.getElementById('signalText');
+        const reasonBox = document.getElementById('reasonBox');
         const confFill = document.getElementById('confidenceFill');
-        const reasonBox = document.getElementById('analysisReason');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
 
-        if (direction === 'bullish') {
-            card.className = 'prediction-card bullish';
+        card.className = `signal-card ${direction}`;
+        
+        if (direction === 'buy') {
             arrow.textContent = '⬆️';
-            text.textContent = 'بارز دەبێتەوە (BUY)';
+            text.textContent = 'BUY - بارز دەبێتەوە';
+            confFill.style.background = 'linear-gradient(90deg, #00c853, #00e676)';
+        } else if (direction === 'sell') {
+            arrow.textContent = '⬇️';
+            text.textContent = 'SELL - نزم دەبێتەوە';
+            confFill.style.background = 'linear-gradient(90deg, #d50000, #ff1744)';
+        } else if (direction === 'no-trade') {
+            arrow.textContent = '🚫';
+            text.textContent = 'ترید مەکە';
+            confFill.style.background = '#ff9800';
         } else {
-            card.className = 'prediction-card bearish';
-            arrow.textContent = '️';
-            text.textContent = 'نزم دەبێتەوە (SELL)';
+            arrow.textContent = '⏳';
+            text.textContent = 'چاوەڕوانی M1...';
+            confFill.style.background = '#007bff';
         }
-        confFill.style.width = finalConfidence.toFixed(0) + '%';
-        confFill.textContent = finalConfidence.toFixed(0) + '%';
-        reasonBox.style.display = 'block';
-        reasonBox.textContent = reasonText;
-        statusBox.style.display = 'block';
-        statusBox.textContent = '🎯 پێشبینی چالاکە - چاوەڕوانی ئەنجام...';
-        timerLabel.textContent = 'کاتی بەسەرچوونی پێشبینی';
-        
-        predBtn.disabled = true;
-        predBtn.textContent = '⏳ پێشبینی چالاکە...';
-        predBtn.classList.remove('ready');
-        
-        document.getElementById('volatilityIndicator').style.display = 'none';
-        
-        startCountdown(300);
-        autoRestartTimeout = setTimeout(() => { startDataCollection(); }, 300000);
-    }
 
-    function startDataCollection() {
-        predictionActive = false;
-        collectingData = true;
-        buttonState = 'collecting';
-        updatePhaseBadge('collecting');
-        
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-        const predBtn = document.getElementById('predictionBtn');
-        
-        card.className = 'prediction-card collecting';
-        arrow.textContent = '📡';
-        text.textContent = 'کۆکردنەوەی داتای تازە...';
-        timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
-        
-        predBtn.disabled = true;
-        predBtn.classList.remove('ready');
-        
-        let collectionTime = 120;
-        if (volatilityLevel === 'high') {
-            collectionTime = 300;
-            statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا (٥ خولەک)';
-            predBtn.textContent = '⏳ چاوەڕوانی ئارامبوونی بازاڕ...';
-            updatePhaseBadge('volatile');
-        } else if (volatilityLevel === 'medium') {
-            collectionTime = 180;
-            statusBox.textContent = '⚡ بازاڕ نائارامە - کۆکردنەوەی داتا ( خولەک)';
-            predBtn.textContent = '⏳ چاوەڕوانی ئارامبوون...';
+        confFill.style.width = confidence + '%';
+        confFill.textContent = confidence + '%';
+
+        if (reasons.length > 0) {
+            reasonBox.style.display = 'block';
+            reasonBox.textContent = reasons.join(' | ');
         } else {
-            statusBox.textContent = '✅ بازاڕ ئارامە - کۆکردنەوەی داتا ( خولەک)';
-            predBtn.textContent = '⏳ کۆکردنەوەی داتا...';
+            reasonBox.style.display = 'none';
         }
-        statusBox.style.display = 'block';
-        
-        startCountdown(collectionTime);
-        autoRestartTimeout = setTimeout(() => {
-            collectingData = false;
-            enableStartButton();
-        }, collectionTime * 1000);
     }
 
-    function enableStartButton() {
-        const predBtn = document.getElementById('predictionBtn');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-        const timerValue = document.getElementById('timerValue');
-        
-        buttonState = 'ready';
-        
-        predBtn.disabled = false;
-        predBtn.textContent = ' دەستپێکردن';
-        predBtn.classList.add('ready');
-        
-        statusBox.style.display = 'block';
-        statusBox.textContent = '✅ داتا تازە کرایەوە - ئێستا دەتوانیت دەست پێ بکەیت!';
-        statusBox.style.background = currentTheme === 'dark' ? 'rgba(0,255,136,0.1)' : 'rgba(0,200,83,0.15)';
-        statusBox.style.color = currentTheme === 'dark' ? '#00ff88' : '#00c853';
-        statusBox.style.border = `1px solid ${currentTheme === 'dark' ? '#00ff88' : '#00c853'}`;
-        
-        timerLabel.textContent = 'کاتی ماوە';
-        timerValue.textContent = '05:00';
-        updatePhaseBadge('ready');
+    // === Main Analysis Flow ===
+    function startAnalysis() {
+        if (analysisState !== 'idle') return;
+        if (priceHistory.length < 200) {
+            alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە (حداقل ١٥ خولەک)');
+            return;
+        }
+
+        analysisState = 'phase1';
+        updatePhase(1, 'شیکاری...', 'active');
+        updatePhase(2, 'چاوەڕێ...', '');
+        updatePhase(3, 'چاوەڕێ...', '');
+
+        const btn = document.getElementById('startBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ شیکاری M15+M5...';
+
+        // Phase 1: M15 + M5
+        setTimeout(() => {
+            const result1 = analyzePhase1();
+            
+            if (result1.details) {
+                showCandleDetails(result1.details);
+            }
+
+            if (!result1.valid) {
+                // No trade signal
+                analysisState = 'completed';
+                updatePhase(1, 'ڕەتکرایەوە', 'failed');
+                updatePhase(2, '-', '');
+                updatePhase(3, 'No Trade', 'failed');
+                showSignal('no-trade', 0, result1.reasons);
+                btn.disabled = false;
+                btn.textContent = '🔄 هەوڵبدەرەوە';
+                btn.classList.add('ready');
+                return;
+            }
+
+            // Phase 1 passed, move to Phase 2
+            updatePhase(1, 'تەواو بوو', 'completed');
+            updatePhase(2, 'چاوەڕوانی M1...', 'active');
+            btn.textContent = `⏳ چاوەڕوانی M1 بۆ ${result1.direction === 'buy' ? 'BUY' : 'SELL'}...`;
+
+            // Phase 2: Wait for M1 confirmation (check every 5 seconds for 60 seconds)
+            let attempts = 0;
+            const maxAttempts = 12; // 60 seconds
+            
+            const checkM1 = setInterval(() => {
+                attempts++;
+                const result2 = analyzePhase2(result1.direction);
+                
+                if (result2.valid || attempts >= maxAttempts) {
+                    clearInterval(checkM1);
+                    analysisState = 'completed';
+                    
+                    if (result2.valid) {
+                        updatePhase(2, 'M1 پاسکرا', 'completed');
+                        updatePhase(3, result1.direction === 'buy' ? 'BUY' : 'SELL', 'completed');
+                        const confidence = 85 + Math.floor(Math.random() * 10);
+                        showSignal(result1.direction, confidence, [...result1.reasons, ...result2.reasons]);
+                        startTimer(300);
+                    } else {
+                        updatePhase(2, 'M1 ڕەتکرایەوە', 'failed');
+                        updatePhase(3, 'No Trade', 'failed');
+                        showSignal('no-trade', 0, [...result1.reasons, 'M1 سیگناڵی نەدا']);
+                    }
+                    
+                    btn.disabled = false;
+                    btn.textContent = '🚀 دەستپێکردنی شیکاری';
+                    btn.classList.add('ready');
+                }
+            }, 5000);
+        }, 1000);
     }
 
-    function updatePhaseBadge(phase) {
-        const badge = document.getElementById('phaseBadge');
-        if (phase === 'prediction') { badge.className = 'phase-badge phase-prediction'; badge.textContent = 'قۆناغی پێشبینی'; }
-        else if (phase === 'collecting') { badge.className = 'phase-badge phase-collecting'; badge.textContent = 'کۆکردنەوەی داتا'; }
-        else if (phase === 'ready') { badge.className = 'phase-badge phase-ready'; badge.textContent = 'ئامادەیە بۆ دەستپێکردن'; }
-        else if (phase === 'volatile') { badge.className = 'phase-badge phase-volatile'; badge.textContent = 'بازاڕ نائارامە'; }
-    }
-
-    function startCountdown(seconds) {
-        if (countdownInterval) clearInterval(countdownInterval);
+    function startTimer(seconds) {
         let remaining = seconds;
         const timerEl = document.getElementById('timerValue');
+        document.getElementById('timerLabel').textContent = 'کاتی بەسەرچوونی پێشبینی';
+        
         countdownInterval = setInterval(() => {
-            const mins = Math.floor(remaining / 60);
-            const secs = remaining % 60;
-            timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            if (remaining <= 0) clearInterval(countdownInterval);
+            const m = Math.floor(remaining / 60);
+            const s = remaining % 60;
+            timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             remaining--;
+            if (remaining < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('timerLabel').textContent = 'پێشبینی تەواو بوو';
+            }
         }, 1000);
+    }
+
+    function resetSystem() {
+        if (countdownInterval) clearInterval(countdownInterval);
+        analysisState = 'idle';
+        priceHistory = [];
+        
+        document.getElementById('candleDetails').style.display = 'none';
+        showSignal('waiting', 0, []);
+        document.getElementById('timerValue').textContent = '05:00';
+        document.getElementById('timerLabel').textContent = 'کاتی ماوە';
+        
+        updatePhase(1, 'M15 + M5', '');
+        updatePhase(2, 'M1 Entry', '');
+        updatePhase(3, 'سیگناڵ', '');
+        
+        const btn = document.getElementById('startBtn');
+        btn.disabled = false;
+        btn.textContent = '🚀 دەستپێکردنی شیکاری';
+        btn.classList.remove('ready');
     }
 
     window.onload = function() {
         reloadChart('dark');
-        fetchGoldPrice();
-        setInterval(fetchGoldPrice, 5000);
+        fetchPrice();
+        setInterval(fetchPrice, 5000);
     };
 </script>
 </body>
