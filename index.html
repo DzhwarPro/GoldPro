@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Fast Data</title>
+<title>Gold Sniper Pro - Real API</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
 
@@ -139,7 +139,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
     
-    <div class="source-badge">📡 ١٢ فلتەری پڕۆفێشناڵ | داتای ڕاستەقینە لە API</div>
+    <div class="source-badge">📡 ١ فلتەری پڕۆفێشناڵ | داتای ڕاستەقینە لە API</div>
 
     <div class="card">
         <div class="chart-wrapper">
@@ -149,12 +149,12 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 
     <div class="card">
         <div id="predictionCard" class="prediction-card waiting">
-            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری ٢ فلتەری پڕۆفێشناڵ</div>
+            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری ١٢ فلتەری پڕۆفێشناڵ</div>
             
             <div id="apiStatus" class="api-status">⏳ چاوەڕوانی API...</div>
             
             <div class="filter-box">
-                <div class="filter-title">🔍 ١٢ فلتەری شیکاری تەکنیکی</div>
+                <div class="filter-title">🔍 ١ فلتەری شیکاری تەکنیکی</div>
                 <div class="filter-grid">
                     <div class="filter-item"><span class="filter-name">RSI (14)</span><span id="fRSI" class="filter-value filter-signal-neutral">-</span></div>
                     <div class="filter-item"><span class="filter-name">MACD</span><span id="fMACD" class="filter-value filter-signal-neutral">-</span></div>
@@ -182,7 +182,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
 
             <div class="confidence-meter">
-                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ١٢ فلتەر)</div>
+                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ١ فلتەر)</div>
                 <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
             </div>
             
@@ -207,13 +207,13 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوە</button>
             </div>
             
-            <div class="accuracy-badge"> ١٢ فلتەری پڕۆفێشناڵ</div>
+            <div class="accuracy-badge">📊 ١٢ فلتەری پڕۆفێشناڵ</div>
             
             <div class="honesty-notice">
-                ️ <strong>تێبینی ڕاستگۆیانە:</strong> هیچ بەرنامەیەک ناتوانێت بازاڕ بە ٩٪ ڕاستی پێشبینی بکات. ئەم بەرنامەیە ١٢ فلتەری تەکنیکی بەکاردەهێنێت بۆ باشترین پێشبینی.
+                ⚠️ <strong>تێبینی ڕاستگۆیانە:</strong> هیچ بەرنامەیەک ناتوانێت بازاڕ بە ٩٪ ڕاستی پێشبینی بکات. ئەم بەرنامەیە ١٢ فلتەری تەکنیکی بەکاردەهێنێت بۆ باشترین پێشبینی.
             </div>
             
-            <div class="cycle-info"> ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
+            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
 </div>
@@ -234,7 +234,11 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     let tvWidget = null;
     let apiConnected = false;
 
-    const GOLD_API_KEY = 'bd4ea3df-622c-4923-aa69-889316f9e3d7';
+    // ==========================================
+    // ✅ API Key - نوێکراوە
+    // ==========================================
+    const GOLD_API_KEY = 'goldapi-e2bb3fc7acfd47fa2f5af04f58f9659e-io';
+    // ==========================================
 
     function toggleTheme() {
         const body = document.body;
@@ -351,7 +355,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const volText = document.getElementById('volatilityText');
         
         if (maxChange > 5 || avgChange > 2) { volatilityLevel = 'high'; volIndicator.className = 'volatility-indicator vol-high'; volText.textContent = '⚠️ بازاڕ زۆر نائارامە'; }
-        else if (maxChange > 2 || avgChange > 1) { volatilityLevel = 'medium'; volIndicator.className = 'volatility-indicator vol-medium'; volText.textContent = ' بازاڕ نائارامە'; }
+        else if (maxChange > 2 || avgChange > 1) { volatilityLevel = 'medium'; volIndicator.className = 'volatility-indicator vol-medium'; volText.textContent = '⚡ بازاڕ نائارامە'; }
         else { volatilityLevel = 'low'; volIndicator.className = 'volatility-indicator vol-low'; volText.textContent = '✅ بازاڕ ئارامە'; }
         volIndicator.style.display = 'inline-flex';
     }
@@ -624,7 +628,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         if (analysis.signals.vwap.signal === 'up') reasons.push("VWAP: سەرەوەی نرخی دادپەروەر");
         if (analysis.signals.mom.signal === 'up') reasons.push("Momentum: ئەرێنی");
         
-        const reasonText = " هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
+        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
 
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
@@ -635,8 +639,8 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
 
-        if (direction === 'bullish') { card.className = 'prediction-card bullish'; arrow.textContent = '️'; text.textContent = 'بارز دەبێتەوە (BUY)'; }
-        else { card.className = 'prediction-card bearish'; arrow.textContent = '⬇️'; text.textContent = 'نزم دەبێتەوە (SELL)'; }
+        if (direction === 'bullish') { card.className = 'prediction-card bullish'; arrow.textContent = '⬆️'; text.textContent = 'بارز دەبێتەوە (BUY)'; }
+        else { card.className = 'prediction-card bearish'; arrow.textContent = '️'; text.textContent = 'نزم دەبێتەوە (SELL)'; }
         
         confFill.style.width = analysis.confidence.toFixed(0) + '%';
         confFill.textContent = analysis.confidence.toFixed(0) + '%';
@@ -660,7 +664,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         const timerLabel = document.getElementById('timerLabel');
         const btn = document.getElementById('predictionBtn');
         
-        card.className = 'prediction-card collecting'; arrow.textContent = ''; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
+        card.className = 'prediction-card collecting'; arrow.textContent = '📡'; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
         btn.disabled = true; btn.classList.remove('ready');
         
         let collectionTime = 120;
