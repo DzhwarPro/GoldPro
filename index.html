@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold DZhaaa - 3 Min Sniper</title>
+    <title>Gold Pro - White Edition</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-            background: #0a0a0a; 
-            color: #e0e0e0; 
+            background: #ffffff; 
+            color: #1a1a1a; 
             padding: 10px; 
             min-height: 100vh; 
         }
@@ -17,166 +17,172 @@
         
         h1 { 
             text-align: center; 
-            color: #ffd700; 
+            color: #d4a017; 
             margin-bottom: 10px; 
             font-size: 22px; 
             font-weight: bold; 
-            text-shadow: 0 0 10px rgba(255,215,0,0.3); 
         }
         
         .card { 
-            background: #1a1a1a; 
-            border-radius: 8px; 
-            padding: 12px; 
+            background: #ffffff; 
+            border-radius: 12px; 
+            padding: 14px; 
             margin-bottom: 12px; 
-            border: 1px solid #333; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+            border: 1px solid #e5e5e5; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
         }
         
-        /* Chart */
         .chart-wrapper { 
             width: 100%; 
             height: 350px; 
-            border-radius: 8px; 
+            border-radius: 12px; 
             overflow: hidden; 
-            background: #000; 
-            border: 1px solid #333; 
+            background: #ffffff; 
+            border: 1px solid #e5e5e5; 
         }
         
-        /* Prediction Card */
         .prediction-card { 
-            border-radius: 8px; 
+            border-radius: 12px; 
             padding: 20px; 
             text-align: center; 
-            border: 3px solid; 
-            background: #1a1a1a; 
+            border: 2px solid; 
+            background: #ffffff; 
         }
-        .prediction-card.bullish { border-color: #00ff88; background: rgba(0,255,136,0.08); }
-        .prediction-card.bearish { border-color: #ff4444; background: rgba(255,68,68,0.08); }
-        .prediction-card.waiting { border-color: #ffd700; background: rgba(255,215,0,0.05); }
+        .prediction-card.bullish { border-color: #00c853; background: #f0fff4; }
+        .prediction-card.bearish { border-color: #d50000; background: #fff5f5; }
+        .prediction-card.waiting { border-color: #d4a017; background: #fffdf0; }
         
         .prediction-arrow { font-size: 70px; margin: 10px 0; }
         .prediction-text { font-size: 28px; font-weight: bold; margin: 10px 0; }
-        .bullish .prediction-text { color: #00ff88; }
-        .bearish .prediction-text { color: #ff4444; }
-        .waiting .prediction-text { color: #ffd700; }
+        .bullish .prediction-text { color: #00c853; }
+        .bearish .prediction-text { color: #d50000; }
+        .waiting .prediction-text { color: #d4a017; }
 
-        /* Multi-TF Status */
         .mtf-status { 
             display: flex; 
             justify-content: space-around; 
             margin: 15px 0; 
-            padding: 10px; 
-            background: rgba(0,0,0,0.3); 
-            border-radius: 8px; 
-            border: 1px solid #333; 
+            padding: 12px; 
+            background: #f8f9fa; 
+            border-radius: 10px; 
+            border: 1px solid #e5e5e5; 
         }
         .tf-item { text-align: center; }
-        .tf-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+        .tf-label { font-size: 11px; color: #666; margin-bottom: 4px; }
         .tf-val { font-size: 16px; font-weight: bold; }
-        .tf-up { color: #00ff88; }
-        .tf-down { color: #ff4444; }
-        .tf-neutral { color: #ffd700; }
+        .tf-up { color: #00c853; }
+        .tf-down { color: #d50000; }
+        .tf-neutral { color: #999; }
 
-        /* Confidence & Timer */
         .confidence-meter { 
             margin: 15px 0; 
-            padding: 10px; 
-            background: rgba(0,0,0,0.3); 
-            border-radius: 8px; 
-            border: 1px solid #333; 
+            padding: 12px; 
+            background: #f8f9fa; 
+            border-radius: 10px; 
+            border: 1px solid #e5e5e5; 
         }
-        .confidence-label { font-size: 12px; color: #888; margin-bottom: 8px; }
+        .confidence-label { font-size: 12px; color: #666; margin-bottom: 8px; }
         .confidence-bar { 
             height: 30px; 
-            background: #0a0a0a; 
+            background: #ffffff; 
             border-radius: 15px; 
             overflow: hidden; 
-            border: 1px solid #333; 
+            border: 1px solid #e5e5e5; 
         }
         .confidence-fill { 
             height: 100%; 
-            background: linear-gradient(90deg, #00ff88, #00c853); 
+            background: linear-gradient(90deg, #00c853, #00e676); 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            color: #000; 
+            color: #fff; 
             font-weight: bold; 
             font-size: 14px; 
             transition: width 0.8s ease; 
         }
         
         .timer-box { 
-            background: rgba(0,0,0,0.4); 
-            border-radius: 8px; 
+            background: #f8f9fa; 
+            border-radius: 10px; 
             padding: 15px; 
             margin: 15px 0; 
-            border: 1px solid #444; 
+            border: 1px solid #e5e5e5; 
         }
-        .timer-label { font-size: 12px; color: #888; }
+        .timer-label { font-size: 12px; color: #666; }
         .timer-value { 
             font-size: 50px; 
             font-weight: bold; 
             font-family: monospace; 
-            color: #ffd700; 
+            color: #d4a017; 
         }
         
-        /* Buttons & Badges */
         .prediction-btn { 
             width: 100%; 
             padding: 18px; 
             border: none; 
-            border-radius: 8px; 
+            border-radius: 10px; 
             font-size: 20px; 
             font-weight: bold; 
             cursor: pointer; 
-            background: linear-gradient(135deg, #ffd700, #ffaa00); 
-            color: #000; 
+            background: linear-gradient(135deg, #d4a017, #f0c040); 
+            color: #fff; 
             margin-top: 10px; 
+            box-shadow: 0 4px 12px rgba(212,160,23,0.3);
         }
-        .prediction-btn:disabled { opacity: 0.5; background: #444; color: #888; }
+        .prediction-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(212,160,23,0.4);
+        }
+        .prediction-btn:disabled { opacity: 0.4; background: #cccccc; color: #888; box-shadow: none; }
         
         .accuracy-badge { 
             display: inline-block; 
-            background: rgba(0,255,136,0.15); 
-            border: 1px solid #00ff88; 
+            background: #f0fff4; 
+            border: 1px solid #00c853; 
             padding: 6px 18px; 
             border-radius: 20px; 
             font-size: 14px; 
             margin-top: 15px; 
-            color: #00ff88; 
+            color: #00c853; 
             font-weight: bold; 
         }
         
         .source-badge { 
             text-align: center; 
-            background: rgba(0,123,255,0.1); 
+            background: #f0f7ff; 
             border: 1px solid #007bff; 
             color: #007bff; 
             padding: 8px; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             font-size: 13px; 
             margin-bottom: 15px; 
             font-weight: bold; 
         }
         
         .analysis-reason { 
-            background: rgba(0,0,0,0.4); 
+            background: #f8f9fa; 
             padding: 10px; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             font-size: 13px; 
-            color: #ccc; 
+            color: #444; 
             margin: 10px 0; 
-            border-right: 3px solid #ffd700; 
+            border-right: 3px solid #d4a017; 
             text-align: right; 
+        }
+
+        .auto-restart-notice {
+            font-size: 11px;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🎯 Gold DZhaaa - 3 Min</h1>
-    <div class="source-badge">📡 OANDA XAUUSD | M1 + M3 + M5 (تایبەت بە ٣ خولەک)</div>
+    <h1> Gold Sniper - 5 Min</h1>
+    <div class="source-badge">📡 OANDA XAUUSD | M1 + M3 + M5 | Auto-Restart</div>
 
     <!-- Chart -->
     <div class="card">
@@ -191,10 +197,10 @@
                 "symbol": "OANDA:XAUUSD", 
                 "interval": "1", 
                 "timezone": "Etc/UTC", 
-                "theme": "dark", 
+                "theme": "light", 
                 "style": "1", 
                 "locale": "ar", 
-                "toolbar_bg": "#1a1a1a", 
+                "toolbar_bg": "#ffffff", 
                 "enable_publishing": false, 
                 "hide_top_toolbar": false, 
                 "hide_legend": false, 
@@ -209,15 +215,15 @@
     <!-- Prediction Section -->
     <div class="card">
         <div id="predictionCard" class="prediction-card waiting">
-            <div style="font-size:14px; color:#888; margin-bottom:10px;">شیکاری تایبەت بە ٣ خولەک</div>
+            <div style="font-size:14px; color:#666; margin-bottom:10px;">شیکاری تایبەت بە ٥ خولەک</div>
             
             <div class="mtf-status">
                 <div class="tf-item"><div class="tf-label">M1 (١ خولەک)</div><div id="tf1" class="tf-val tf-neutral">⏳</div></div>
-                <div class="tf-item"><div class="tf-label">M3 (٣ خولەک)</div><div id="tf3" class="tf-val tf-neutral">⏳</div></div>
+                <div class="tf-item"><div class="tf-label">M3 ( خولەک)</div><div id="tf3" class="tf-val tf-neutral">⏳</div></div>
                 <div class="tf-item"><div class="tf-label">M5 (٥ خولەک)</div><div id="tf5" class="tf-val tf-neutral">⏳</div></div>
             </div>
 
-            <div id="predictionArrow" class="prediction-arrow">⏳</div>
+            <div id="predictionArrow" class="prediction-arrow"></div>
             <div id="predictionText" class="prediction-text">چاوەڕێبە...</div>
             <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
 
@@ -227,12 +233,13 @@
             </div>
             
             <div class="timer-box">
-                <div class="timer-label">کاتی بەسەرچوونی پێشبینی</div>
-                <div id="timerValue" class="timer-value">03:00</div>
+                <div class="timer-label">کاتی ماوە</div>
+                <div id="timerValue" class="timer-value">05:00</div>
             </div>
             
-            <button id="predictionBtn" class="prediction-btn" onclick="generatePrediction()">🚀 دەستپێکردنی شیکاری ٣ خولەک</button>
-            <div class="accuracy-badge">مۆتۆری Sniper 3-Min</div>
+            <button id="predictionBtn" class="prediction-btn" onclick="generatePrediction()">🚀 دەستپێکردنی شیکاری ٥ خولەک</button>
+            <div class="accuracy-badge">✅ مۆتۆری Auto-Sniper</div>
+            <div class="auto-restart-notice">🔄 دوای ٥ خولەک خۆکارانە دووبارە دەست پێ دەکاتەوە</div>
         </div>
     </div>
 </div>
@@ -241,6 +248,7 @@
     let priceHistory = [];
     let predictionActive = false;
     let countdownInterval = null;
+    let autoRestartTimeout = null;
 
     async function fetchGoldPrice() {
         try {
@@ -257,7 +265,7 @@
 
     function updatePriceData(price) {
         priceHistory.push(price);
-        if (priceHistory.length > 150) priceHistory.shift();
+        if (priceHistory.length > 300) priceHistory.shift();
     }
 
     function calcSMA(prices, period) {
@@ -293,11 +301,9 @@
         const ema9 = calcEMA(prices, Math.min(9, prices.length));
         
         let score = 0;
-        // RSI Logic
         if (rsi < 30) score += 2; else if (rsi > 70) score -= 2;
         else if (rsi > 50) score += 1; else score -= 1;
         
-        // Trend Logic
         if (current > sma20 && current > ema9) score += 3;
         else if (current < sma20 && current < ema9) score -= 3;
         else if (current > sma20) score += 1; else score -= 1;
@@ -311,20 +317,23 @@
 
     function generatePrediction() {
         if (predictionActive || priceHistory.length < 60) {
-            if (priceHistory.length < 60) alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە (حداقل ٥ خولەک)');
+            if (priceHistory.length < 60) alert('تکایە چاوەڕێ بکە تا داتا کۆبکرێتەوە');
             return;
+        }
+        
+        if (autoRestartTimeout) {
+            clearTimeout(autoRestartTimeout);
+            autoRestartTimeout = null;
         }
         
         predictionActive = true;
         
-        // دابەشکردنی داتا بۆ M1, M3, M5
-        // هەر ١٢ خاڵێک = ١ خولەک (چونکە هەر ٥ چرکە جارێک داتا وەردەگرین)
         const m1Data = priceHistory.slice(-12);   
         const m3Data = priceHistory.slice(-36);   
         const m5Data = priceHistory.slice(-60);   
 
         const tf1Res = analyzeTF(m1Data);
-        const tf3Res = analyzeTF(m3Data); // ئەمە گرنگترینە بۆ ٣ خولەک
+        const tf3Res = analyzeTF(m3Data);
         const tf5Res = analyzeTF(m5Data);
 
         const updateTFUI = (id, res) => {
@@ -336,7 +345,6 @@
         updateTFUI('tf3', tf3Res);
         updateTFUI('tf5', tf5Res);
 
-        // کێشەکان: M3 گرنگترینە (٥٠٪)، M1 بۆ چوونەژوورەوە (٣٠٪)، M5 بۆ مەیل (٢٠٪)
         const totalScore = (tf1Res.score * 0.3) + (tf3Res.score * 0.5) + (tf5Res.score * 0.2);
         
         let alignment = 0;
@@ -352,14 +360,14 @@
         const direction = totalScore > 0 ? 'bullish' : 'bearish';
         
         const reasons = [];
-        if (tf3Res.signal === 'up') reasons.push("M3 مەیلی سەرەوە (گرنگترین)");
-        if (tf3Res.signal === 'down') reasons.push("M3 مەیلی خوارەوە (گرنگترین)");
-        if (tf1Res.signal === 'up') reasons.push("M1 کاتی چوونەژوورەوەی BUY");
-        if (tf1Res.signal === 'down') reasons.push("M1 کاتی چوونەژوورەوەی SELL");
-        if (tf5Res.signal === 'up') reasons.push("M5 پشتگیری کورتخایەن");
-        if (tf5Res.signal === 'down') reasons.push("M5 بەربەستی کورتخایەن");
+        if (tf3Res.signal === 'up') reasons.push("M3 مەیلی سەرەوە");
+        if (tf3Res.signal === 'down') reasons.push("M3 مەیلی خوارەوە");
+        if (tf1Res.signal === 'up') reasons.push("M1 کاتی BUY");
+        if (tf1Res.signal === 'down') reasons.push("M1 کاتی SELL");
+        if (tf5Res.signal === 'up') reasons.push("M5 پشتگیری");
+        if (tf5Res.signal === 'down') reasons.push("M5 بەربەست");
         
-        const reasonText = " هۆکارەکان: " + (reasons.length > 0 ? reasons.join(" | ") : "بازاڕ نائارامە");
+        const reasonText = "🔍 هۆکارەکان: " + (reasons.length > 0 ? reasons.join(" | ") : "بازاڕ نائارامە");
 
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
@@ -370,14 +378,14 @@
 
         if (direction === 'bullish') {
             card.className = 'prediction-card bullish';
-            arrow.textContent = '️';
+            arrow.textContent = '⬆️';
             text.textContent = 'بارز دەبێتەوە (BUY)';
-            confFill.style.background = 'linear-gradient(90deg, #00ff88, #00c853)';
+            confFill.style.background = 'linear-gradient(90deg, #00c853, #00e676)';
         } else {
             card.className = 'prediction-card bearish';
             arrow.textContent = '⬇️';
             text.textContent = 'نزم دەبێتەوە (SELL)';
-            confFill.style.background = 'linear-gradient(90deg, #ff4444, #c50000)';
+            confFill.style.background = 'linear-gradient(90deg, #d50000, #ff1744)';
         }
         
         confFill.style.width = finalConfidence.toFixed(0) + '%';
@@ -388,8 +396,16 @@
         btn.disabled = true;
         btn.textContent = '⏳ شیکاری چالاکە...';
         
-        startCountdown(180); // ٣ خولەک
-        setTimeout(() => resetPredictionButton(), 180000);
+        startCountdown(300);
+        
+        autoRestartTimeout = setTimeout(() => {
+            resetPredictionButton();
+            setTimeout(() => {
+                if (!predictionActive && priceHistory.length >= 60) {
+                    generatePrediction();
+                }
+            }, 2000);
+        }, 300000);
     }
 
     function startCountdown(seconds) {
@@ -418,15 +434,15 @@
         arrow.textContent = '⏳';
         text.textContent = 'چاوەڕێبە...';
         btn.disabled = false;
-        btn.textContent = '🚀 دەستپێکردنی شیکاری ٣ خولەک';
-        document.getElementById('timerValue').textContent = '03:00';
+        btn.textContent = '🚀 دەستپێکردنی شیکاری ٥ خولەک';
+        document.getElementById('timerValue').textContent = '05:00';
         confFill.style.width = '0%';
         confFill.textContent = '0%';
         reasonBox.style.display = 'none';
         
         ['tf1', 'tf3', 'tf5'].forEach(id => {
             const el = document.getElementById(id);
-            el.textContent = '⏳'; el.className = 'tf-val tf-neutral';
+            el.textContent = ''; el.className = 'tf-val tf-neutral';
         });
 
         if (countdownInterval) clearInterval(countdownInterval);
