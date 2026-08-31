@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Sniper Pro - Fixed Button</title>
+    <title>Gold Sniper Pro - Reset Button</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
         
@@ -72,18 +72,36 @@
         
         .status-box { border-radius: 10px; padding: 12px; margin: 10px 0; font-size: 13px; text-align: center; }
         
-        /* دوگمەکە لە شوێنی خۆی دەمێنێتەوە */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .prediction-btn, .reset-btn { 
+            flex: 1; padding: 18px; border: none; border-radius: 10px; 
+            font-size: 18px; font-weight: bold; cursor: pointer; 
+            color: #fff; transition: all 0.3s;
+        }
+        
         .prediction-btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 10px; 
-            font-size: 20px; font-weight: bold; cursor: pointer; 
-            background: linear-gradient(135deg, #d4a017, #f0c040); color: #fff; margin-top: 10px;
-            position: relative;
+            background: linear-gradient(135deg, #d4a017, #f0c040); 
         }
         .prediction-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
         .prediction-btn.ready { 
             background: linear-gradient(135deg, #00c853, #00e676); 
             animation: pulse 1.5s infinite;
         }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6b35, #ff4444);
+        }
+        .reset-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(255,68,68,0.4);
+        }
+        .reset-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
+        
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         
         .accuracy-badge { 
@@ -162,10 +180,13 @@
                 </div>
             </div>
             
-            <!-- دوگمەکە لەم شوێنەدا دەمێنێتەوە -->
-            <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()">🚀 دەستپێکردن</button>
+            <!-- دو دوگمە: دەستپێکردن + دوبارەکردنەوە -->
+            <div class="btn-group">
+                <button id="predictionBtn" class="prediction-btn" onclick="handleStartClick()"> دەستپێکردن</button>
+                <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوەی داتا</button>
+            </div>
             
-            <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
+            <div class="accuracy-badge"> مۆتۆری Pro Sniper</div>
             <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
@@ -210,12 +231,70 @@
         });
     }
 
-    // کاتی کرتەکردن لەسەر دوگمەکە
-    function handleButtonClick() {
+    // === نوێ: فەنکشنی دوبارەکردنەوەی تەواو ===
+    function resetAllData() {
+        // ڕاگرتنی هەموو تایمەرەکان
+        if (countdownInterval) clearInterval(countdownInterval);
+        if (autoRestartTimeout) clearTimeout(autoRestartTimeout);
+        
+        // سڕینەوەی داتا
+        priceHistory = [];
+        
+        // ڕیسێتکردنی قۆناغەکان
+        predictionActive = false;
+        collectingData = false;
+        buttonState = 'idle';
+        
+        // ڕیسێتکردنی UI
+        const card = document.getElementById('predictionCard');
+        const arrow = document.getElementById('predictionArrow');
+        const text = document.getElementById('predictionText');
+        const predBtn = document.getElementById('predictionBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const confFill = document.getElementById('confidenceFill');
+        const reasonBox = document.getElementById('analysisReason');
+        const statusBox = document.getElementById('statusBox');
+        const timerLabel = document.getElementById('timerLabel');
+        const timerValue = document.getElementById('timerValue');
+        
+        card.className = 'prediction-card waiting';
+        arrow.textContent = '⏳';
+        text.textContent = 'چاوەڕێبە...';
+        predBtn.disabled = false;
+        predBtn.textContent = '🚀 دەستپێکردن';
+        predBtn.classList.remove('ready');
+        resetBtn.disabled = false;
+        document.getElementById('timerValue').textContent = '05:00';
+        confFill.style.width = '0%';
+        confFill.textContent = '0%';
+        reasonBox.style.display = 'none';
+        statusBox.style.display = 'block';
+        statusBox.textContent = '🔄 داتا تەواو سڕایەوە - چاوەڕوانی داتای نوێ...';
+        statusBox.style.background = currentTheme === 'dark' ? 'rgba(255,107,53,0.1)' : 'rgba(255,107,53,0.15)';
+        statusBox.style.color = currentTheme === 'dark' ? '#ff6b35' : '#ff4444';
+        statusBox.style.border = `1px solid ${currentTheme === 'dark' ? '#ff6b35' : '#ff4444'}`;
+        timerLabel.textContent = 'کاتی ماوە';
+        updatePhaseBadge('prediction');
+        
+        ['tf1', 'tf5', 'tf15'].forEach(id => {
+            const el = document.getElementById(id);
+            el.textContent = '⏳'; el.className = 'tf-val tf-neutral';
+        });
+        
+        document.getElementById('volatilityIndicator').style.display = 'none';
+        
+        // چاوەڕوانی تا داتای نوێ کۆبکرێتەوە
+        setTimeout(() => {
+            if (priceHistory.length >= 60) {
+                enableStartButton();
+            }
+        }, 30000); // 30 چرکە چاوەڕوانی
+    }
+
+    function handleStartClick() {
         if (buttonState === 'idle' || buttonState === 'ready') {
             startCycle();
         }
-        // ئەگەر لە قۆناغی predicting یان collecting بێت، هیچ ناکات
     }
 
     async function fetchGoldPrice() {
@@ -367,7 +446,8 @@
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
         const text = document.getElementById('predictionText');
-        const btn = document.getElementById('predictionBtn');
+        const predBtn = document.getElementById('predictionBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const confFill = document.getElementById('confidenceFill');
         const reasonBox = document.getElementById('analysisReason');
         const statusBox = document.getElementById('statusBox');
@@ -390,10 +470,10 @@
         statusBox.textContent = '🎯 پێشبینی چالاکە - چاوەڕوانی ئەنجام...';
         timerLabel.textContent = 'کاتی بەسەرچوونی پێشبینی';
         
-        // دوگمەکە ناچالاک دەبێت بەڵام لە شوێنی خۆی دەمێنێتەوە
-        btn.disabled = true;
-        btn.textContent = '⏳ پێشبینی چالاکە...';
-        btn.classList.remove('ready');
+        predBtn.disabled = true;
+        predBtn.textContent = '⏳ پێشبینی چالاکە...';
+        predBtn.classList.remove('ready');
+        resetBtn.disabled = true; // دوگمەی ڕیسێت ناچالاک دەبێت لە کاتی پێشبینیدا
         
         document.getElementById('volatilityIndicator').style.display = 'none';
         
@@ -412,36 +492,35 @@
         const text = document.getElementById('predictionText');
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
-        const btn = document.getElementById('predictionBtn');
+        const predBtn = document.getElementById('predictionBtn');
+        const resetBtn = document.getElementById('resetBtn');
         
         card.className = 'prediction-card collecting';
         arrow.textContent = '📡';
         text.textContent = 'کۆکردنەوەی داتای تازە...';
         timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
         
-        // دوگمەکە هێشتا ناچالاکە
-        btn.disabled = true;
-        btn.classList.remove('ready');
+        predBtn.disabled = true;
+        predBtn.classList.remove('ready');
+        resetBtn.disabled = true; // دوگمەی ڕیسێت ناچالاک دەبێت لە کاتی کۆکردنەوەدا
         
         let collectionTime = 120;
         if (volatilityLevel === 'high') {
             collectionTime = 300;
             statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە - کۆکردنەوەی داتا (٥ خولەک)';
-            btn.textContent = '⏳ چاوەڕوانی ئارامبوونی بازاڕ...';
+            predBtn.textContent = '⏳ چاوەڕوانی ئارامبوونی بازاڕ...';
             updatePhaseBadge('volatile');
         } else if (volatilityLevel === 'medium') {
             collectionTime = 180;
             statusBox.textContent = '⚡ بازاڕ نائارامە - کۆکردنەوەی داتا (٣ خولەک)';
-            btn.textContent = '⏳ چاوەڕوانی ئارامبوون...';
+            predBtn.textContent = '⏳ چاوەڕوانی ئارامبوون...';
         } else {
             statusBox.textContent = '✅ بازاڕ ئارامە - کۆکردنەوەی داتا (٢ خولەک)';
-            btn.textContent = '⏳ کۆکردنەوەی داتا...';
+            predBtn.textContent = '⏳ کۆکردنەوەی داتا...';
         }
         statusBox.style.display = 'block';
         
         startCountdown(collectionTime);
-        
-        // دوای تەواوبوونی کۆکردنەوە، دوگمەکە چالاک دەبێتەوە
         autoRestartTimeout = setTimeout(() => {
             collectingData = false;
             enableStartButton();
@@ -449,17 +528,18 @@
     }
 
     function enableStartButton() {
-        const btn = document.getElementById('predictionBtn');
+        const predBtn = document.getElementById('predictionBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
         const timerValue = document.getElementById('timerValue');
         
         buttonState = 'ready';
         
-        // دوگمەکە چالاک دەبێتەوە بەڵام لە شوێنی خۆی دەمێنێتەوە
-        btn.disabled = false;
-        btn.textContent = '🚀 دەستپێکردن';
-        btn.classList.add('ready');
+        predBtn.disabled = false;
+        predBtn.textContent = '🚀 دەستپێکردن';
+        predBtn.classList.add('ready');
+        resetBtn.disabled = false; // دوگمەی ڕیسێت چالاک دەبێتەوە
         
         statusBox.style.display = 'block';
         statusBox.textContent = '✅ داتا تازە کرایەوە - ئێستا دەتوانیت دەست پێ بکەیت!';
