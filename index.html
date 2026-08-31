@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Sniper Pro - Reset Button</title>
+    <title>Gold Sniper Pro - Always Active Reset</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
         
@@ -93,14 +93,17 @@
             animation: pulse 1.5s infinite;
         }
         
+        /* دوگمەی ڕیسێت هەمیشە چالاکە */
         .reset-btn {
             background: linear-gradient(135deg, #ff6b35, #ff4444);
         }
-        .reset-btn:hover:not(:disabled) {
+        .reset-btn:hover {
             transform: scale(1.02);
             box-shadow: 0 4px 12px rgba(255,68,68,0.4);
         }
-        .reset-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
         
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         
@@ -135,7 +138,7 @@
 <div class="container">
     <div class="header">
         <h1>🎯 Gold Sniper Pro</h1>
-        <button class="theme-toggle" onclick="toggleTheme()" title="گۆڕینی ڕەنگ"></button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="گۆڕینی ڕەنگ">🌓</button>
     </div>
     
     <div class="source-badge">📡 M1 + M5 + M15 | چارتی M5 | دەستپێکردنی دەستی</div>
@@ -180,13 +183,13 @@
                 </div>
             </div>
             
-            <!-- دو دوگمە: دەستپێکردن + دوبارەکردنەوە -->
             <div class="btn-group">
-                <button id="predictionBtn" class="prediction-btn" onclick="handleStartClick()"> دەستپێکردن</button>
-                <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوەی داتا</button>
+                <button id="predictionBtn" class="prediction-btn" onclick="handleStartClick()">🚀 دەستپێکردن</button>
+                <!-- دوگمەی ڕیسێت هەمیشە چالاکە -->
+                <button id="resetBtn" class="reset-btn" onclick="resetAllData()"> دوبارەکردنەوە</button>
             </div>
             
-            <div class="accuracy-badge"> مۆتۆری Pro Sniper</div>
+            <div class="accuracy-badge">🎯 مۆتۆری Pro Sniper</div>
             <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
@@ -201,7 +204,7 @@
     let autoRestartTimeout = null;
     let currentTheme = 'dark';
     let volatilityLevel = 'low';
-    let buttonState = 'idle'; // idle, predicting, collecting, ready
+    let buttonState = 'idle';
 
     function toggleTheme() {
         const body = document.body;
@@ -231,7 +234,7 @@
         });
     }
 
-    // === نوێ: فەنکشنی دوبارەکردنەوەی تەواو ===
+    // === دوگمەی ڕیسێت هەمیشە چالاکە ===
     function resetAllData() {
         // ڕاگرتنی هەموو تایمەرەکان
         if (countdownInterval) clearInterval(countdownInterval);
@@ -250,7 +253,6 @@
         const arrow = document.getElementById('predictionArrow');
         const text = document.getElementById('predictionText');
         const predBtn = document.getElementById('predictionBtn');
-        const resetBtn = document.getElementById('resetBtn');
         const confFill = document.getElementById('confidenceFill');
         const reasonBox = document.getElementById('analysisReason');
         const statusBox = document.getElementById('statusBox');
@@ -263,7 +265,6 @@
         predBtn.disabled = false;
         predBtn.textContent = '🚀 دەستپێکردن';
         predBtn.classList.remove('ready');
-        resetBtn.disabled = false;
         document.getElementById('timerValue').textContent = '05:00';
         confFill.style.width = '0%';
         confFill.textContent = '0%';
@@ -288,7 +289,7 @@
             if (priceHistory.length >= 60) {
                 enableStartButton();
             }
-        }, 30000); // 30 چرکە چاوەڕوانی
+        }, 30000);
     }
 
     function handleStartClick() {
@@ -415,7 +416,7 @@
 
         const updateTFUI = (id, res) => {
             const el = document.getElementById(id);
-            el.textContent = res.signal === 'up' ? '⬆️ UP' : res.signal === 'down' ? '️ DOWN' : '➖ FLAT';
+            el.textContent = res.signal === 'up' ? '⬆️ UP' : res.signal === 'down' ? '⬇️ DOWN' : '➖ FLAT';
             el.className = `tf-val ${res.signal === 'up' ? 'tf-up' : res.signal === 'down' ? 'tf-down' : 'tf-neutral'}`;
         };
         updateTFUI('tf1', tf1Res);
@@ -441,13 +442,12 @@
         if (tf5Res.signal === 'down') reasons.push("M5: بەربەستی خوارەوە");
         if (tf1Res.signal === 'up') reasons.push("M1: کاتی BUY");
         if (tf1Res.signal === 'down') reasons.push("M1: کاتی SELL");
-        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
+        const reasonText = " هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "⚠️ بازاڕ نائارامە");
 
         const card = document.getElementById('predictionCard');
         const arrow = document.getElementById('predictionArrow');
         const text = document.getElementById('predictionText');
         const predBtn = document.getElementById('predictionBtn');
-        const resetBtn = document.getElementById('resetBtn');
         const confFill = document.getElementById('confidenceFill');
         const reasonBox = document.getElementById('analysisReason');
         const statusBox = document.getElementById('statusBox');
@@ -459,7 +459,7 @@
             text.textContent = 'بارز دەبێتەوە (BUY)';
         } else {
             card.className = 'prediction-card bearish';
-            arrow.textContent = '⬇️';
+            arrow.textContent = '️';
             text.textContent = 'نزم دەبێتەوە (SELL)';
         }
         confFill.style.width = finalConfidence.toFixed(0) + '%';
@@ -473,7 +473,6 @@
         predBtn.disabled = true;
         predBtn.textContent = '⏳ پێشبینی چالاکە...';
         predBtn.classList.remove('ready');
-        resetBtn.disabled = true; // دوگمەی ڕیسێت ناچالاک دەبێت لە کاتی پێشبینیدا
         
         document.getElementById('volatilityIndicator').style.display = 'none';
         
@@ -493,7 +492,6 @@
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
         const predBtn = document.getElementById('predictionBtn');
-        const resetBtn = document.getElementById('resetBtn');
         
         card.className = 'prediction-card collecting';
         arrow.textContent = '📡';
@@ -502,7 +500,6 @@
         
         predBtn.disabled = true;
         predBtn.classList.remove('ready');
-        resetBtn.disabled = true; // دوگمەی ڕیسێت ناچالاک دەبێت لە کاتی کۆکردنەوەدا
         
         let collectionTime = 120;
         if (volatilityLevel === 'high') {
@@ -512,10 +509,10 @@
             updatePhaseBadge('volatile');
         } else if (volatilityLevel === 'medium') {
             collectionTime = 180;
-            statusBox.textContent = '⚡ بازاڕ نائارامە - کۆکردنەوەی داتا (٣ خولەک)';
+            statusBox.textContent = '⚡ بازاڕ نائارامە - کۆکردنەوەی داتا ( خولەک)';
             predBtn.textContent = '⏳ چاوەڕوانی ئارامبوون...';
         } else {
-            statusBox.textContent = '✅ بازاڕ ئارامە - کۆکردنەوەی داتا (٢ خولەک)';
+            statusBox.textContent = '✅ بازاڕ ئارامە - کۆکردنەوەی داتا ( خولەک)';
             predBtn.textContent = '⏳ کۆکردنەوەی داتا...';
         }
         statusBox.style.display = 'block';
@@ -529,7 +526,6 @@
 
     function enableStartButton() {
         const predBtn = document.getElementById('predictionBtn');
-        const resetBtn = document.getElementById('resetBtn');
         const statusBox = document.getElementById('statusBox');
         const timerLabel = document.getElementById('timerLabel');
         const timerValue = document.getElementById('timerValue');
@@ -537,9 +533,8 @@
         buttonState = 'ready';
         
         predBtn.disabled = false;
-        predBtn.textContent = '🚀 دەستپێکردن';
+        predBtn.textContent = ' دەستپێکردن';
         predBtn.classList.add('ready');
-        resetBtn.disabled = false; // دوگمەی ڕیسێت چالاک دەبێتەوە
         
         statusBox.style.display = 'block';
         statusBox.textContent = '✅ داتا تازە کرایەوە - ئێستا دەتوانیت دەست پێ بکەیت!';
