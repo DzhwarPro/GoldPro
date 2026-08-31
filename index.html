@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - High Accuracy</title>
+<title>Gold Sniper Pro - Finnhub Real</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; }
+* { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-body.dark { background: #000000; color: #e0e0e0; }
+body.dark { background: #050505; color: #e0e0e0; }
 body.dark .card { background: #0a0a0a; border: 1px solid #1a1a1a; }
 body.dark .filter-box, body.dark .confidence-meter, body.dark .timer-box, body.dark .status-box, body.dark .analysis-reason { background: #0f0f0f; border: 1px solid #1a1a1a; }
 body.dark .source-badge { background: #0f0f0f; border: 1px solid #007bff; color: #007bff; }
@@ -39,7 +39,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 .card { border-radius: 10px; padding: 12px; margin-bottom: 12px; }
 .chart-wrapper { width: 100%; height: 380px; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
 
-.prediction-card { border-radius: 10px; padding: 20px; text-align: center; border: 2px solid; }
+.prediction-card { border-radius: 10px; padding: 20px; text-align: center; border: 2px solid; position: relative; }
 .prediction-card.bullish { border-color: #00c853; background: rgba(0,200,83,0.08); }
 .prediction-card.bearish { border-color: #d50000; background: rgba(213,0,0,0.08); }
 .prediction-card.waiting { border-color: #d4a017; background: rgba(212,160,23,0.05); }
@@ -64,7 +64,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 
 .confidence-meter { margin: 15px 0; padding: 12px; border-radius: 10px; }
 .confidence-label { font-size: 12px; margin-bottom: 8px; opacity: 0.7; }
-.confidence-bar { height: 32px; background: rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; }
+.confidence-bar { height: 32px; background: rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; position: relative; }
 .confidence-fill { height: 100%; background: linear-gradient(90deg, #00c853, #00e676); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px; transition: width 0.8s ease; }
 .confidence-fill.high-acc { background: linear-gradient(90deg, #ffd700, #ffaa00); color: #000; }
 
@@ -198,7 +198,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     
     <!-- API Section at TOP -->
     <div class="api-section">
-        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;"> API Keyـی خۆت لێرە دانێ</div>
+        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 API Keyـی Finnhub لێرە دانێ</div>
         <div class="api-info">
             Finnhub API بەکاربهێنە (خۆڕایی) - 
             <a href="https://finnhub.io/register" target="_blank">Lêrê Tûmar Bike</a>
@@ -225,7 +225,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             <div class="price-display">نرخی ئێستا: <span id="currentPriceDisplay">--</span></div>
             
             <div class="filter-box">
-                <div class="filter-title"> ١٢ فلتەری شیکاری تەکنیکی</div>
+                <div class="filter-title">٢ فلتەری شیکاری تەکنیکی</div>
                 <div class="filter-grid">
                     <div class="filter-item"><span class="filter-name">RSI (14)</span><span id="fRSI" class="filter-value filter-signal-neutral">-</span></div>
                     <div class="filter-item"><span class="filter-name">MACD</span><span id="fMACD" class="filter-value filter-signal-neutral">-</span></div>
@@ -248,12 +248,12 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <div>زەرد (FLAT): <span id="countNeutral" class="summary-neutral">0</span></div>
             </div>
 
-            <div id="predictionArrow" class="prediction-arrow">⏳</div>
+            <div id="predictionArrow" class="prediction-arrow"></div>
             <div id="predictionText" class="prediction-text">چاوەڕێبە...</div>
             <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
 
             <div class="confidence-meter">
-                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ١٢ فلتەر)</div>
+                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ٢ فلتەر)</div>
                 <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
             </div>
             
@@ -270,21 +270,21 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
                 <div id="volatilityIndicator" class="volatility-indicator vol-low" style="display:none;">
                     <span id="volatilityText">بازاڕ ئارامە</span>
                 </div>
-                <div id="dataStatus" class="data-status data-simulated"> چاوەڕوانی دەستپێکردن...</div>
+                <div id="dataStatus" class="data-status data-simulated">چاوەڕوانی دەستپێکردن...</div>
             </div>
             
             <div class="btn-group">
-                <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()"> دەستپێکردن</button>
+                <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()">🚀 دەستپێکردن</button>
                 <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوە</button>
             </div>
             
-            <div class="accuracy-badge"> دڵنیایی بەرز (>85%)</div>
+            <div class="accuracy-badge">📊 دڵنیایی بەرز (>85%)</div>
             
             <div class="honesty-notice">
                 ⚠️ <strong>تێبینی ڕاستگۆیانە:</strong> ئەم بەرنامەیە تەنها کاتێک سیگناڵ دەدات کە دڵنیایی لەسەر ٨٥٪ بێت. ١٢ فلتەری تەکنیکی بەکاردەهێنێت.
             </div>
             
-            <div class="cycle-info"> ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
+            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
         </div>
     </div>
 </div>
@@ -363,21 +363,22 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         if(!userApiKey) return null;
         
         try {
-            // Using Finnhub API (Free)
+            // Using Finnhub API (Free) for XAU/USD
             const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=XAUUSD&token=${userApiKey}`);
             
             if (!response.ok) throw new Error('API Error');
             
             const data = await response.json();
             
-            if(data.c) {
+            // Finnhub returns: c=current, h=high, l=low, o=open, pc=previous close
+            if(data.c && data.c > 0) {
                 apiConnected = true;
                 updateAPIStatus(true);
                 currentPrice = data.c;
                 document.getElementById('currentPriceDisplay').textContent = currentPrice.toFixed(2);
                 return data.c;
             } else {
-                throw new Error('No price data');
+                throw new Error('No price data or invalid symbol');
             }
             
         } catch (error) {
@@ -385,7 +386,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             apiConnected = false;
             updateAPIStatus(false);
             
-            // Fallback
+            // Fallback to last known price or default
             const lastPrice = priceHistory.length > 0 ? priceHistory[priceHistory.length-1] : 2300;
             return lastPrice;
         }
@@ -622,10 +623,10 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
             const reasonBox = document.getElementById('analysisReason');
             
             card.className = 'prediction-card waiting';
-            arrow.textContent = '✋';
+            arrow.textContent = '';
             text.textContent = 'چاوەڕێ بکە (دڵنیایی کەمە)';
             reasonBox.style.display = 'block';
-            reasonBox.textContent = '⚠️ دڵنیایی تەنها ' + analysis.confidence.toFixed(0) + '%ە. چاوەڕێ بکە تا بگاتە ٨٥%+';
+            reasonBox.textContent = '⚠️ دڵنیایی تەنها ' + analysis.confidence.toFixed(0) + '%ە. چاوەڕێ بکە تا بگاتە ٥%+';
             
             setTimeout(() => {
                 predictionActive = false;
@@ -700,7 +701,7 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
         
         let collectionTime = 120;
         if (volatilityLevel === 'high') { collectionTime = 300; statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە (٥ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; updatePhaseBadge('volatile'); }
-        else if (volatilityLevel === 'medium') { collectionTime = 180; statusBox.textContent = '⚡ بازاڕ نائارامە (٣ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; }
+        else if (volatilityLevel === 'medium') { collectionTime = 180; statusBox.textContent = ' بازاڕ نائارامە (٣ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; }
         else { statusBox.textContent = '✅ بازاڕ ئارامە (٢ خولەک)'; btn.textContent = '⏳ کۆکردنەوەی داتا...'; }
         statusBox.style.display = 'block';
         
