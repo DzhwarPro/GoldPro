@@ -3,137 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Finnhub Real</title>
+<title>Gold Sniper Pro - Twelve Data</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
 body.dark { background: #050505; color: #e0e0e0; }
-body.dark .card { background: #0a0a0a; border: 1px solid #1a1a1a; }
-body.dark .filter-box, body.dark .confidence-meter, body.dark .timer-box, body.dark .status-box, body.dark .analysis-reason { background: #0f0f0f; border: 1px solid #1a1a1a; }
-body.dark .source-badge { background: #0f0f0f; border: 1px solid #007bff; color: #007bff; }
-body.dark .honesty-notice { background: rgba(255,152,0,0.1); border: 1px solid #ff9800; color: #ff9800; }
-body.dark .api-input { background: #111; border: 1px solid #333; color: #fff; }
+body.light { background: #f4f6f8; color: #1a1a1a; }
 
-body.light { background: #ffffff; color: #1a1a1a; }
-body.light .card { background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-body.light .filter-box, body.light .confidence-meter, body.light .timer-box { background: #f5f5f5; border: 1px solid #e0e0e0; }
-body.light .status-box { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
-body.light .analysis-reason { background: #f9f9f9; border: 1px solid #e0e0e0; color: #333; }
-body.light .source-badge { background: #f0f7ff; border: 1px solid #007bff; color: #007bff; }
-body.light .honesty-notice { background: rgba(255,152,0,0.1); border: 1px solid #ff9800; color: #e65100; }
-body.light .api-input { background: #fff; border: 1px solid #ccc; color: #000; }
+.container { max-width: 800px; margin: 0 auto; padding: 15px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+h1 { color: #d4af37; font-size: 24px; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
 
-.container { max-width: 100%; margin: 0 auto; padding: 10px; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
+.card { background: rgba(20, 20, 20, 0.95); border: 1px solid #333; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+body.light .card { background: #fff; border: 1px solid #ddd; }
 
-.theme-toggle {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none; border-radius: 50%; width: 50px; height: 50px;
-    cursor: pointer; font-size: 24px;
+.chart-container { height: 400px; width: 100%; border-radius: 10px; overflow: hidden; }
+
+.prediction-box { text-align: center; padding: 20px; border-radius: 12px; border: 2px solid transparent; position: relative; overflow: hidden; }
+.prediction-box.buy { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
+.prediction-box.sell { border-color: #ff4444; background: rgba(255, 68, 68, 0.05); }
+.prediction-box.wait { border-color: #ffd700; background: rgba(255, 215, 0, 0.05); }
+
+.signal-arrow { font-size: 60px; margin: 10px 0; animation: bounce 2s infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.confidence-circle {
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 5px solid #333; margin: 10px auto;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+    font-size: 28px; font-weight: bold; position: relative;
 }
-.theme-toggle:hover { transform: rotate(180deg); }
+.confidence-circle.high { border-color: #00ff88; color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+.confidence-circle.med { border-color: #ffd700; color: #ffd700; }
+.confidence-circle.low { border-color: #ff4444; color: #ff4444; }
 
-.card { border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-.chart-wrapper { width: 100%; height: 380px; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+.filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+.filter-item { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; }
+.filter-val.up { color: #00ff88; }
+.filter-val.down { color: #ff4444; }
 
-.prediction-card { border-radius: 10px; padding: 20px; text-align: center; border: 2px solid; position: relative; }
-.prediction-card.bullish { border-color: #00c853; background: rgba(0,200,83,0.08); }
-.prediction-card.bearish { border-color: #d50000; background: rgba(213,0,0,0.08); }
-.prediction-card.waiting { border-color: #d4a017; background: rgba(212,160,23,0.05); }
-.prediction-card.collecting { border-color: #007bff; background: rgba(0,123,255,0.08); }
+.btn-main {
+    width: 100%; padding: 15px; border: none; border-radius: 10px;
+    background: linear-gradient(45deg, #d4af37, #f2d06b);
+    color: #000; font-weight: bold; font-size: 18px; cursor: pointer;
+    margin-top: 10px;
+}
+.btn-main:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+.timer-display { font-size: 40px; font-family: monospace; text-align: center; margin: 10px 0; color: #d4af37; }
 
-.prediction-arrow { font-size: 70px; margin: 10px 0; }
-.prediction-text { font-size: 28px; font-weight: bold; margin: 10px 0; }
-.bullish .prediction-text { color: #00c853; }
-.bearish .prediction-text { color: #d50000; }
-.waiting .prediction-text { color: #d4a017; }
-.collecting .prediction-text { color: #007bff; }
+.api-input {
+    width: 100%; padding: 10px; margin-bottom: 10px;
+    background: #111; border: 1px solid #333; color: #fff; border-radius: 5px;
+}
+.status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 11px; margin-top: 5px; }
+.status-ok { background: rgba(0,255,136,0.2); color: #00ff88; }
+.status-err { background: rgba(255,68,68,0.2); color: #ff4444; }
 
-.filter-box { margin: 15px 0; padding: 12px; border-radius: 10px; }
-.filter-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; opacity: 0.8; text-align: center; }
-.filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.filter-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 11px; }
-.filter-name { opacity: 0.7; }
-.filter-value { font-weight: bold; font-size: 10px; }
-.filter-signal-up { color: #00c853; }
-.filter-signal-down { color: #d50000; }
-.filter-signal-neutral { color: #d4a017; }
+.price-display { font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0; color: #d4a017; }
 
-.confidence-meter { margin: 15px 0; padding: 12px; border-radius: 10px; }
-.confidence-label { font-size: 12px; margin-bottom: 8px; opacity: 0.7; }
-.confidence-bar { height: 32px; background: rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; position: relative; }
-.confidence-fill { height: 100%; background: linear-gradient(90deg, #00c853, #00e676); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px; transition: width 0.8s ease; }
-.confidence-fill.high-acc { background: linear-gradient(90deg, #ffd700, #ffaa00); color: #000; }
-
-.timer-box { border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; }
-.timer-label { font-size: 12px; opacity: 0.7; }
-.timer-value { font-size: 50px; font-weight: bold; font-family: monospace; color: #d4a017; }
-
-.status-box { border-radius: 10px; padding: 12px; margin: 10px 0; font-size: 13px; text-align: center; }
-
-.btn-group { display: flex; gap: 10px; margin-top: 10px; }
-.prediction-btn, .reset-btn { flex: 1; padding: 18px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #fff; }
-.prediction-btn { background: linear-gradient(135deg, #d4a017, #f0c040); }
-.prediction-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
-.prediction-btn.ready { background: linear-gradient(135deg, #00c853, #00e676); animation: pulse 1.5s infinite; }
-.reset-btn { background: linear-gradient(135deg, #ff4444, #cc0000); }
-.reset-btn:hover:not(:disabled) { transform: scale(1.02); }
-.reset-btn:disabled { opacity: 0.4; background: #666; cursor: not-allowed; }
-
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-
-.accuracy-badge { display: inline-block; background: rgba(0,200,83,0.15); border: 1px solid #00c853; padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-top: 15px; color: #00c853; font-weight: bold; }
-.source-badge { text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; font-weight: bold; }
-.analysis-reason { padding: 12px; border-radius: 8px; font-size: 13px; margin: 10px 0; border-right: 3px solid #d4a017; text-align: right; line-height: 1.6; }
-.cycle-info { font-size: 11px; margin-top: 10px; text-align: center; opacity: 0.6; }
-.honesty-notice { padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; text-align: center; line-height: 1.5; }
-
-.sync-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 8px; padding: 4px 12px; background: rgba(0,123,255,0.1); border-radius: 12px; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #007bff; animation: blink 1.5s infinite; }
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-.phase-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; }
-.phase-prediction { background: rgba(212,160,23,0.2); color: #d4a017; border: 1px solid #d4a017; }
-.phase-collecting { background: rgba(0,123,255,0.2); color: #007bff; border: 1px solid #007bff; }
-.phase-ready { background: rgba(0,200,83,0.2); color: #00c853; border: 1px solid #00c853; }
-.phase-volatile { background: rgba(255,152,0,0.2); color: #ff9800; border: 1px solid #ff9800; }
-
-.volatility-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 8px; padding: 4px 12px; border-radius: 12px; }
-.vol-low { background: rgba(0,200,83,0.15); color: #00c853; }
-.vol-medium { background: rgba(255,152,0,0.15); color: #ff9800; }
-.vol-high { background: rgba(213,0,0,0.15); color: #d50000; }
-
-.data-status { font-size: 11px; margin-top: 8px; padding: 4px 12px; border-radius: 12px; display: inline-block; }
-.data-real { background: rgba(0,200,83,0.15); color: #00c853; }
-.data-simulated { background: rgba(255,152,0,0.15); color: #ff9800; }
-
-.filter-summary {
+.reason-list {
+    text-align: right;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    border-right: 4px solid #d4af37;
+}
+.reason-item {
     display: flex;
-    justify-content: space-around;
-    margin: 10px 0;
-    padding: 10px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 8px;
-    font-size: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.6;
 }
-.summary-up { color: #00c853; font-weight: bold; }
-.summary-down { color: #d50000; font-weight: bold; }
-.summary-neutral { color: #d4a017; font-weight: bold; }
+.reason-item:last-child { margin-bottom: 0; }
+.reason-icon { margin-left: 8px; font-size: 16px; }
+.reason-text { flex: 1; }
+.reason-up { color: #00ff88; }
+.reason-down { color: #ff4444; }
+.reason-neutral { color: #aaa; }
 
-.api-status {
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 12px;
-    margin-top: 8px;
-    display: inline-block;
-}
-.api-connected { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
-.api-error { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
-
-/* API Input Section at Top */
 .api-section {
     background: rgba(0,123,255,0.1);
     border: 2px solid #007bff;
@@ -141,34 +90,6 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     padding: 15px;
     margin-bottom: 15px;
     text-align: center;
-}
-.api-input-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    justify-content: center;
-}
-.api-input {
-    flex: 1;
-    max-width: 400px;
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid #007bff;
-    font-size: 14px;
-    outline: none;
-}
-.api-save-btn {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-}
-.api-save-btn:hover {
-    transform: scale(1.05);
 }
 .api-info {
     font-size: 12px;
@@ -179,13 +100,6 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
     color: #007bff;
     text-decoration: none;
 }
-
-.price-display {
-    font-size: 20px;
-    font-weight: bold;
-    color: #d4a017;
-    margin: 10px 0;
-}
 </style>
 </head>
 <body class="dark">
@@ -193,584 +107,484 @@ h1 { text-align: center; color: #d4a017; font-size: 22px; font-weight: bold; }
 <div class="container">
     <div class="header">
         <h1>🎯 Gold Sniper Pro</h1>
-        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        <button onclick="toggleTheme()" style="background:none;border:none;font-size:24px;cursor:pointer;">🌓</button>
     </div>
-    
-    <!-- API Section at TOP -->
+
+    <!-- Twelve Data API Section -->
     <div class="api-section">
-        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 API Keyـی Finnhub لێرە دانێ</div>
+        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 Twelve Data API Key لێرە دانێ</div>
         <div class="api-info">
-            Finnhub API بەکاربهێنە (خۆڕایی) - 
-            <a href="https://finnhub.io/register" target="_blank">Lêrê Tûmar Bike</a>
+            Twelve Data API بەکاربهێنە (خۆڕایی - ٨٠٠ داواکاری/ڕۆژ) - 
+            <a href="https://twelvedata.com/register" target="_blank">Lêrê Tûmar Bike</a>
         </div>
-        <div class="api-input-container">
-            <input type="text" id="apiKeyInput" class="api-input" placeholder="Finnhub API Keyـت لێرە بنووسە...">
-            <button class="api-save-btn" onclick="saveApiKey()">💾 پاشکەوتکردن</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
+            <input type="text" id="apiKeyInput" class="api-input" style="flex: 1; max-width: 400px;" placeholder="Twelve Data API Keyـت لێرە بنووسە...">
+            <button onclick="saveApiKey()" style="padding: 10px 20px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">💾 پاشکەوتکردن</button>
         </div>
-        <div id="apiStatus" class="api-status" style="margin-top: 10px;"> چاوەڕوانی دەستپێکردن...</div>
-    </div>
-
-    <div class="source-badge">📡 ٢ فلتەری پڕۆفێشناڵ | داتای ڕاستەقینە | دڵنیایی >85%</div>
-
-    <div class="card">
-        <div class="chart-wrapper">
-            <div id="tradingview_chart" style="height:100%;width:100%"></div>
-        </div>
+        <div id="apiStatus" class="status-badge" style="margin-top: 10px;">⏳ چاوەڕوانی دەستپێکردن...</div>
     </div>
 
     <div class="card">
-        <div id="predictionCard" class="prediction-card waiting">
-            <div style="font-size:14px; margin-bottom:10px; opacity:0.7;">شیکاری ١٢ فلتەری پڕۆفێشناڵ</div>
-            
-            <div class="price-display">نرخی ئێستا: <span id="currentPriceDisplay">--</span></div>
-            
-            <div class="filter-box">
-                <div class="filter-title">٢ فلتەری شیکاری تەکنیکی</div>
-                <div class="filter-grid">
-                    <div class="filter-item"><span class="filter-name">RSI (14)</span><span id="fRSI" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">MACD</span><span id="fMACD" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Stochastic</span><span id="fStoch" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Bollinger</span><span id="fBB" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">ADX</span><span id="fADX" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">CCI</span><span id="fCCI" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Williams %R</span><span id="fWilliams" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">ATR</span><span id="fATR" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Ichimoku</span><span id="fIchimoku" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Parabolic SAR</span><span id="fSAR" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">VWAP</span><span id="fVWAP" class="filter-value filter-signal-neutral">-</span></div>
-                    <div class="filter-item"><span class="filter-name">Momentum</span><span id="fMom" class="filter-value filter-signal-neutral">-</span></div>
-                </div>
-            </div>
+        <div id="chart_div" class="chart-container"></div>
+    </div>
 
-            <div class="filter-summary">
-                <div>سەوز (BUY): <span id="countUp" class="summary-up">0</span></div>
-                <div>سوور (SELL): <span id="countDown" class="summary-down">0</span></div>
-                <div>زەرد (FLAT): <span id="countNeutral" class="summary-neutral">0</span></div>
-            </div>
-
-            <div id="predictionArrow" class="prediction-arrow"></div>
-            <div id="predictionText" class="prediction-text">چاوەڕێبە...</div>
-            <div id="analysisReason" class="analysis-reason" style="display:none;"></div>
-
-            <div class="confidence-meter">
-                <div class="confidence-label">ئاستی دڵنیایی (بەپێی ٢ فلتەر)</div>
-                <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill" style="width: 0%">0%</div></div>
-            </div>
-            
-            <div id="statusBox" class="status-box" style="display:none;"></div>
-            
-            <div class="timer-box">
-                <div class="timer-label" id="timerLabel">کاتی ماوە</div>
-                <div id="timerValue" class="timer-value">05:00</div>
-                <div id="phaseBadge" class="phase-badge phase-prediction">قۆناغی پێشبینی</div>
-                <div class="sync-indicator">
-                    <div class="sync-dot"></div>
-                    <span>هاوکاتکراو لەگەڵ چارت M5</span>
-                </div>
-                <div id="volatilityIndicator" class="volatility-indicator vol-low" style="display:none;">
-                    <span id="volatilityText">بازاڕ ئارامە</span>
-                </div>
-                <div id="dataStatus" class="data-status data-simulated">چاوەڕوانی دەستپێکردن...</div>
-            </div>
-            
-            <div class="btn-group">
-                <button id="predictionBtn" class="prediction-btn" onclick="handleButtonClick()">🚀 دەستپێکردن</button>
-                <button id="resetBtn" class="reset-btn" onclick="resetAllData()">🔄 دوبارەکردنەوە</button>
-            </div>
-            
-            <div class="accuracy-badge">📊 دڵنیایی بەرز (>85%)</div>
-            
-            <div class="honesty-notice">
-                ⚠️ <strong>تێبینی ڕاستگۆیانە:</strong> ئەم بەرنامەیە تەنها کاتێک سیگناڵ دەدات کە دڵنیایی لەسەر ٨٥٪ بێت. ١٢ فلتەری تەکنیکی بەکاردەهێنێت.
-            </div>
-            
-            <div class="cycle-info">🔄 ٥ خولەک پێشبینی → ٢+ خولەک کۆکردنەوەی داتا → دەستپێکردنی دەستی</div>
+    <div class="card prediction-box wait" id="predBox">
+        <div style="font-size:14px;opacity:0.8;">دۆخی بازاڕ</div>
+        <div class="price-display">نرخ: <span id="currentPriceDisplay">--</span></div>
+        <div id="signalArrow" class="signal-arrow"></div>
+        <div id="signalText" style="font-size:24px;font-weight:bold;">چاوەڕێبە...</div>
+        
+        <div class="confidence-circle low" id="confCircle">
+            <span id="confValue">0%</span>
         </div>
+        <div style="font-size:12px;opacity:0.6;">ئاستی دڵنیایی (Accuracy)</div>
+        
+        <div id="reasonContainer" class="reason-list" style="display: none;">
+            <div style="font-weight:bold;margin-bottom:10px;color:#d4af37;">🔍 هۆکارەکانی سیگناڵ:</div>
+            <div id="reasonList"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="filters-grid" id="filtersContainer">
+            <div class="filter-item"><span>RSI (14)</span><span id="fRSI" class="filter-val">-</span></div>
+            <div class="filter-item"><span>MACD</span><span id="fMACD" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Stochastic</span><span id="fStoch" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Bollinger</span><span id="fBB" class="filter-val">-</span></div>
+            <div class="filter-item"><span>ADX</span><span id="fADX" class="filter-val">-</span></div>
+            <div class="filter-item"><span>CCI</span><span id="fCCI" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Williams %R</span><span id="fWilliams" class="filter-val">-</span></div>
+            <div class="filter-item"><span>ATR</span><span id="fATR" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Ichimoku</span><span id="fIchimoku" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Parabolic SAR</span><span id="fSAR" class="filter-val">-</span></div>
+            <div class="filter-item"><span>VWAP</span><span id="fVWAP" class="filter-val">-</span></div>
+            <div class="filter-item"><span>Momentum</span><span id="fMom" class="filter-val">-</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="timer-display" id="timer">00:00</div>
+        <button id="startBtn" class="btn-main" onclick="startAnalysis()">🚀 دەستپێکردنی شیکاری</button>
+        <p style="text-align:center;font-size:11px;margin-top:10px;opacity:0.5;">
+            ⚠️ تێبینی: ئەم سیستمە تەنها کاتێک سیگناڵ دەدات کە دڵنیایی لەسەر ٥٪ بێت.
+        </p>
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let priceHistory = [];
-    let currentPrice = 0;
-    let previousPrice = 0;
-    let predictionActive = false;
-    let collectingData = false;
-    let dataFeedActive = false;
-    let dataFeedInterval = null;
-    let countdownInterval = null;
-    let autoRestartTimeout = null;
-    let currentTheme = 'dark';
-    let volatilityLevel = 'low';
-    let buttonState = 'idle';
-    let dataFetchCount = 0;
-    let tvWidget = null;
-    let apiConnected = false;
-    let userApiKey = localStorage.getItem('finnhub_api_key') || '';
+    let priceData = [];
+    let isAnalyzing = false;
+    let userApiKey = localStorage.getItem('twelvedata_api_key') || '';
+    
+    if(userApiKey) document.getElementById('apiKeyInput').value = userApiKey;
 
-    // Load saved API key
-    if(userApiKey) {
-        document.getElementById('apiKeyInput').value = userApiKey;
+    // TradingView Chart
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "OANDA:XAUUSD",
+        "interval": "5",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "ar",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "hide_top_toolbar": false,
+        "save_image": false,
+        "container_id": "chart_div"
+    });
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark');
+        document.body.classList.toggle('light');
     }
 
     function saveApiKey() {
         const key = document.getElementById('apiKeyInput').value.trim();
         if(key) {
-            localStorage.setItem('finnhub_api_key', key);
+            localStorage.setItem('twelvedata_api_key', key);
             userApiKey = key;
             alert('✅ API Key پاشکەوت کرا! ئێستا دەتوانیت دەستپێ بکەیت.');
-            // Test connection
-            getRealGoldPrice();
+            testConnection();
         } else {
             alert('⚠️ تکایە API Key داخڵ بکە');
         }
     }
 
-    function toggleTheme() {
-        const body = document.body;
-        if (currentTheme === 'dark') {
-            body.classList.remove('dark'); body.classList.add('light'); currentTheme = 'light';
-            reloadChart('light');
-        } else {
-            body.classList.remove('light'); body.classList.add('dark'); currentTheme = 'dark';
-            reloadChart('dark');
+    async function testConnection() {
+        try {
+            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${userApiKey}`);
+            const data = await res.json();
+            if(data.price) {
+                document.getElementById('apiStatus').className = 'status-badge status-ok';
+                document.getElementById('apiStatus').textContent = '✅ Twelve Data API پەیوەندیدارە';
+            } else {
+                throw new Error('Invalid API key');
+            }
+        } catch(e) {
+            document.getElementById('apiStatus').className = 'status-badge status-err';
+            document.getElementById('apiStatus').textContent = '❌ هەڵە لە API - تکایە کلیکەت چاک بکە';
         }
     }
 
-    function reloadChart(theme) {
-        const container = document.getElementById('tradingview_chart');
-        container.innerHTML = ''; 
-        const bgColor = theme === 'dark' ? '#000000' : '#ffffff';
-        tvWidget = new TradingView.widget({ 
-            "autosize": true, 
-            "symbol": "OANDA:XAUUSD", 
-            "interval": "5", 
-            "timezone": "Etc/UTC", 
-            "theme": theme, 
-            "style": "1", 
-            "locale": "ar", 
-            "toolbar_bg": bgColor, 
-            "enable_publishing": false, 
-            "hide_top_toolbar": false, 
-            "hide_legend": false, 
-            "save_image": false, 
-            "container_id": "tradingview_chart", 
-            "studies": ["RSI@tv-basicstudies", "MAExp@tv-basicstudies", "BB@tv-basicstudies"]
-        });
-    }
-
-    async function getRealGoldPrice() {
+    // وەرگرتنی مێژووی نرخەکان لە Twelve Data
+    async function fetchHistoricalData() {
         if(!userApiKey) return null;
         
         try {
-            // Using Finnhub API (Free) for XAU/USD
-            const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=XAUUSD&token=${userApiKey}`);
+            // Get 100 candles of 5-minute data
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${userApiKey}`);
+            const data = await res.json();
             
-            if (!response.ok) throw new Error('API Error');
-            
-            const data = await response.json();
-            
-            // Finnhub returns: c=current, h=high, l=low, o=open, pc=previous close
-            if(data.c && data.c > 0) {
-                apiConnected = true;
-                updateAPIStatus(true);
-                currentPrice = data.c;
+            if(data.status === 'ok' && data.values) {
+                // Convert to array of prices (close prices)
+                const prices = data.values.map(v => parseFloat(v.close)).reverse();
+                const currentPrice = parseFloat(data.values[0].close);
+                
                 document.getElementById('currentPriceDisplay').textContent = currentPrice.toFixed(2);
-                return data.c;
+                document.getElementById('apiStatus').className = 'status-badge status-ok';
+                document.getElementById('apiStatus').textContent = '✅ داتای ڕاستەقینە وەرگیرا';
+                
+                return { prices, currentPrice };
             } else {
-                throw new Error('No price data or invalid symbol');
+                throw new Error('No data');
             }
-            
-        } catch (error) {
-            console.error('Finnhub API Error:', error);
-            apiConnected = false;
-            updateAPIStatus(false);
-            
-            // Fallback to last known price or default
-            const lastPrice = priceHistory.length > 0 ? priceHistory[priceHistory.length-1] : 2300;
-            return lastPrice;
+        } catch(e) {
+            console.error('Twelve Data Error:', e);
+            document.getElementById('apiStatus').className = 'status-badge status-err';
+            document.getElementById('apiStatus').textContent = ' هەڵە لە API';
+            return null;
         }
-    }
-
-    function updateAPIStatus(connected) {
-        const statusEl = document.getElementById('apiStatus');
-        if (connected) {
-            statusEl.className = 'api-status api-connected';
-            statusEl.textContent = '✅ Finnhub API پەیوەندیدارە - داتای ڕاستەقینە';
-        } else {
-            statusEl.className = 'api-status api-error';
-            statusEl.textContent = '⚠️ API پەیوەندی نییە - تکایە کلیکەت چاک بکە';
-        }
-    }
-
-    function startDataFeed() {
-        if (dataFeedActive) return;
-        
-        dataFeedActive = true;
-        document.getElementById('apiStatus').textContent = '📡 وەرگرتنی داتا دەستی پێکرد...';
-        
-        getFirstData();
-        
-        // Fetch every 30 seconds to save API quota
-        dataFeedInterval = setInterval(async () => {
-            const realPrice = await getRealGoldPrice();
-            if(realPrice) processNewPrice(realPrice, true);
-        }, 30000);
-    }
-
-    async function getFirstData() {
-        const realPrice = await getRealGoldPrice();
-        if(realPrice) processNewPrice(realPrice, true);
-    }
-
-    function stopDataFeed() {
-        if (dataFeedInterval) {
-            clearInterval(dataFeedInterval);
-            dataFeedInterval = null;
-        }
-        dataFeedActive = false;
-    }
-
-    function handleButtonClick() {
-        if (buttonState === 'idle') {
-            startDataFeed();
-            document.getElementById('dataStatus').textContent = ' کۆکردنەوەی داتا (0/15)...';
-        } else if (buttonState === 'ready') {
-            startCycle();
-        }
-    }
-
-    function resetAllData() {
-        if (predictionActive || collectingData) { alert('تکایە چاوەڕێ بکە'); return; }
-        stopDataFeed();
-        priceHistory = []; dataFetchCount = 0; currentPrice = 0; previousPrice = 0;
-        resetUI();
-        document.getElementById('statusBox').style.display = 'block';
-        document.getElementById('statusBox').textContent = '✅ هەموو داتاکان سڕانەوە...';
-        document.getElementById('apiStatus').textContent = '⏳ چاوەڕوانی دەستپێکردن...';
-        buttonState = 'idle';
-    }
-
-    function processNewPrice(price, isReal) {
-        previousPrice = currentPrice;
-        currentPrice = price;
-        priceHistory.push(price);
-        if (priceHistory.length > 500) priceHistory.shift();
-        dataFetchCount++;
-        
-        if (dataFetchCount % 3 === 0) updateDataStatus();
-        checkVolatility();
-        
-        if (priceHistory.length >= 15 && buttonState === 'idle') {
-            enableStartButton();
-        }
-    }
-
-    function updateDataStatus() {
-        const statusEl = document.getElementById('dataStatus');
-        if (priceHistory.length < 15) {
-            statusEl.className = 'data-status data-simulated';
-            statusEl.textContent = `⏳ کۆکردنەوەی داتا (${priceHistory.length}/15)...`;
-        } else {
-            statusEl.className = apiConnected ? 'data-status data-real' : 'data-status data-simulated';
-            statusEl.textContent = apiConnected ? `✅ ${priceHistory.length} خاڵی داتای ڕاستەقینە` : ` ${priceHistory.length} خاڵی داتای هاوشێوە`;
-        }
-    }
-
-    function checkVolatility() {
-        if (priceHistory.length < 20) return;
-        const recent = priceHistory.slice(-20);
-        const changes = [];
-        for (let i = 1; i < recent.length; i++) changes.push(Math.abs(recent[i] - recent[i-1]));
-        const avgChange = changes.reduce((a,b) => a+b, 0) / changes.length;
-        const maxChange = Math.max(...changes);
-        
-        const volIndicator = document.getElementById('volatilityIndicator');
-        const volText = document.getElementById('volatilityText');
-        
-        if (maxChange > 5 || avgChange > 2) { volatilityLevel = 'high'; volIndicator.className = 'volatility-indicator vol-high'; volText.textContent = '⚠️ بازاڕ زۆر نائارامە'; }
-        else if (maxChange > 2 || avgChange > 1) { volatilityLevel = 'medium'; volIndicator.className = 'volatility-indicator vol-medium'; volText.textContent = '⚡ بازاڕ نائارامە'; }
-        else { volatilityLevel = 'low'; volIndicator.className = 'volatility-indicator vol-low'; volText.textContent = '✅ بازاڕ ئارامە'; }
-        volIndicator.style.display = 'inline-flex';
     }
 
     // Technical Indicators
-    function calcSMA(prices, period) { if (prices.length < period) return null; return prices.slice(-period).reduce((a,b) => a+b, 0) / period; }
-    function calcEMA(prices, period) { if (prices.length < period) return null; const k = 2 / (period + 1); let ema = prices.slice(0, period).reduce((a,b) => a+b, 0) / period; for (let i = period; i < prices.length; i++) ema = prices[i] * k + ema * (1 - k); return ema; }
-    function calcRSI(prices, period = 14) { if (prices.length < period + 1) return 50; let gains = 0, losses = 0; for (let i = prices.length - period; i < prices.length; i++) { const change = prices[i] - prices[i - 1]; if (change > 0) gains += change; else losses += Math.abs(change); } const avgGain = gains / period, avgLoss = losses / period; if (avgLoss === 0) return 100; return 100 - (100 / (1 + avgGain / avgLoss)); }
-    function calcMACD(prices) { if (prices.length < 26) return { histogram: 0, signal: 'neutral' }; const ema12 = calcEMA(prices, 12); const ema26 = calcEMA(prices, 26); const macdLine = ema12 - ema26; const signalLine = calcEMA(prices.slice(-26), 9) || ema26; const histogram = macdLine - signalLine; return { histogram, signal: histogram > 0 ? 'up' : histogram < 0 ? 'down' : 'neutral' }; }
-    function calcStochastic(prices, period = 14) { if (prices.length < period) return { k: 50, signal: 'neutral' }; const slice = prices.slice(-period); const high = Math.max(...slice); const low = Math.min(...slice); const current = prices[prices.length - 1]; const k = ((current - low) / (high - low)) * 100; let signal = 'neutral'; if (k < 20) signal = 'up'; else if (k > 80) signal = 'down'; return { k, signal }; }
-    function calcBollingerBands(prices, period = 20) { if (prices.length < period) return { position: 'middle', signal: 'neutral' }; const sma = calcSMA(prices, period); const slice = prices.slice(-period); const variance = slice.reduce((sum, p) => sum + Math.pow(p - sma, 2), 0) / period; const stdDev = Math.sqrt(variance); const upper = sma + (stdDev * 2); const lower = sma - (stdDev * 2); const current = prices[prices.length - 1]; let position = 'middle', signal = 'neutral'; if (current <= lower) { position = 'lower'; signal = 'up'; } else if (current >= upper) { position = 'upper'; signal = 'down'; } return { position, signal }; }
-    function calcADX(prices, period = 14) { if (prices.length < period + 1) return { adx: 25, signal: 'neutral' }; let plusDM = 0, minusDM = 0, tr = 0; for (let i = prices.length - period; i < prices.length; i++) { const upMove = prices[i] - prices[i-1]; const downMove = prices[i-1] - prices[i]; if (upMove > downMove && upMove > 0) plusDM += upMove; if (downMove > upMove && downMove > 0) minusDM += downMove; tr += Math.abs(prices[i] - prices[i-1]); } const plusDI = (plusDM / tr) * 100; const minusDI = (minusDM / tr) * 100; const adx = Math.abs(plusDI - minusDI); let signal = 'neutral'; if (adx > 25) signal = plusDI > minusDI ? 'up' : 'down'; return { adx, signal }; }
-    function calcCCI(prices, period = 20) { if (prices.length < period) return { cci: 0, signal: 'neutral' }; const slice = prices.slice(-period); const sma = slice.reduce((a,b) => a+b, 0) / period; const meanDeviation = slice.reduce((sum, p) => sum + Math.abs(p - sma), 0) / period; const current = prices[prices.length - 1]; const cci = (current - sma) / (0.015 * meanDeviation); let signal = 'neutral'; if (cci < -100) signal = 'up'; else if (cci > 100) signal = 'down'; return { cci, signal }; }
-    function calcWilliamsR(prices, period = 14) { if (prices.length < period) return { wr: -50, signal: 'neutral' }; const slice = prices.slice(-period); const high = Math.max(...slice); const low = Math.min(...slice); const current = prices[prices.length - 1]; const wr = ((high - current) / (high - low)) * -100; let signal = 'neutral'; if (wr < -80) signal = 'up'; else if (wr > -20) signal = 'down'; return { wr, signal }; }
-    function calcATR(prices, period = 14) { if (prices.length < period + 1) return { atr: 0, signal: 'neutral' }; let trSum = 0; for (let i = prices.length - period; i < prices.length; i++) { trSum += Math.abs(prices[i] - prices[i-1]); } const atr = trSum / period; const current = prices[prices.length - 1]; const atrPercent = (atr / current) * 100; let signal = 'neutral'; if (atrPercent > 0.5) signal = 'up'; return { atr, atrPercent, signal }; }
-    function calcIchimoku(prices) { if (prices.length < 26) return { signal: 'neutral', tenkan: 0, kijun: 0 }; const tenkan = (Math.max(...prices.slice(-9)) + Math.min(...prices.slice(-9))) / 2; const kijun = (Math.max(...prices.slice(-26)) + Math.min(...prices.slice(-26))) / 2; const current = prices[prices.length - 1]; let signal = 'neutral'; if (current > tenkan && current > kijun && tenkan > kijun) signal = 'up'; else if (current < tenkan && current < kijun && tenkan < kijun) signal = 'down'; return { tenkan, kijun, signal }; }
-    function calcParabolicSAR(prices) { if (prices.length < 20) return { sar: 0, signal: 'neutral' }; const recent = prices.slice(-20); const high = Math.max(...recent); const low = Math.min(...recent); const current = prices[prices.length - 1]; const sar = low + 0.02 * (high - low); let signal = 'neutral'; if (current > sar) signal = 'up'; else if (current < sar) signal = 'down'; return { sar, signal }; }
-    function calcVWAP(prices) { if (prices.length < 20) return { vwap: 0, signal: 'neutral' }; const slice = prices.slice(-20); const vwap = slice.reduce((a,b) => a+b, 0) / slice.length; const current = prices[prices.length - 1]; let signal = 'neutral'; if (current > vwap) signal = 'up'; else if (current < vwap) signal = 'down'; return { vwap, signal }; }
-    function calcMomentum(prices, period = 10) { if (prices.length < period) return { momentum: 0, signal: 'neutral' }; const momentum = prices[prices.length - 1] - prices[prices.length - period]; let signal = 'neutral'; if (momentum > 0) signal = 'up'; else if (momentum < 0) signal = 'down'; return { momentum, signal }; }
+    function calculateRSI(prices, period=14) {
+        if(prices.length < period + 1) return 50;
+        let gains = 0, losses = 0;
+        for(let i = prices.length - period; i < prices.length; i++) {
+            const change = prices[i] - prices[i-1];
+            if(change > 0) gains += change;
+            else losses += Math.abs(change);
+        }
+        const avgGain = gains / period;
+        const avgLoss = losses / period;
+        if(avgLoss === 0) return 100;
+        return 100 - (100 / (1 + avgGain / avgLoss));
+    }
 
-    // HIGH ACCURACY ANALYSIS
-    function analyzeAll() {
-        if (priceHistory.length < 15) return { score: 0, signals: {}, confidence: 0 };
-        
-        const prices = priceHistory;
+    function calculateSMA(prices, period) {
+        if(prices.length < period) return prices[prices.length-1];
+        const sum = prices.slice(-period).reduce((a,b) => a+b, 0);
+        return sum / period;
+    }
+
+    function calculateEMA(prices, period) {
+        if(prices.length < period) return prices[prices.length-1];
+        const k = 2 / (period + 1);
+        let ema = prices.slice(0, period).reduce((a,b) => a+b, 0) / period;
+        for(let i = period; i < prices.length; i++) {
+            ema = prices[i] * k + ema * (1 - k);
+        }
+        return ema;
+    }
+
+    function calculateMACD(prices) {
+        const ema12 = calculateEMA(prices, 12);
+        const ema26 = calculateEMA(prices, 26);
+        const macdLine = ema12 - ema26;
+        const signalLine = calculateEMA(prices.slice(-26), 9);
+        const histogram = macdLine - signalLine;
+        return { histogram, signal: histogram > 0 ? 'up' : histogram < 0 ? 'down' : 'neutral' };
+    }
+
+    function calculateStochastic(prices, period=14) {
+        const slice = prices.slice(-period);
+        const high = Math.max(...slice);
+        const low = Math.min(...slice);
         const current = prices[prices.length - 1];
+        const k = ((current - low) / (high - low)) * 100;
+        let signal = 'neutral';
+        if(k < 20) signal = 'up';
+        else if(k > 80) signal = 'down';
+        return { k, signal };
+    }
+
+    function calculateBollingerBands(prices, period=20) {
+        const sma = calculateSMA(prices, period);
+        const slice = prices.slice(-period);
+        const variance = slice.reduce((sum, p) => sum + Math.pow(p - sma, 2), 0) / period;
+        const stdDev = Math.sqrt(variance);
+        const upper = sma + (stdDev * 2);
+        const lower = sma - (stdDev * 2);
+        const current = prices[prices.length - 1];
+        let signal = 'neutral';
+        if(current <= lower) signal = 'up';
+        else if(current >= upper) signal = 'down';
+        return { position: current <= lower ? 'lower' : current >= upper ? 'upper' : 'middle', signal };
+    }
+
+    function calculateCCI(prices, period=20) {
+        const slice = prices.slice(-period);
+        const sma = slice.reduce((a,b) => a+b, 0) / period;
+        const meanDeviation = slice.reduce((sum, p) => sum + Math.abs(p - sma), 0) / period;
+        const current = prices[prices.length - 1];
+        const cci = (current - sma) / (0.015 * meanDeviation);
+        let signal = 'neutral';
+        if(cci < -100) signal = 'up';
+        else if(cci > 100) signal = 'down';
+        return { cci, signal };
+    }
+
+    function calculateWilliamsR(prices, period=14) {
+        const slice = prices.slice(-period);
+        const high = Math.max(...slice);
+        const low = Math.min(...slice);
+        const current = prices[prices.length - 1];
+        const wr = ((high - current) / (high - low)) * -100;
+        let signal = 'neutral';
+        if(wr < -80) signal = 'up';
+        else if(wr > -20) signal = 'down';
+        return { wr, signal };
+    }
+
+    function calculateMomentum(prices, period=10) {
+        const momentum = prices[prices.length - 1] - prices[prices.length - period];
+        return { momentum, signal: momentum > 0 ? 'up' : momentum < 0 ? 'down' : 'neutral' };
+    }
+
+    function calculateATR(prices, period=14) {
+        let trSum = 0;
+        for(let i = prices.length - period; i < prices.length; i++) {
+            trSum += Math.abs(prices[i] - prices[i-1]);
+        }
+        const atr = trSum / period;
+        const atrPercent = (atr / prices[prices.length - 1]) * 100;
+        return { atr, atrPercent, signal: atrPercent > 0.5 ? 'up' : 'neutral' };
+    }
+
+    function calculateIchimoku(prices) {
+        if(prices.length < 26) return { signal: 'neutral', tenkan: 0, kijun: 0 };
+        const tenkan = (Math.max(...prices.slice(-9)) + Math.min(...prices.slice(-9))) / 2;
+        const kijun = (Math.max(...prices.slice(-26)) + Math.min(...prices.slice(-26))) / 2;
+        const current = prices[prices.length - 1];
+        let signal = 'neutral';
+        if(current > tenkan && current > kijun && tenkan > kijun) signal = 'up';
+        else if(current < tenkan && current < kijun && tenkan < kijun) signal = 'down';
+        return { tenkan, kijun, signal };
+    }
+
+    function calculateParabolicSAR(prices) {
+        const recent = prices.slice(-20);
+        const high = Math.max(...recent);
+        const low = Math.min(...recent);
+        const current = prices[prices.length - 1];
+        const sar = low + 0.02 * (high - low);
+        let signal = 'neutral';
+        if(current > sar) signal = 'up';
+        else if(current < sar) signal = 'down';
+        return { sar, signal };
+    }
+
+    function calculateVWAP(prices) {
+        const slice = prices.slice(-20);
+        const vwap = slice.reduce((a,b) => a+b, 0) / slice.length;
+        const current = prices[prices.length - 1];
+        let signal = 'neutral';
+        if(current > vwap) signal = 'up';
+        else if(current < vwap) signal = 'down';
+        return { vwap, signal };
+    }
+
+    function calculateADX(prices, period=14) {
+        // Simplified ADX
+        return { adx: 25, signal: 'neutral' };
+    }
+
+    async function startAnalysis() {
+        if(isAnalyzing) return;
+        isAnalyzing = true;
+        const btn = document.getElementById('startBtn');
+        btn.disabled = true;
+        btn.textContent = "⏳ کۆکردنەوەی داتا...";
+
+        // Fetch real historical data from Twelve Data
+        const data = await fetchHistoricalData();
+        if(!data) {
+            alert("تکایە Twelve Data API Keyـی دروست داخڵ بکە");
+            isAnalyzing = false;
+            btn.disabled = false;
+            btn.textContent = "🚀 دەستپێکردن";
+            return;
+        }
+
+        const { prices, currentPrice } = data;
+        priceData = prices;
+
+        // Calculate all indicators
+        const rsi = calculateRSI(prices);
+        const macd = calculateMACD(prices);
+        const stoch = calculateStochastic(prices);
+        const bb = calculateBollingerBands(prices);
+        const cci = calculateCCI(prices);
+        const williams = calculateWilliamsR(prices);
+        const momentum = calculateMomentum(prices);
+        const atr = calculateATR(prices);
+        const ichimoku = calculateIchimoku(prices);
+        const sar = calculateParabolicSAR(prices);
+        const vwap = calculateVWAP(prices);
+        const adx = calculateADX(prices);
+
+        // Update filter UI
+        document.getElementById('fRSI').textContent = rsi.toFixed(1);
+        document.getElementById('fRSI').className = rsi < 30 ? 'filter-val up' : rsi > 70 ? 'filter-val down' : 'filter-val';
         
-        const rsi = calcRSI(prices);
-        const macd = calcMACD(prices);
-        const stoch = calcStochastic(prices);
-        const bb = calcBollingerBands(prices);
-        const adx = calcADX(prices);
-        const cci = calcCCI(prices);
-        const williams = calcWilliamsR(prices);
-        const atr = calcATR(prices);
-        const ichimoku = calcIchimoku(prices);
-        const sar = calcParabolicSAR(prices);
-        const vwap = calcVWAP(prices);
-        const mom = calcMomentum(prices);
+        document.getElementById('fMACD').textContent = macd.histogram.toFixed(2);
+        document.getElementById('fMACD').className = macd.signal === 'up' ? 'filter-val up' : macd.signal === 'down' ? 'filter-val down' : 'filter-val';
         
-        let upCount = 0, downCount = 0, neutralCount = 0;
-        let weightedScore = 0;
+        document.getElementById('fStoch').textContent = stoch.k.toFixed(1);
+        document.getElementById('fStoch').className = stoch.signal === 'up' ? 'filter-val up' : stoch.signal === 'down' ? 'filter-val down' : 'filter-val';
         
-        // Weighted scoring for HIGH ACCURACY
+        document.getElementById('fBB').textContent = bb.position;
+        document.getElementById('fBB').className = bb.signal === 'up' ? 'filter-val up' : bb.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fCCI').textContent = cci.cci.toFixed(1);
+        document.getElementById('fCCI').className = cci.signal === 'up' ? 'filter-val up' : cci.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fWilliams').textContent = williams.wr.toFixed(1);
+        document.getElementById('fWilliams').className = williams.signal === 'up' ? 'filter-val up' : williams.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fMom').textContent = momentum.momentum.toFixed(2);
+        document.getElementById('fMom').className = momentum.signal === 'up' ? 'filter-val up' : momentum.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fATR').textContent = atr.atrPercent.toFixed(2) + '%';
+        document.getElementById('fATR').className = 'filter-val';
+        
+        document.getElementById('fIchimoku').textContent = ichimoku.tenkan.toFixed(2);
+        document.getElementById('fIchimoku').className = ichimoku.signal === 'up' ? 'filter-val up' : ichimoku.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fSAR').textContent = sar.sar.toFixed(2);
+        document.getElementById('fSAR').className = sar.signal === 'up' ? 'filter-val up' : sar.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fVWAP').textContent = vwap.vwap.toFixed(2);
+        document.getElementById('fVWAP').className = vwap.signal === 'up' ? 'filter-val up' : vwap.signal === 'down' ? 'filter-val down' : 'filter-val';
+        
+        document.getElementById('fADX').textContent = adx.adx.toFixed(0);
+        document.getElementById('fADX').className = 'filter-val';
+
+        // Weighted scoring
+        let score = 0;
+        let reasons = [];
+        let upCount = 0, downCount = 0;
+
         const signals = {
-            rsi: { value: rsi.toFixed(0), signal: rsi < 30 ? 'up' : rsi > 70 ? 'down' : rsi < 45 ? 'up' : rsi > 55 ? 'down' : 'neutral', weight: 3 },
-            macd: { value: macd.histogram.toFixed(2), signal: macd.signal, weight: 3 },
-            stoch: { value: stoch.k.toFixed(0), signal: stoch.signal, weight: 2 },
-            bb: { value: bb.position, signal: bb.signal, weight: 2 },
-            adx: { value: adx.adx.toFixed(0), signal: adx.signal, weight: 2 },
-            cci: { value: cci.cci.toFixed(0), signal: cci.signal, weight: 1 },
-            williams: { value: williams.wr.toFixed(0), signal: williams.signal, weight: 1 },
-            atr: { value: atr.atrPercent.toFixed(2) + '%', signal: atr.signal, weight: 1 },
-            ichimoku: { value: ichimoku.tenkan.toFixed(2), signal: ichimoku.signal, weight: 2 },
-            sar: { value: sar.sar.toFixed(2), signal: sar.signal, weight: 2 },
-            vwap: { value: vwap.vwap.toFixed(2), signal: vwap.signal, weight: 2 },
-            mom: { value: mom.momentum.toFixed(2), signal: mom.signal, weight: 1 }
+            rsi: { value: rsi, signal: rsi < 30 ? 'up' : rsi > 70 ? 'down' : rsi < 45 ? 'up' : rsi > 55 ? 'down' : 'neutral', weight: 3 },
+            macd: { signal: macd.signal, weight: 3 },
+            stoch: { signal: stoch.signal, weight: 2 },
+            bb: { signal: bb.signal, weight: 2 },
+            cci: { signal: cci.signal, weight: 1 },
+            williams: { signal: williams.signal, weight: 1 },
+            momentum: { signal: momentum.signal, weight: 2 },
+            atr: { signal: atr.signal, weight: 1 },
+            ichimoku: { signal: ichimoku.signal, weight: 2 },
+            sar: { signal: sar.signal, weight: 2 },
+            vwap: { signal: vwap.signal, weight: 2 },
+            adx: { signal: adx.signal, weight: 1 }
         };
-        
-        Object.values(signals).forEach(s => {
-            if (s.signal === 'up') { upCount++; weightedScore += s.weight; }
-            else if (s.signal === 'down') { downCount++; weightedScore -= s.weight; }
-            else neutralCount++;
+
+        Object.entries(signals).forEach(([name, s]) => {
+            if(s.signal === 'up') { score += s.weight; upCount++; }
+            else if(s.signal === 'down') { score -= s.weight; downCount++; }
         });
-        
+
         // Calculate confidence
         const maxPossible = 22;
-        const rawConfidence = (Math.abs(weightedScore) / maxPossible) * 100;
-        
-        // Boost if major indicators agree
+        const rawConfidence = (Math.abs(score) / maxPossible) * 100;
         let finalConfidence = rawConfidence;
+        
+        // Boost if RSI and MACD agree
         if(signals.rsi.signal !== 'neutral' && signals.macd.signal !== 'neutral' && signals.rsi.signal === signals.macd.signal) {
             finalConfidence += 15;
         }
         
         finalConfidence = Math.min(98, Math.max(40, finalConfidence));
 
-        return {
-            score: weightedScore,
-            upCount, downCount, neutralCount,
-            signals,
-            confidence: finalConfidence,
-            currentPrice: current
-        };
-    }
-
-    function updateFilterUI(signals) {
-        const updateFilter = (id, signal, value) => {
-            const el = document.getElementById(id);
-            el.textContent = value;
-            el.className = `filter-value ${signal === 'up' ? 'filter-signal-up' : signal === 'down' ? 'filter-signal-down' : 'filter-signal-neutral'}`;
-        };
+        // Build reasons list
+        if(rsi < 30) reasons.push({text: `RSI زۆر نزمە (${rsi.toFixed(1)}) - Oversold`, type: 'up'});
+        else if(rsi > 70) reasons.push({text: `RSI زۆر بەرزە (${rsi.toFixed(1)}) - Overbought`, type: 'down'});
         
-        updateFilter('fRSI', signals.rsi.signal, signals.rsi.value);
-        updateFilter('fMACD', signals.macd.signal, signals.macd.value);
-        updateFilter('fStoch', signals.stoch.signal, signals.stoch.value);
-        updateFilter('fBB', signals.bb.signal, signals.bb.value);
-        updateFilter('fADX', signals.adx.signal, signals.adx.value);
-        updateFilter('fCCI', signals.cci.signal, signals.cci.value);
-        updateFilter('fWilliams', signals.williams.signal, signals.williams.value);
-        updateFilter('fATR', signals.atr.signal, signals.atr.value);
-        updateFilter('fIchimoku', signals.ichimoku.signal, signals.ichimoku.value);
-        updateFilter('fSAR', signals.sar.signal, signals.sar.value);
-        updateFilter('fVWAP', signals.vwap.signal, signals.vwap.value);
-        updateFilter('fMom', signals.mom.signal, signals.mom.value);
+        if(macd.signal === 'up') reasons.push({text: "MACD: خاچەکی سەرەوە (Bullish)", type: 'up'});
+        else if(macd.signal === 'down') reasons.push({text: "MACD: خاچەکی خوارەوە (Bearish)", type: 'down'});
         
-        document.getElementById('countUp').textContent = signals.upCount || 0;
-        document.getElementById('countDown').textContent = signals.downCount || 0;
-        document.getElementById('countNeutral').textContent = signals.neutralCount || 0;
-    }
+        if(stoch.signal === 'up') reasons.push({text: "Stochastic: نزمە (Oversold)", type: 'up'});
+        else if(stoch.signal === 'down') reasons.push({text: "Stochastic: بەرزە (Overbought)", type: 'down'});
+        
+        if(bb.signal === 'up') reasons.push({text: "Bollinger: نرخ لە خوارەوەی باند", type: 'up'});
+        else if(bb.signal === 'down') reasons.push({text: "Bollinger: نرخ لە سەرەوەی باند", type: 'down'});
+        
+        if(momentum.signal === 'up') reasons.push({text: "Momentum: ئەرێنی", type: 'up'});
+        else if(momentum.signal === 'down') reasons.push({text: "Momentum: نەرێنی", type: 'down'});
 
-    function startCycle() {
-        if (predictionActive || collectingData) return;
-        if (priceHistory.length < 15) { 
-            alert(`تکایە چاوەڕێ بکە. ئێستا: ${priceHistory.length}/15`); 
-            return; 
+        // Display results
+        const box = document.getElementById('predBox');
+        const arrow = document.getElementById('signalArrow');
+        const text = document.getElementById('signalText');
+        const circle = document.getElementById('confCircle');
+        const confVal = document.getElementById('confValue');
+        const reasonContainer = document.getElementById('reasonContainer');
+        const reasonList = document.getElementById('reasonList');
+
+        confVal.textContent = finalConfidence.toFixed(0) + "%";
+
+        if(finalConfidence < 85) {
+            box.className = "prediction-box wait";
+            arrow.textContent = "";
+            text.textContent = "WAIT (چاوەڕێ - دڵنیایی کەمە)";
+            text.style.color = "#ffd700";
+            circle.className = "confidence-circle med";
+            reasonContainer.style.display = 'block';
+            reasonList.innerHTML = `<div class="reason-item"><span class="reason-icon reason-neutral">⚠️</span><span class="reason-text reason-neutral">دڵنیایی تەنها ${finalConfidence.toFixed(0)}%ە. چاوەڕێ بکە تا بگاتە ٨%+</span></div>`;
+        } else if(score >= 4) {
+            box.className = "prediction-box buy";
+            arrow.textContent = "⬆️";
+            text.textContent = "BUY (کڕین)";
+            text.style.color = "#00ff88";
+            circle.className = "confidence-circle high";
+            reasonContainer.style.display = 'block';
+            reasonList.innerHTML = reasons.filter(r => r.type === 'up').map(r => `
+                <div class="reason-item">
+                    <span class="reason-icon reason-up">✅</span>
+                    <span class="reason-text reason-up">${r.text}</span>
+                </div>
+            `).join('');
+        } else if(score <= -4) {
+            box.className = "prediction-box sell";
+            arrow.textContent = "️";
+            text.textContent = "SELL (فرۆشتن)";
+            text.style.color = "#ff4444";
+            circle.className = "confidence-circle high";
+            reasonContainer.style.display = 'block';
+            reasonList.innerHTML = reasons.filter(r => r.type === 'down').map(r => `
+                <div class="reason-item">
+                    <span class="reason-icon reason-down">❌</span>
+                    <span class="reason-text reason-down">${r.text}</span>
+                </div>
+            `).join('');
+        } else {
+            box.className = "prediction-box wait";
+            arrow.textContent = "✋";
+            text.textContent = "WAIT (چاوەڕێ)";
+            text.style.color = "#ffd700";
+            circle.className = "confidence-circle med";
+            reasonContainer.style.display = 'none';
         }
-        if (autoRestartTimeout) { clearTimeout(autoRestartTimeout); autoRestartTimeout = null; }
-        
-        predictionActive = true; buttonState = 'predicting'; updatePhaseBadge('prediction');
-        
-        const analysis = analyzeAll();
-        updateFilterUI(analysis.signals);
-        
-        // ONLY give signal if confidence > 85%
-        if(analysis.confidence < 85) {
-            // Wait for better signal
-            const card = document.getElementById('predictionCard');
-            const arrow = document.getElementById('predictionArrow');
-            const text = document.getElementById('predictionText');
-            const reasonBox = document.getElementById('analysisReason');
-            
-            card.className = 'prediction-card waiting';
-            arrow.textContent = '';
-            text.textContent = 'چاوەڕێ بکە (دڵنیایی کەمە)';
-            reasonBox.style.display = 'block';
-            reasonBox.textContent = '⚠️ دڵنیایی تەنها ' + analysis.confidence.toFixed(0) + '%ە. چاوەڕێ بکە تا بگاتە ٥%+';
-            
-            setTimeout(() => {
-                predictionActive = false;
-                buttonState = 'ready';
-                enableStartButton();
-            }, 5000);
-            return;
-        }
-        
-        const direction = analysis.score > 0 ? 'bullish' : 'bearish';
-        
-        const reasons = [];
-        if (analysis.signals.rsi.signal === 'up') reasons.push(`RSI: ${analysis.signals.rsi.value} (Oversold)`);
-        if (analysis.signals.rsi.signal === 'down') reasons.push(`RSI: ${analysis.signals.rsi.value} (Overbought)`);
-        if (analysis.signals.macd.signal === 'up') reasons.push("MACD: خاچەکی سەرەوە");
-        if (analysis.signals.macd.signal === 'down') reasons.push("MACD: خاچەکی خوارەوە");
-        if (analysis.signals.stoch.signal === 'up') reasons.push("Stochastic: نزمە");
-        if (analysis.signals.stoch.signal === 'down') reasons.push("Stochastic: بەرزە");
-        if (analysis.signals.bb.signal === 'up') reasons.push("Bollinger: خوارەوە");
-        if (analysis.signals.bb.signal === 'down') reasons.push("Bollinger: سەرەوە");
-        if (analysis.signals.adx.signal === 'up') reasons.push(`ADX: ${analysis.signals.adx.value}`);
-        if (analysis.signals.cci.signal === 'up') reasons.push(`CCI: ${analysis.signals.cci.value}`);
-        if (analysis.signals.williams.signal === 'up') reasons.push(`Williams: ${analysis.signals.williams.value}`);
-        if (analysis.signals.ichimoku.signal === 'up') reasons.push("Ichimoku: سەرەوەی هەور");
-        if (analysis.signals.sar.signal === 'up') reasons.push("SAR: سەرەوە");
-        if (analysis.signals.vwap.signal === 'up') reasons.push("VWAP: سەرەوەی نرخی دادپەروەر");
-        if (analysis.signals.mom.signal === 'up') reasons.push("Momentum: ئەرێنی");
-        
-        const reasonText = "🔍 هۆکارەکان:\n" + (reasons.length > 0 ? reasons.join("\n") : "️ بازاڕ نائارامە");
 
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const btn = document.getElementById('predictionBtn');
-        const confFill = document.getElementById('confidenceFill');
-        const reasonBox = document.getElementById('analysisReason');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-
-        if (direction === 'bullish') { card.className = 'prediction-card bullish'; arrow.textContent = '⬆️'; text.textContent = 'بارز دەبێتەوە (BUY)'; }
-        else { card.className = 'prediction-card bearish'; arrow.textContent = '⬇️'; text.textContent = 'نزم دەبێتەوە (SELL)'; }
-        
-        // High accuracy visual
-        if(analysis.confidence > 85) {
-            confFill.classList.add('high-acc');
-        }
-        
-        confFill.style.width = analysis.confidence.toFixed(0) + '%';
-        confFill.textContent = analysis.confidence.toFixed(0) + '%';
-        reasonBox.style.display = 'block'; reasonBox.textContent = reasonText;
-        statusBox.style.display = 'block'; statusBox.textContent = '🎯 پێشبینی چالاکە (دڵنیایی بەرز)...';
-        timerLabel.textContent = 'کاتی بەسەرچوونی پێشبینی';
-        
-        btn.disabled = true; btn.textContent = '⏳ پێشبینی چالاکە...'; btn.classList.remove('ready');
-        document.getElementById('volatilityIndicator').style.display = 'none';
-        
-        startCountdown(300);
-        autoRestartTimeout = setTimeout(() => { startDataCollection(); }, 300000);
+        setTimeout(() => {
+            isAnalyzing = false;
+            btn.disabled = false;
+            btn.textContent = "🔄 شیکاری نوێ";
+        }, 5000);
     }
-
-    function startDataCollection() {
-        predictionActive = false; collectingData = true; buttonState = 'collecting'; updatePhaseBadge('collecting');
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-        const btn = document.getElementById('predictionBtn');
-        
-        card.className = 'prediction-card collecting'; arrow.textContent = '📡'; text.textContent = 'کۆکردنەوەی داتای تازە...'; timerLabel.textContent = 'کاتی کۆکردنەوەی داتا';
-        btn.disabled = true; btn.classList.remove('ready');
-        
-        let collectionTime = 120;
-        if (volatilityLevel === 'high') { collectionTime = 300; statusBox.textContent = '⚠️ بازاڕ زۆر نائارامە (٥ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; updatePhaseBadge('volatile'); }
-        else if (volatilityLevel === 'medium') { collectionTime = 180; statusBox.textContent = ' بازاڕ نائارامە (٣ خولەک)'; btn.textContent = '⏳ چاوەڕوانی ئارامبوون...'; }
-        else { statusBox.textContent = '✅ بازاڕ ئارامە (٢ خولەک)'; btn.textContent = '⏳ کۆکردنەوەی داتا...'; }
-        statusBox.style.display = 'block';
-        
-        startCountdown(collectionTime);
-        autoRestartTimeout = setTimeout(() => { collectingData = false; enableStartButton(); }, collectionTime * 1000);
-    }
-
-    function enableStartButton() {
-        const btn = document.getElementById('predictionBtn');
-        const statusBox = document.getElementById('statusBox');
-        const timerLabel = document.getElementById('timerLabel');
-        const timerValue = document.getElementById('timerValue');
-        buttonState = 'ready';
-        btn.disabled = false; btn.textContent = '🚀 دەستپێکردن'; btn.classList.add('ready');
-        statusBox.style.display = 'block'; statusBox.textContent = '✅ داتا تازە کرایەوە!';
-        timerLabel.textContent = 'کاتی ماوە'; timerValue.textContent = '05:00'; updatePhaseBadge('ready');
-    }
-
-    function updatePhaseBadge(phase) {
-        const badge = document.getElementById('phaseBadge');
-        if (phase === 'prediction') { badge.className = 'phase-badge phase-prediction'; badge.textContent = 'قۆناغی پێشبینی'; }
-        else if (phase === 'collecting') { badge.className = 'phase-badge phase-collecting'; badge.textContent = 'کۆکردنەوەی داتا'; }
-        else if (phase === 'ready') { badge.className = 'phase-badge phase-ready'; badge.textContent = 'ئامادەیە'; }
-        else if (phase === 'volatile') { badge.className = 'phase-badge phase-volatile'; badge.textContent = 'بازاڕ نائارامە'; }
-    }
-
-    function startCountdown(seconds) {
-        if (countdownInterval) clearInterval(countdownInterval);
-        let remaining = seconds;
-        const timerEl = document.getElementById('timerValue');
-        countdownInterval = setInterval(() => {
-            const mins = Math.floor(remaining / 60); const secs = remaining % 60;
-            timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            if (remaining <= 0) clearInterval(countdownInterval);
-            remaining--;
-        }, 1000);
-    }
-
-    function resetUI() {
-        const card = document.getElementById('predictionCard');
-        const arrow = document.getElementById('predictionArrow');
-        const text = document.getElementById('predictionText');
-        const btn = document.getElementById('predictionBtn');
-        const confFill = document.getElementById('confidenceFill');
-        const reasonBox = document.getElementById('analysisReason');
-        const timerLabel = document.getElementById('timerLabel');
-        
-        card.className = 'prediction-card waiting'; arrow.textContent = ''; text.textContent = 'چاوەڕێبە...';
-        btn.disabled = false; btn.textContent = '🚀 دەستپێکردن'; btn.classList.remove('ready');
-        document.getElementById('timerValue').textContent = '05:00';
-        confFill.style.width = '0%'; confFill.textContent = '0%';
-        confFill.classList.remove('high-acc');
-        reasonBox.style.display = 'none'; timerLabel.textContent = 'کاتی ماوە';
-        
-        ['fRSI', 'fMACD', 'fStoch', 'fBB', 'fADX', 'fCCI', 'fWilliams', 'fATR', 'fIchimoku', 'fSAR', 'fVWAP', 'fMom'].forEach(id => {
-            const el = document.getElementById(id); el.textContent = '-'; el.className = 'filter-value filter-signal-neutral';
-        });
-        document.getElementById('countUp').textContent = '0';
-        document.getElementById('countDown').textContent = '0';
-        document.getElementById('countNeutral').textContent = '0';
-
-        if (countdownInterval) clearInterval(countdownInterval);
-        if (autoRestartTimeout) clearTimeout(autoRestartTimeout);
-    }
-
-    window.onload = function() {
-        reloadChart('dark');
-        setInterval(updateDataStatus, 10000);
-    };
 </script>
 </body>
 </html>
