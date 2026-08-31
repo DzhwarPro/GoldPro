@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold M1 Fast Sniper - Fixed</title>
+    <title>Gold M1 Instant Sniper</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; }
         
@@ -22,7 +22,6 @@
         .card { border-radius: 12px; padding: 15px; margin-bottom: 12px; }
         .chart-wrapper { width: 100%; height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
         
-        /* Status Bar */
         .status-bar { 
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px; border-radius: 8px; margin-bottom: 15px;
@@ -31,20 +30,21 @@
         .data-status { color: #ff9800; font-weight: bold; }
         .data-status.ready { color: #00c853; }
         
-        /* Candle Timer */
         .candle-timer-box { text-align: center; margin: 15px 0; }
         .candle-timer { font-size: 32px; font-weight: bold; font-family: monospace; color: #d4a017; }
         .candle-label { font-size: 12px; opacity: 0.7; }
         
-        /* Signal Card */
         .signal-card { 
             border-radius: 12px; padding: 20px; text-align: center; 
             border: 3px solid; margin: 15px 0; min-height: 150px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .signal-card.buy { border-color: #00c853; background: rgba(0,200,83,0.1); }
-        .signal-card.sell { border-color: #d50000; background: rgba(213,0,0,0.1); }
+        .signal-card.buy { border-color: #00c853; background: rgba(0,200,83,0.1); animation: pulseGreen 2s infinite; }
+        .signal-card.sell { border-color: #d50000; background: rgba(213,0,0,0.1); animation: pulseRed 2s infinite; }
         .signal-card.waiting { border-color: #444; background: rgba(255,255,255,0.02); }
+        
+        @keyframes pulseGreen { 0%,100% { box-shadow: 0 0 10px rgba(0,200,83,0.2); } 50% { box-shadow: 0 0 20px rgba(0,200,83,0.5); } }
+        @keyframes pulseRed { 0%,100% { box-shadow: 0 0 10px rgba(213,0,0,0.2); } 50% { box-shadow: 0 0 20px rgba(213,0,0,0.5); } }
         
         .signal-arrow { font-size: 60px; margin-bottom: 10px; }
         .signal-text { font-size: 24px; font-weight: bold; }
@@ -67,11 +67,11 @@
 
 <div class="container">
     <div class="header">
-        <h1> Gold M1 Fast</h1>
+        <h1> Gold M1 Instant</h1>
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
     
-    <div class="source-badge">📡 M1 Chart | M5+M15 Analysis | هەر ١ خولەک سیگناڵ</div>
+    <div class="source-badge">📡 M1 Chart | M5+M15 Analysis | یەکسەر سیگناڵ</div>
 
     <div class="card">
         <div class="chart-wrapper">
@@ -80,22 +80,19 @@
     </div>
 
     <div class="card">
-        <!-- Data Status -->
         <div class="status-bar">
             <span>بارودۆخی داتا:</span>
             <span id="dataStatusText" class="data-status">⏳ چاوەڕوانی دەستپێکردن...</span>
         </div>
 
-        <!-- Candle Timer -->
         <div class="candle-timer-box">
             <div class="candle-label">کاتی ماوە بۆ مۆمی داهاتوو</div>
             <div class="candle-timer" id="candleCountdown">--</div>
         </div>
 
-        <!-- Signal Display -->
         <div id="signalCard" class="signal-card waiting">
             <div id="signalArrow" class="signal-arrow">⏳</div>
-            <div id="signalText" class="signal-text">چاوەڕوانی مۆمی M1...</div>
+            <div id="signalText" class="signal-text">چاوەڕێبە...</div>
             <div id="reasonText" class="reason-text"></div>
         </div>
         
@@ -113,9 +110,8 @@
     let systemActive = false;
     let fetchInterval = null;
     let timerInterval = null;
-    let basePrice = 2350; // Starting mock price
+    let basePrice = 2350;
 
-    // === Theme & Chart ===
     function toggleTheme() {
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.body.className = currentTheme;
@@ -133,21 +129,18 @@
         });
     }
 
-    // === FIX: Generate Mock History for M15 Analysis ===
     function generateMockHistory() {
         priceHistory = [];
         let price = basePrice;
         const now = Date.now();
-        // Generate 20 minutes of history (1200 seconds) to ensure M15 is full
         for (let i = 1200; i > 0; i--) {
-            const change = (Math.random() - 0.5) * 0.5; // Small random changes
+            const change = (Math.random() - 0.5) * 0.5;
             price += change;
             priceHistory.push({ time: now - (i * 1000), price: price });
         }
         updateDataStatus();
     }
 
-    // === Fast Data Collection (Every 1 Second) ===
     async function fetchPrice() {
         try {
             const res = await fetch('https://api.metalpriceapi.com/v1/latest?api_key=55da3a9ecdb23ffd4370123283fdb61b&base=USD&currencies=XAU');
@@ -156,7 +149,6 @@
                 addTick(1 / data.rates.XAU);
             }
         } catch (e) {
-            // If API fails, continue with slight random movement based on last price
             const last = priceHistory.length ? priceHistory[priceHistory.length-1].price : basePrice;
             addTick(last + (Math.random() - 0.5) * 0.2);
         }
@@ -165,13 +157,11 @@
 
     function addTick(price) {
         priceHistory.push({ time: Date.now(), price: price });
-        // Keep last 2000 points (approx 33 mins) to save memory
         if (priceHistory.length > 2000) priceHistory.shift();
     }
 
     function updateDataStatus() {
         const statusEl = document.getElementById('dataStatusText');
-        // We need at least 900 seconds (15 mins) of data
         const progress = Math.min(100, Math.floor((priceHistory.length / 900) * 100));
         
         if (progress >= 100) {
@@ -183,9 +173,7 @@
         }
     }
 
-    // === Indicators ===
     function buildCandle(ticks, minutes) {
-        // Since we have 1 tick per second now:
         const requiredTicks = minutes * 60; 
         if (ticks.length < requiredTicks) return null;
         
@@ -214,11 +202,9 @@
         return ema;
     }
 
-    // === Analysis Logic ===
     function analyzeMarket() {
         const prices = priceHistory.map(t => t.price);
         
-        // Check Data Sufficiency
         if (prices.length < 900) { 
             return { valid: false, reason: `داتا کەمە (${Math.floor(prices.length/60)} خولەک)` };
         }
@@ -234,18 +220,15 @@
         let score = 0;
         let reasons = [];
 
-        // M15 Analysis
         if (candleM15.isStrong && candleM15.isBullish) { score += 3; reasons.push("M15 بەهێزە ⬆️"); }
         else if (candleM15.isStrong && candleM15.isBearish) { score -= 3; reasons.push("M15 بەهێزە ⬇️"); }
         
         if (current > ema9_M15) { score += 2; reasons.push("لەسەر EMA"); }
         else { score -= 2; reasons.push("لەژێر EMA"); }
 
-        // M5 Analysis
         if (candleM5.isStrong && candleM5.isBullish) { score += 2; reasons.push("M5 سەرەوە"); }
         else if (candleM5.isStrong && candleM5.isBearish) { score -= 2; reasons.push("M5 خوارەوە"); }
 
-        // Decision
         let direction = null;
         if (score >= 4) direction = 'buy';
         else if (score <= -4) direction = 'sell';
@@ -259,7 +242,6 @@
         };
     }
 
-    // === System Control ===
     function toggleSystem() {
         if (systemActive) {
             stopSystem();
@@ -273,15 +255,17 @@
         document.getElementById('startBtn').textContent = '⏹ وەستاندن';
         document.getElementById('startBtn').style.background = '#d50000';
         
-        // 1. Generate Mock History first so we have data immediately
         generateMockHistory();
-        
-        // 2. Start fetching real price every 1 second
         fetchPrice(); 
         fetchInterval = setInterval(fetchPrice, 1000);
-        
-        // 3. Start Timer
         startCandleTimer();
+        
+        // === NEW: Execute signal immediately on start ===
+        setTimeout(() => {
+            if (systemActive) {
+                executeSignal();
+            }
+        }, 2000); // Wait 2 seconds for first data update
     }
 
     function stopSystem() {
@@ -304,7 +288,7 @@
         
         document.getElementById('candleCountdown').textContent = remaining + 's';
         
-        // Execute analysis exactly when new candle starts (seconds == 0)
+        // Also execute on new candle start
         if (seconds === 0 && systemActive) {
             executeSignal();
         }
@@ -325,7 +309,7 @@
             reason.textContent = result.reason;
         } else {
             card.className = `signal-card ${result.direction}`;
-            arrow.textContent = result.direction === 'buy' ? '⬆️' : '⬇️';
+            arrow.textContent = result.direction === 'buy' ? '⬆️' : '️';
             text.textContent = result.direction === 'buy' ? 'BUY' : 'SELL';
             text.style.color = result.direction === 'buy' ? '#00c853' : '#d50000';
             reason.textContent = `${result.reasons} | هێزی: ${result.confidence}%`;
@@ -338,7 +322,7 @@
         updateDataStatus();
         document.getElementById('signalCard').className = 'signal-card waiting';
         document.getElementById('signalArrow').textContent = '⏳';
-        document.getElementById('signalText').textContent = 'چاوەڕوانی مۆمی M1...';
+        document.getElementById('signalText').textContent = 'چاوەڕێبە...';
         document.getElementById('reasonText').textContent = '';
         document.getElementById('candleCountdown').textContent = '--';
     }
