@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Auto + Stats</title>
+<title>Gold Sniper Pro - Auto + Chart</title>
 <style>
     :root { --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; --red: #ff4444; --text: #e0e0e0; --blue: #007bff; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 20px; }
+    body { background: var(--bg); color: var(--text); padding: 15px; }
     
     .container { max-width: 800px; margin: 0 auto; }
-    .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #2a2a35; }
+    .card { background: var(--card); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid #2a2a35; }
     
-    .signal-box { text-align: center; padding: 30px; border: 2px solid #333; border-radius: 12px; margin-bottom: 20px; position: relative; }
+    /* Chart Box */
+    .chart-box { height: 350px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid #333; margin-bottom: 15px; }
+    
+    .signal-box { text-align: center; padding: 25px; border: 2px solid #333; border-radius: 12px; position: relative; }
     .signal-box.buy { border-color: var(--green); background: rgba(0,255,136,0.05); }
     .signal-box.sell { border-color: var(--red); background: rgba(255,68,68,0.05); }
     .signal-box.wait { border-color: var(--gold); }
@@ -20,48 +23,50 @@
     
     @keyframes pulse { 0%,100% { box-shadow: 0 0 20px rgba(0,123,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,123,255,0.6); } }
     
-    .price { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
-    .arrow { font-size: 80px; margin: 10px 0; }
-    .status-text { font-size: 28px; font-weight: 900; letter-spacing: 2px; }
+    .price { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
+    .arrow { font-size: 90px; margin: 5px 0; }
+    .status-text { font-size: 30px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
     .buy .status-text { color: var(--green); }
     .sell .status-text { color: var(--red); }
     .wait .status-text { color: var(--gold); }
     
-    .conf-circle { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; background: rgba(0,0,0,0.3); }
+    .conf-circle { width: 130px; height: 130px; border-radius: 50%; border: 5px solid #333; margin: 15px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); }
     .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
     .conf-circle.med { border-color: var(--gold); }
-    .conf-circle.low { border-color: var(--red); }
+    .conf-val { font-size: 34px; font-weight: bold; }
+    .conf-label { font-size: 12px; color: #888; margin-top: 5px; }
     
-    .timer { font-size: 40px; font-family: monospace; color: var(--gold); margin: 15px 0; display: none; }
-    .timer.active { display: block; }
+    .timer { font-size: 44px; font-family: monospace; color: var(--gold); margin: 15px 0; display: none; font-weight: bold; }
+    .timer.active { display: block; animation: pulse 1s infinite; }
     
-    .auto-status { background: rgba(0,123,255,0.1); border: 2px solid var(--blue); border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; display: none; }
+    .auto-status { background: rgba(0,123,255,0.1); border: 2px solid var(--blue); border-radius: 10px; padding: 12px; margin: 15px 0; text-align: center; display: none; }
     .auto-status.active { display: block; }
-    .auto-status .next-check { font-size: 24px; font-weight: bold; color: var(--blue); margin-top: 10px; }
+    .auto-status .next-check { font-size: 24px; font-weight: bold; color: var(--blue); margin-top: 8px; }
     
-    .reasons { text-align: right; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 15px; }
-    .reason-item { margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; }
-    .reason-icon { margin-left: 10px; }
+    .reasons { text-align: right; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 15px; }
+    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 8px; font-size: 14px; }
+    .reason-item { margin-bottom: 6px; font-size: 13px; display: flex; align-items: center; }
+    .reason-icon { margin-left: 8px; font-size: 14px; }
     
-    .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 20px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+    .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
     .btn:hover { transform: scale(1.02); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; color: #fff; }
     .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
     .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
     
-    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-    .ind-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #2a2a35; }
-    .ind-name { font-size: 12px; color: #888; margin-bottom: 5px; }
-    .ind-val { font-weight: bold; font-size: 16px; }
+    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-top: 12px; }
+    .ind-item { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #2a2a35; }
+    .ind-name { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .ind-val { font-weight: bold; font-size: 14px; }
     .up { color: var(--green); }
     .down { color: var(--red); }
     
-    .error-msg { color: var(--red); text-align: center; margin-top: 10px; font-size: 14px; display: none; }
-    .log { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+    .error-msg { color: var(--red); text-align: center; margin-top: 8px; font-size: 13px; display: none; }
+    .log { font-size: 12px; color: #666; text-align: center; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px; }
     
-    /* History & Stats Styles */
-    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
-    .win-rate { font-size: 20px; font-weight: bold; color: var(--green); }
+    /* History & Stats */
+    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+    .win-rate { font-size: 18px; font-weight: bold; }
     .history-list { max-height: 300px; overflow-y: auto; }
     .history-item { 
         display: flex; justify-content: space-between; align-items: center; 
@@ -70,39 +75,50 @@
     }
     .history-item.win { border-right-color: var(--green); }
     .history-item.loss { border-right-color: var(--red); }
-    .h-signal { font-weight: bold; font-size: 16px; }
-    .h-details { font-size: 12px; color: #888; margin-top: 4px; }
-    .h-result { font-weight: bold; font-size: 14px; }
+    .h-signal { font-weight: bold; font-size: 16px; margin-bottom: 3px; }
+    .h-details { font-size: 11px; color: #888; }
+    .h-result { font-weight: bold; font-size: 14px; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.3); }
     .h-result.win { color: var(--green); }
     .h-result.loss { color: var(--red); }
+    
+    .mode-badge { position: absolute; top: 8px; left: 8px; font-size: 11px; color: var(--blue); font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- TradingView Chart -->
+    <div class="card" style="padding: 10px;">
+        <div id="tv_chart_container" class="chart-box"></div>
+    </div>
+
     <div class="card signal-box wait" id="signalCard">
-        <div style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: var(--blue);" id="modeBadge">🔄 AUTO MODE</div>
+        <div class="mode-badge" id="modeBadge">🔄 AUTO MODE</div>
         <div class="price" id="priceDisplay">--</div>
         <div class="arrow" id="arrow">⏳</div>
         <div class="status-text" id="statusText">چاوەڕێبە...</div>
         
-        <div class="conf-circle med" id="confCircle">0%</div>
+        <div class="conf-circle med" id="confCircle">
+            <div class="conf-val" id="confVal">0%</div>
+            <div class="conf-label">ئاستی دڵنیایی</div>
+        </div>
         
         <div class="timer" id="timer">05:00</div>
         
         <div class="auto-status" id="autoStatus">
-            <div> دۆخی خۆکار چالاکە - هەر ٢ خولەک جارێک شیکاری دەکات</div>
-            <div class="next-check" id="nextCheck">٢:٠٠</div>
-            <div style="font-size: 12px; margin-top: 5px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
+            <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+            <div class="next-check" id="nextCheck">٠١:٠</div>
+            <div style="font-size: 11px; margin-top: 4px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
         </div>
         
         <div class="reasons" id="reasonsBox" style="display:none;">
-            <div style="font-weight:bold; color:var(--gold); margin-bottom:10px;">🔍 هۆکارەکان:</div>
+            <div class="reasons-title"> هۆکارەکانی سیگناڵ:</div>
             <div id="reasonsList"></div>
         </div>
     </div>
 
     <div class="card">
+        <div style="font-weight: bold; margin-bottom: 12px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
         <div class="indicators">
             <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
             <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -111,36 +127,54 @@
             <div class="ind-item"><div class="ind-name">Momentum</div><div class="ind-val" id="iMom">-</div></div>
         </div>
         <div class="error-msg" id="errorMsg"></div>
-        <div class="log" id="log">ئامادەیە...</div>
+        <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
         
-        <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()">🤖 دەستپێکردنی دۆخی خۆکار (AUTO)</button>
+        <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:12px;"> دەستپێکردنی دۆخی خۆکار (AUTO)</button>
         <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
     </div>
 
     <!-- History & Stats Section -->
     <div class="card" id="historyCard" style="display: none;">
         <div class="stats-header">
-            <div style="font-weight: bold; color: var(--gold);"> مێژووی سیگناڵەکان</div>
+            <div style="font-weight: bold; color: var(--gold); font-size: 16px;">📈 مێژووی سیگناڵەکان</div>
             <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
         </div>
         <div class="history-list" id="historyList"></div>
     </div>
 </div>
 
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
     let autoMode = false;
     let autoInterval = null;
     let countdownInterval = null;
     let signalTimer = null;
-    let nextCheckTime = 120; // 2 minutes
+    let nextCheckTime = 60; // Changed to 1 minute (60 seconds)
     let isProcessing = false;
     
     // Stats Variables
     let history = [];
     let wins = 0;
     let losses = 0;
-    let currentSignal = null; // Stores active signal data
+    let currentSignal = null;
+
+    // Initialize TradingView Chart
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "OANDA:XAUUSD",
+        "interval": "5",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "ar",
+        "toolbar_bg": "#12121a",
+        "enable_publishing": false,
+        "hide_top_toolbar": false,
+        "save_image": false,
+        "container_id": "tv_chart_container",
+        "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
+    });
 
     // Math Functions
     function rsi(p, n=14) {
@@ -183,6 +217,7 @@
         const manualBtn = document.getElementById('manualBtn');
         const card = document.getElementById('signalCard');
         const autoStatus = document.getElementById('autoStatus');
+        const modeBadge = document.getElementById('modeBadge');
         
         if(autoMode) {
             btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار';
@@ -190,7 +225,8 @@
             manualBtn.style.display = 'block';
             card.classList.add('auto');
             autoStatus.classList.add('active');
-            log('🔄 دۆخی خۆکار چالاک کرا - هەر ٢ خولەک جارێک شیکاری دەکات');
+            modeBadge.textContent = '🤖 AUTO ACTIVE';
+            log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
             stopAutoMode();
@@ -206,24 +242,27 @@
         const manualBtn = document.getElementById('manualBtn');
         const card = document.getElementById('signalCard');
         const autoStatus = document.getElementById('autoStatus');
+        const modeBadge = document.getElementById('modeBadge');
         
-        btn.textContent = ' دەستپێکردنی دۆخی خۆکار (AUTO)';
+        btn.textContent = '🤖 دەستپێکردنی دۆخی خۆکار (AUTO)';
         btn.classList.remove('active');
         manualBtn.style.display = 'none';
         card.classList.remove('auto');
         autoStatus.classList.remove('active');
+        modeBadge.textContent = '🔄 AUTO MODE';
         log('⏹️ دۆخی خۆکار وەستا');
     }
 
     function startAutoLoop() {
-        nextCheckTime = 120;
+        nextCheckTime = 60; // Reset to 1 minute
         if(autoInterval) clearInterval(autoInterval);
         
+        // Run analysis every 1 minute (60000 ms)
         autoInterval = setInterval(() => {
             if(!isProcessing && autoMode) {
                 runAnalysis(false);
             }
-        }, 120000); // Every 2 minutes
+        }, 60000);
         
         // Countdown timer
         if(countdownInterval) clearInterval(countdownInterval);
@@ -234,7 +273,7 @@
                 let s = nextCheckTime % 60;
                 document.getElementById('nextCheck').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             } else if(autoMode) {
-                nextCheckTime = 120;
+                nextCheckTime = 60;
             }
         }, 1000);
     }
@@ -248,9 +287,9 @@
         err.style.display = 'none';
         
         if(manual) {
-            logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+            logEl.textContent = ' شیکاری دەستپێکرد...';
         } else {
-            logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+            logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
         }
 
         try {
@@ -269,10 +308,8 @@
             let price = prices[prices.length-1];
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
-            // Calc indicators
             let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
 
-            // Update UI
             document.getElementById('iRSI').textContent = r.toFixed(1);
             document.getElementById('iRSI').className = r<30?'ind-val up':r>70?'ind-val down':'ind-val';
             document.getElementById('iMACD').textContent = m.h.toFixed(2);
@@ -284,7 +321,6 @@
             document.getElementById('iMom').textContent = mo.m.toFixed(2);
             document.getElementById('iMom').className = mo.d==='up'?'ind-val up':mo.d==='down'?'ind-val down':'ind-val';
 
-            // Score
             let score = 0, reasons = [];
             if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} 
             else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});}
@@ -303,7 +339,7 @@
             else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
 
             let conf = Math.min(99, Math.abs(score)*10);
-            document.getElementById('confCircle').textContent = conf+'%';
+            document.getElementById('confVal').textContent = conf+'%';
             
             const card = document.getElementById('signalCard');
             const arrow = document.getElementById('arrow');
@@ -313,18 +349,13 @@
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':'⚪'}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-            // Check if strong signal
             if(conf >= 70) {
-                // Found strong signal!
-                if(autoMode && !manual) {
-                    playNotification();
-                }
+                if(autoMode && !manual) playNotification();
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 
-                // Save current signal for later evaluation
                 currentSignal = {
                     type: direction,
                     entryPrice: price,
@@ -335,22 +366,22 @@
                 if(direction === 'BUY') {
                     card.className = 'card signal-box buy'; 
                     arrow.textContent='⬆️'; 
-                    txt.textContent='BUY'; 
+                    txt.textContent='BUY (کڕین)'; 
                     circle.className='conf-circle high';
                     log(`✅ سیگناڵی BUY دۆزرایەوە - دڵنیایی: ${conf}%`);
                 } else {
                     card.className = 'card signal-box sell'; 
                     arrow.textContent='⬇️'; 
-                    txt.textContent='SELL'; 
+                    txt.textContent='SELL (فرۆشتن)'; 
                     circle.className='conf-circle high';
                     log(`✅ سیگناڵی SELL دۆزرایەوە - دڵنیایی: ${conf}%`);
                 }
                 
-                // Start 5-minute timer
+                // STOP auto loop during signal timer
+                pauseAutoDuringSignal();
                 startSignalTimer();
                 
             } else {
-                // Weak signal - keep waiting
                 if(autoMode) {
                     card.className = 'card signal-box wait auto';
                     arrow.textContent='🔄';
@@ -360,7 +391,7 @@
                 } else {
                     card.className = 'card signal-box wait';
                     arrow.textContent='✋';
-                    txt.textContent='WAIT';
+                    txt.textContent='WAIT (چاوەڕێ)';
                     circle.className='conf-circle low';
                 }
             }
@@ -374,13 +405,27 @@
         }
     }
 
+    function pauseAutoDuringSignal() {
+        // Pause the auto interval so it doesn't interfere with the 5-min timer
+        if(autoInterval) clearInterval(autoInterval);
+        if(countdownInterval) clearInterval(countdownInterval);
+        document.getElementById('autoStatus').classList.remove('active');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
+    }
+
+    function resumeAutoAfterSignal() {
+        // Resume auto mode after 5 minutes
+        if(autoMode) {
+            log('▶️ دۆخی خۆکار دووبارە دەست پێ دەکاتەوە...');
+            startAutoLoop();
+        }
+    }
+
     function startSignalTimer() {
         let t = 300; // 5 minutes
         const el = document.getElementById('timer');
-        const autoStatus = document.getElementById('autoStatus');
         
         el.classList.add('active');
-        autoStatus.classList.remove('active'); // Hide auto status during signal
         
         if(signalTimer) clearInterval(signalTimer);
         signalTimer = setInterval(() => {
@@ -390,14 +435,11 @@
                 clearInterval(signalTimer);
                 el.classList.remove('active');
                 
-                // Evaluate the signal result
+                // Evaluate result
                 evaluateSignalResult();
                 
-                if(autoMode) {
-                    autoStatus.classList.add('active');
-                    nextCheckTime = 120;
-                    log('🔄 ٥ خولەک تەواو بوو - گەڕانەوە بۆ دۆخی خۆکار');
-                }
+                // Resume auto mode
+                resumeAutoAfterSignal();
             }
             t--;
         }, 1000);
@@ -407,7 +449,6 @@
         if(!currentSignal) return;
         
         try {
-            // Fetch latest price to compare
             const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
             const data = await res.json();
             
@@ -416,17 +457,14 @@
                 let entryPrice = currentSignal.entryPrice;
                 let isWin = false;
                 
-                // Determine win/loss
                 if(currentSignal.type === 'SELL') {
-                    isWin = currentPrice < entryPrice; // Price went down = Win for Sell
+                    isWin = currentPrice < entryPrice;
                 } else {
-                    isWin = currentPrice > entryPrice; // Price went up = Win for Buy
+                    isWin = currentPrice > entryPrice;
                 }
                 
-                // Update stats
                 if(isWin) wins++; else losses++;
                 
-                // Add to history
                 history.unshift({
                     ...currentSignal,
                     exitPrice: currentPrice,
@@ -441,7 +479,6 @@
             console.error('Error evaluating result:', e);
         }
         
-        // Reset current signal
         currentSignal = null;
     }
 
@@ -452,13 +489,11 @@
         
         historyCard.style.display = 'block';
         
-        // Calculate win rate
         let total = wins + losses;
         let rate = total > 0 ? Math.round((wins / total) * 100) : 0;
         winRateEl.textContent = `سەرکەوتن: ${rate}% (${wins}/${total})`;
         winRateEl.style.color = rate >= 70 ? 'var(--green)' : rate >= 50 ? 'var(--gold)' : 'var(--red)';
         
-        // Render list
         historyList.innerHTML = history.map(h => `
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
@@ -466,7 +501,7 @@
                         ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
                     </div>
                     <div class="h-details">
-                        کات: ${h.time} | دڵنیایی: ${h.conf}% | نرخ: ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)}
+                        ⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
                     </div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">
@@ -486,7 +521,6 @@
         console.log(msg);
     }
 
-    // Initialize
     log('ئامادەیە - دوگمەی AUTO داگرە بۆ دەستپێکردن');
 </script>
 </body>
