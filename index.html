@@ -3,382 +3,491 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - M5 Precision</title>
+<title>Gold Sniper Pro - Auto + Stats</title>
 <style>
-    :root {
-        --bg-dark: #0a0a0f;
-        --card-dark: #12121a;
-        --gold: #d4af37;
-        --gold-light: #f2d06b;
-        --green: #00ff88;
-        --red: #ff4444;
-        --yellow: #ffcc00;
-        --text-main: #e0e0e0;
-        --text-muted: #888899;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    :root { --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; --red: #ff4444; --text: #e0e0e0; --blue: #007bff; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px; }
     
-    body { background: var(--bg-dark); color: var(--text-main); transition: all 0.3s; }
-    body.light { background: #f4f6f8; color: #1a1a1a; --card-dark: #ffffff; }
-
-    .container { max-width: 850px; margin: 0 auto; padding: 15px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #2a2a35; }
     
-    .header { 
-        display: flex; justify-content: space-between; align-items: center; 
-        margin-bottom: 20px; padding-bottom: 15px; 
-        border-bottom: 2px solid var(--gold);
-    }
-    .header h1 { color: var(--gold); font-size: 26px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-    .theme-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-
-    .card { 
-        background: var(--card-dark); border: 1px solid #2a2a35; 
-        border-radius: 16px; padding: 20px; margin-bottom: 20px; 
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    }
-
-    .chart-box { height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
-
-    /* Signal Box */
-    .signal-card { text-align: center; padding: 25px; position: relative; overflow: hidden; }
-    .signal-card.buy { border: 2px solid var(--green); background: linear-gradient(145deg, rgba(0,255,136,0.05), transparent); }
-    .signal-card.sell { border: 2px solid var(--red); background: linear-gradient(145deg, rgba(255,68,68,0.05), transparent); }
-    .signal-card.wait { border: 2px solid var(--yellow); background: linear-gradient(145deg, rgba(255,204,0,0.05), transparent); }
-
-    .price-tag { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
-    .signal-arrow { font-size: 80px; margin: 10px 0; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
-    .signal-text { font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; }
-    .buy .signal-text { color: var(--green); }
-    .sell .signal-text { color: var(--red); }
-    .wait .signal-text { color: var(--yellow); }
-
-    /* Confidence Circle */
-    .conf-circle {
-        width: 130px; height: 130px; border-radius: 50%;
-        border: 6px solid #333; margin: 15px auto;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.2);
-    }
+    .signal-box { text-align: center; padding: 30px; border: 2px solid #333; border-radius: 12px; margin-bottom: 20px; position: relative; }
+    .signal-box.buy { border-color: var(--green); background: rgba(0,255,136,0.05); }
+    .signal-box.sell { border-color: var(--red); background: rgba(255,68,68,0.05); }
+    .signal-box.wait { border-color: var(--gold); }
+    .signal-box.auto { border-color: var(--blue); box-shadow: 0 0 20px rgba(0,123,255,0.3); animation: pulse 2s infinite; }
+    
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 20px rgba(0,123,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,123,255,0.6); } }
+    
+    .price { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+    .arrow { font-size: 80px; margin: 10px 0; }
+    .status-text { font-size: 28px; font-weight: 900; letter-spacing: 2px; }
+    .buy .status-text { color: var(--green); }
+    .sell .status-text { color: var(--red); }
+    .wait .status-text { color: var(--gold); }
+    
+    .conf-circle { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; background: rgba(0,0,0,0.3); }
     .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-    .conf-circle.med { border-color: var(--yellow); box-shadow: 0 0 20px rgba(255,204,0,0.3); }
-    .conf-val { font-size: 36px; font-weight: bold; }
-    .conf-label { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
-
-    /* Timer */
-    .timer-box {
-        margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); 
-        border-radius: 12px; display: none;
-    }
-    .timer-box.active { display: block; animation: pulseBorder 2s infinite; }
-    @keyframes pulseBorder { 0%,100% { border: 1px solid transparent; } 50% { border: 1px solid var(--gold); } }
-    .timer-val { font-size: 42px; font-weight: bold; font-family: monospace; color: var(--gold); }
-    .timer-label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
-
-    /* Reasons */
-    .reasons-box { text-align: right; margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; border-right: 4px solid var(--gold); }
-    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 10px; font-size: 15px; }
-    .reason-item { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
-    .reason-icon { margin-left: 10px; font-size: 16px; }
-    .reason-up { color: var(--green); }
-    .reason-down { color: var(--red); }
-    .reason-neutral { color: var(--text-muted); }
-
-    /* Indicators Grid */
-    .indicators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-    .ind-item { 
-        background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; 
+    .conf-circle.med { border-color: var(--gold); }
+    .conf-circle.low { border-color: var(--red); }
+    
+    .timer { font-size: 40px; font-family: monospace; color: var(--gold); margin: 15px 0; display: none; }
+    .timer.active { display: block; }
+    
+    .auto-status { background: rgba(0,123,255,0.1); border: 2px solid var(--blue); border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; display: none; }
+    .auto-status.active { display: block; }
+    .auto-status .next-check { font-size: 24px; font-weight: bold; color: var(--blue); margin-top: 10px; }
+    
+    .reasons { text-align: right; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 15px; }
+    .reason-item { margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; }
+    .reason-icon { margin-left: 10px; }
+    
+    .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 20px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+    .btn:hover { transform: scale(1.02); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; color: #fff; }
+    .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
+    .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
+    
+    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+    .ind-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #2a2a35; }
+    .ind-name { font-size: 12px; color: #888; margin-bottom: 5px; }
+    .ind-val { font-weight: bold; font-size: 16px; }
+    .up { color: var(--green); }
+    .down { color: var(--red); }
+    
+    .error-msg { color: var(--red); text-align: center; margin-top: 10px; font-size: 14px; display: none; }
+    .log { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+    
+    /* History & Stats Styles */
+    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
+    .win-rate { font-size: 20px; font-weight: bold; color: var(--green); }
+    .history-list { max-height: 300px; overflow-y: auto; }
+    .history-item { 
         display: flex; justify-content: space-between; align-items: center; 
-        border: 1px solid #2a2a35;
+        padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); 
+        border-radius: 8px; border-right: 4px solid transparent;
     }
-    .ind-name { font-size: 12px; color: var(--text-muted); }
-    .ind-val { font-weight: bold; font-size: 14px; }
-    .ind-up { color: var(--green); }
-    .ind-down { color: var(--red); }
-
-    /* Buttons */
-    .action-btn {
-        width: 100%; padding: 16px; border: none; border-radius: 12px;
-        background: linear-gradient(135deg, var(--gold), var(--gold-light));
-        color: #000; font-weight: 900; font-size: 20px; cursor: pointer;
-        margin-top: 15px; transition: transform 0.2s;
-    }
-    .action-btn:hover { transform: scale(1.02); }
-    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .disclaimer { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 15px; opacity: 0.7; }
+    .history-item.win { border-right-color: var(--green); }
+    .history-item.loss { border-right-color: var(--red); }
+    .h-signal { font-weight: bold; font-size: 16px; }
+    .h-details { font-size: 12px; color: #888; margin-top: 4px; }
+    .h-result { font-weight: bold; font-size: 14px; }
+    .h-result.win { color: var(--green); }
+    .h-result.loss { color: var(--red); }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1> Gold Sniper M5</h1>
-        <button class="theme-btn" onclick="toggleTheme()"> ڕوون/تاریک</button>
-    </div>
-
-    <div class="card">
-        <div id="chart_div" class="chart-box"></div>
-    </div>
-
-    <div class="card signal-card wait" id="signalCard">
-        <div class="price-tag">نرخی ئێستا: <span id="priceDisplay">--</span></div>
+    <div class="card signal-box wait" id="signalCard">
+        <div style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: var(--blue);" id="modeBadge">🔄 AUTO MODE</div>
+        <div class="price" id="priceDisplay">--</div>
+        <div class="arrow" id="arrow">⏳</div>
+        <div class="status-text" id="statusText">چاوەڕێبە...</div>
         
-        <div id="signalArrow" class="signal-arrow">⏳</div>
-        <div id="signalText" class="signal-text">چاوەڕێبە...</div>
+        <div class="conf-circle med" id="confCircle">0%</div>
         
-        <div class="conf-circle med" id="confCircle">
-            <div class="conf-val" id="confVal">0%</div>
-            <div class="conf-label">ئاستی دڵنیایی</div>
+        <div class="timer" id="timer">05:00</div>
+        
+        <div class="auto-status" id="autoStatus">
+            <div> دۆخی خۆکار چالاکە - هەر ٢ خولەک جارێک شیکاری دەکات</div>
+            <div class="next-check" id="nextCheck">٢:٠٠</div>
+            <div style="font-size: 12px; margin-top: 5px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
         </div>
-
-        <div class="timer-box" id="timerBox">
-            <div class="timer-label">⏳ کاتی ماوە بۆ کۆتایی شمع (٥ خولەک)</div>
-            <div class="timer-val" id="timerVal">05:00</div>
-        </div>
-
-        <div class="reasons-box" id="reasonsBox" style="display: none;">
-            <div class="reasons-title"> هۆکارەکانی بڕیار:</div>
+        
+        <div class="reasons" id="reasonsBox" style="display:none;">
+            <div style="font-weight:bold; color:var(--gold); margin-bottom:10px;">🔍 هۆکارەکان:</div>
             <div id="reasonsList"></div>
         </div>
     </div>
 
     <div class="card">
-        <div style="font-weight: bold; margin-bottom: 15px; color: var(--gold);">📊 فلتەرە تەکنیکییەکان (M5)</div>
-        <div class="indicators-grid">
-            <div class="ind-item"><span class="ind-name">RSI (14)</span><span class="ind-val" id="indRSI">-</span></div>
-            <div class="ind-item"><span class="ind-name">MACD</span><span class="ind-val" id="indMACD">-</span></div>
-            <div class="ind-item"><span class="ind-name">Stochastic</span><span class="ind-val" id="indStoch">-</span></div>
-            <div class="ind-item"><span class="ind-name">Bollinger</span><span class="ind-val" id="indBB">-</span></div>
-            <div class="ind-item"><span class="ind-name">Momentum</span><span class="ind-val" id="indMom">-</span></div>
+        <div class="indicators">
+            <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
+            <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
+            <div class="ind-item"><div class="ind-name">Stochastic</div><div class="ind-val" id="iStoch">-</div></div>
+            <div class="ind-item"><div class="ind-name">Bollinger</div><div class="ind-val" id="iBB">-</div></div>
+            <div class="ind-item"><div class="ind-name">Momentum</div><div class="ind-val" id="iMom">-</div></div>
         </div>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="log" id="log">ئامادەیە...</div>
+        
+        <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()">🤖 دەستپێکردنی دۆخی خۆکار (AUTO)</button>
+        <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
     </div>
 
-    <div class="card">
-        <button class="action-btn" id="analyzeBtn" onclick="runAnalysis()">🚀 شیکاری و دەستپێکردن</button>
-        <div class="disclaimer">⚠️ ئەم بەرنامەیە تەنها بۆ مەبەستی فێربوون و تاقیکردنەوەیە. بازاڕی زێڕ مەترسەی هەیە.</div>
+    <!-- History & Stats Section -->
+    <div class="card" id="historyCard" style="display: none;">
+        <div class="stats-header">
+            <div style="font-weight: bold; color: var(--gold);"> مێژووی سیگناڵەکان</div>
+            <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
+        </div>
+        <div class="history-list" id="historyList"></div>
     </div>
 </div>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    // API Key (ئەگەر دەتەوێت بیگۆڕیت، لێرە بیگۆڕە)
     const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
-    let isAnalyzing = false;
+    let autoMode = false;
+    let autoInterval = null;
+    let countdownInterval = null;
     let signalTimer = null;
+    let nextCheckTime = 120; // 2 minutes
+    let isProcessing = false;
+    
+    // Stats Variables
+    let history = [];
+    let wins = 0;
+    let losses = 0;
+    let currentSignal = null; // Stores active signal data
 
-    // TradingView Chart
-    new TradingView.widget({
-        "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5",
-        "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "ar",
-        "toolbar_bg": "#12121a", "enable_publishing": false, "hide_top_toolbar": false,
-        "save_image": false, "container_id": "chart_div",
-        "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
-    });
-
-    function toggleTheme() { document.body.classList.toggle('light'); }
-
-    // --- Technical Indicators Math ---
-    function calcRSI(prices, p=14) {
-        if(prices.length < p+1) return 50;
+    // Math Functions
+    function rsi(p, n=14) {
+        if(p.length < n+1) return 50;
         let g=0, l=0;
-        for(let i=prices.length-p; i<prices.length; i++) {
-            let c = prices[i]-prices[i-1];
-            if(c>0) g+=c; else l+=Math.abs(c);
+        for(let i=p.length-n; i<p.length; i++) { let c=p[i]-p[i-1]; if(c>0) g+=c; else l+=Math.abs(c); }
+        let ag=g/n, al=l/n;
+        return al===0 ? 100 : 100 - (100/(1+ag/al));
+    }
+    function ema(p, n) {
+        if(p.length < n) return p[p.length-1];
+        let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n;
+        for(let i=n; i<p.length; i++) e = p[i]*k + e*(1-k);
+        return e;
+    }
+    function macd(p) {
+        let e12=ema(p,12), e26=ema(p,26), line=e12-e26;
+        let sig=ema(p.slice(-26), 9), hist=line-sig;
+        return { h: hist, d: hist>0?'up':hist<0?'down':'flat' };
+    }
+    function stoch(p, n=14) {
+        let s=p.slice(-n), h=Math.max(...s), l=Math.min(...s), c=p[p.length-1];
+        let k=((c-l)/(h-l))*100;
+        return { k, d: k<20?'up':k>80?'down':'flat' };
+    }
+    function bb(p, n=20) {
+        let sma=p.slice(-n).reduce((a,b)=>a+b,0)/n;
+        let std=Math.sqrt(p.slice(-n).reduce((s,x)=>s+Math.pow(x-sma,2),0)/n);
+        let c=p[p.length-1], u=sma+2*std, lo=sma-2*std;
+        return { pos: c<=lo?'Lower':c>=u?'Upper':'Mid', d: c<=lo?'up':c>=u?'down':'flat' };
+    }
+    function mom(p, n=10) {
+        let m=p[p.length-1]-p[p.length-1-n];
+        return { m, d: m>0?'up':m<0?'down':'flat' };
+    }
+
+    function toggleAutoMode() {
+        autoMode = !autoMode;
+        const btn = document.getElementById('autoBtn');
+        const manualBtn = document.getElementById('manualBtn');
+        const card = document.getElementById('signalCard');
+        const autoStatus = document.getElementById('autoStatus');
+        
+        if(autoMode) {
+            btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار';
+            btn.classList.add('active');
+            manualBtn.style.display = 'block';
+            card.classList.add('auto');
+            autoStatus.classList.add('active');
+            log('🔄 دۆخی خۆکار چالاک کرا - هەر ٢ خولەک جارێک شیکاری دەکات');
+            startAutoLoop();
+        } else {
+            stopAutoMode();
         }
-        let ag=g/p, al=l/p;
-        if(al===0) return 100;
-        return 100 - (100/(1+ag/al));
     }
 
-    function calcEMA(prices, p) {
-        if(prices.length < p) return prices[prices.length-1];
-        let k = 2/(p+1);
-        let ema = prices.slice(0,p).reduce((a,b)=>a+b,0)/p;
-        for(let i=p; i<prices.length; i++) ema = prices[i]*k + ema*(1-k);
-        return ema;
+    function stopAutoMode() {
+        autoMode = false;
+        if(autoInterval) clearInterval(autoInterval);
+        if(countdownInterval) clearInterval(countdownInterval);
+        
+        const btn = document.getElementById('autoBtn');
+        const manualBtn = document.getElementById('manualBtn');
+        const card = document.getElementById('signalCard');
+        const autoStatus = document.getElementById('autoStatus');
+        
+        btn.textContent = ' دەستپێکردنی دۆخی خۆکار (AUTO)';
+        btn.classList.remove('active');
+        manualBtn.style.display = 'none';
+        card.classList.remove('auto');
+        autoStatus.classList.remove('active');
+        log('⏹️ دۆخی خۆکار وەستا');
     }
 
-    function calcMACD(prices) {
-        let e12 = calcEMA(prices, 12), e26 = calcEMA(prices, 26);
-        let line = e12 - e26;
-        // Simplified signal for M5
-        let signal = calcEMA(prices.slice(-26), 9); 
-        let hist = line - signal;
-        return { hist, dir: hist > 0 ? 'up' : hist < 0 ? 'down' : 'flat' };
+    function startAutoLoop() {
+        nextCheckTime = 120;
+        if(autoInterval) clearInterval(autoInterval);
+        
+        autoInterval = setInterval(() => {
+            if(!isProcessing && autoMode) {
+                runAnalysis(false);
+            }
+        }, 120000); // Every 2 minutes
+        
+        // Countdown timer
+        if(countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            if(nextCheckTime > 0 && autoMode) {
+                nextCheckTime--;
+                let m = Math.floor(nextCheckTime / 60);
+                let s = nextCheckTime % 60;
+                document.getElementById('nextCheck').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            } else if(autoMode) {
+                nextCheckTime = 120;
+            }
+        }, 1000);
     }
 
-    function calcStoch(prices, p=14) {
-        let slice = prices.slice(-p);
-        let h = Math.max(...slice), l = Math.min(...slice);
-        let c = prices[prices.length-1];
-        let k = ((c-l)/(h-l))*100;
-        return { k, dir: k<20?'up':k>80?'down':'flat' };
-    }
-
-    function calcBB(prices, p=20) {
-        let sma = prices.slice(-p).reduce((a,b)=>a+b,0)/p;
-        let std = Math.sqrt(prices.slice(-p).reduce((s,x)=>s+Math.pow(x-sma,2),0)/p);
-        let c = prices[prices.length-1];
-        let upper = sma + 2*std, lower = sma - 2*std;
-        return { pos: c<=lower?'lower':c>=upper?'upper':'mid', dir: c<=lower?'up':c>=upper?'down':'flat' };
-    }
-
-    function calcMom(prices, p=10) {
-        let m = prices[prices.length-1] - prices[prices.length-1-p];
-        return { m, dir: m>0?'up':m<0?'down':'flat' };
-    }
-
-    // --- Main Logic ---
-    async function runAnalysis() {
-        if(isAnalyzing) return;
-        isAnalyzing = true;
-        const btn = document.getElementById('analyzeBtn');
-        btn.disabled = true; btn.textContent = " وەرگرتنی داتا لە Twelve Data...";
+    async function runAnalysis(manual = false) {
+        if(isProcessing) return;
+        isProcessing = true;
+        
+        const logEl = document.getElementById('log');
+        const err = document.getElementById('errorMsg');
+        err.style.display = 'none';
+        
+        if(manual) {
+            logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+        } else {
+            logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        }
 
         try {
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            if(!res.ok) throw new Error(`API Error: ${res.status}`);
+            
             const data = await res.json();
-            
-            if(data.status !== 'ok' || !data.values) throw new Error('API Error');
-            
+            if(data.status !== 'ok' || !data.values) throw new Error('داتای نادروست');
+
             let prices = data.values.map(v => parseFloat(v.close)).reverse();
-            let currentPrice = prices[prices.length-1];
-            document.getElementById('priceDisplay').textContent = currentPrice.toFixed(2);
+            let price = prices[prices.length-1];
+            document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
-            // Calculate
-            let rsi = calcRSI(prices);
-            let macd = calcMACD(prices);
-            let stoch = calcStoch(prices);
-            let bb = calcBB(prices);
-            let mom = calcMom(prices);
+            // Calc indicators
+            let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
 
-            // Update UI Indicators
-            updateInd('indRSI', rsi.toFixed(1), rsi<30?'ind-up':rsi>70?'ind-down':'');
-            updateInd('indMACD', macd.hist.toFixed(2), macd.dir==='up'?'ind-up':macd.dir==='down'?'ind-down':'');
-            updateInd('indStoch', stoch.k.toFixed(1), stoch.dir==='up'?'ind-up':stoch.dir==='down'?'ind-down':'');
-            updateInd('indBB', bb.pos, bb.dir==='up'?'ind-up':bb.dir==='down'?'ind-down':'');
-            updateInd('indMom', mom.m.toFixed(2), mom.dir==='up'?'ind-up':mom.dir==='down'?'ind-down':'');
+            // Update UI
+            document.getElementById('iRSI').textContent = r.toFixed(1);
+            document.getElementById('iRSI').className = r<30?'ind-val up':r>70?'ind-val down':'ind-val';
+            document.getElementById('iMACD').textContent = m.h.toFixed(2);
+            document.getElementById('iMACD').className = m.d==='up'?'ind-val up':m.d==='down'?'ind-val down':'ind-val';
+            document.getElementById('iStoch').textContent = s.k.toFixed(1);
+            document.getElementById('iStoch').className = s.d==='up'?'ind-val up':s.d==='down'?'ind-val down':'ind-val';
+            document.getElementById('iBB').textContent = b.pos;
+            document.getElementById('iBB').className = b.d==='up'?'ind-val up':b.d==='down'?'ind-val down':'ind-val';
+            document.getElementById('iMom').textContent = mo.m.toFixed(2);
+            document.getElementById('iMom').className = mo.d==='up'?'ind-val up':mo.d==='down'?'ind-val down':'ind-val';
 
-            // Scoring (Max 10)
-            let score = 0;
-            let reasons = [];
+            // Score
+            let score = 0, reasons = [];
+            if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} 
+            else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});}
+            else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
 
-            // RSI (Weight 3)
-            if(rsi < 30) { score += 3; reasons.push({t:`RSI نزمە (${rsi.toFixed(1)}) - بازاڕ زۆر فرۆشراوە`, d:'up'}); }
-            else if(rsi > 70) { score -= 3; reasons.push({t:`RSI بەرزە (${rsi.toFixed(1)}) - بازاڕ زۆر کڕاوە`, d:'down'}); }
-            else { reasons.push({t:`RSI ناوەندییە (${rsi.toFixed(1)})`, d:'neutral'}); }
+            if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});}
+            else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
+            
+            if(s.d==='up'){score+=2; reasons.push({t:"Stochastic نزمە", d:'up'});}
+            else if(s.d==='down'){score-=2; reasons.push({t:"Stochastic بەرزە", d:'down'});}
 
-            // MACD (Weight 3)
-            if(macd.dir === 'up') { score += 3; reasons.push({t:"MACD ئەرێنییە (Bullish)", d:'up'}); }
-            else if(macd.dir === 'down') { score -= 3; reasons.push({t:"MACD نەرێنییە (Bearish)", d:'down'}); }
-            else { reasons.push({t:"MACD لاوازە", d:'neutral'}); }
+            if(b.d==='up'){score+=1; reasons.push({t:"Bollinger خوارەوە", d:'up'});}
+            else if(b.d==='down'){score-=1; reasons.push({t:"Bollinger سەرەوە", d:'down'});}
 
-            // Stoch (Weight 2)
-            if(stoch.dir === 'up') { score += 2; reasons.push({t:"Stochastic نزمە (Oversold)", d:'up'}); }
-            else if(stoch.dir === 'down') { score -= 2; reasons.push({t:"Stochastic بەرزە (Overbought)", d:'down'}); }
+            if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});}
+            else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
 
-            // BB (Weight 1)
-            if(bb.dir === 'up') { score += 1; reasons.push({t:"نرخ گەیشتە باندی خوارەوەی Bollinger", d:'up'}); }
-            else if(bb.dir === 'down') { score -= 1; reasons.push({t:"نرخ گەیشتە باندی سەرەوەی Bollinger", d:'down'}); }
-
-            // Momentum (Weight 1)
-            if(mom.dir === 'up') { score += 1; reasons.push({t:"Momentum ئەرێنییە", d:'up'}); }
-            else if(mom.dir === 'down') { score -= 1; reasons.push({t:"Momentum نەرێنییە", d:'down'}); }
-
-            // Confidence
-            let conf = Math.min(99, Math.abs(score) * 10);
-            document.getElementById('confVal').textContent = conf.toFixed(0) + '%';
-
-            // Decision
+            let conf = Math.min(99, Math.abs(score)*10);
+            document.getElementById('confCircle').textContent = conf+'%';
+            
             const card = document.getElementById('signalCard');
-            const arrow = document.getElementById('signalArrow');
-            const text = document.getElementById('signalText');
+            const arrow = document.getElementById('arrow');
+            const txt = document.getElementById('statusText');
             const circle = document.getElementById('confCircle');
-            const reasonsBox = document.getElementById('reasonsBox');
-            const reasonsList = document.getElementById('reasonsList');
+            const rBox = document.getElementById('reasonsBox');
+            const rList = document.getElementById('reasonsList');
 
-            reasonsBox.style.display = 'block';
-            reasonsList.innerHTML = reasons.map(r => `
-                <div class="reason-item">
-                    <span class="reason-icon ${r.d==='up'?'reason-up':r.d==='down'?'reason-down':'reason-neutral'}">
-                        ${r.d==='up'?'✅':r.d==='down'?'🔴':'⚪'}
-                    </span>
-                    <span class="${r.d==='up'?'reason-up':r.d==='down'?'reason-down':'reason-neutral'}">${r.t}</span>
-                </div>
-            `).join('');
+            rBox.style.display = 'block';
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':'⚪'}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-            // Threshold: 70% confidence (Score >= 7 or <= -7)
+            // Check if strong signal
             if(conf >= 70) {
-                if(score > 0) {
-                    // BUY
-                    card.className = 'card signal-card buy';
-                    arrow.textContent = '⬆️';
-                    text.textContent = 'BUY (کڕین)';
-                    circle.className = 'conf-circle high';
-                    start5MinTimer();
-                } else {
-                    // SELL
-                    card.className = 'card signal-card sell';
-                    arrow.textContent = '⬇️';
-                    text.textContent = 'SELL (فرۆشتن)';
-                    circle.className = 'conf-circle high';
-                    start5MinTimer();
+                // Found strong signal!
+                if(autoMode && !manual) {
+                    playNotification();
                 }
+                
+                let direction = score > 0 ? 'BUY' : 'SELL';
+                
+                // Save current signal for later evaluation
+                currentSignal = {
+                    type: direction,
+                    entryPrice: price,
+                    time: new Date().toLocaleTimeString('ku'),
+                    conf: conf
+                };
+                
+                if(direction === 'BUY') {
+                    card.className = 'card signal-box buy'; 
+                    arrow.textContent='⬆️'; 
+                    txt.textContent='BUY'; 
+                    circle.className='conf-circle high';
+                    log(`✅ سیگناڵی BUY دۆزرایەوە - دڵنیایی: ${conf}%`);
+                } else {
+                    card.className = 'card signal-box sell'; 
+                    arrow.textContent='⬇️'; 
+                    txt.textContent='SELL'; 
+                    circle.className='conf-circle high';
+                    log(`✅ سیگناڵی SELL دۆزرایەوە - دڵنیایی: ${conf}%`);
+                }
+                
+                // Start 5-minute timer
+                startSignalTimer();
+                
             } else {
-                // WAIT
-                card.className = 'card signal-card wait';
-                arrow.textContent = '✋';
-                text.textContent = 'WAIT (چاوەڕێ)';
-                circle.className = 'conf-circle med';
-                document.getElementById('timerBox').classList.remove('active');
+                // Weak signal - keep waiting
+                if(autoMode) {
+                    card.className = 'card signal-box wait auto';
+                    arrow.textContent='🔄';
+                    txt.textContent='چاوەڕێ...';
+                    circle.className='conf-circle med';
+                    log(`⏳ دڵنیایی تەنها ${conf}% - چاوەڕوانی شیکاری داهاتوو...`);
+                } else {
+                    card.className = 'card signal-box wait';
+                    arrow.textContent='✋';
+                    txt.textContent='WAIT';
+                    circle.className='conf-circle low';
+                }
             }
 
         } catch(e) {
-            alert('هەڵە لە وەرگرتنی داتا: ' + e.message);
+            err.textContent = e.message;
+            err.style.display = 'block';
+            log(`❌ هەڵە: ${e.message}`);
+        } finally {
+            isProcessing = false;
         }
-
-        isAnalyzing = false;
-        btn.disabled = false;
-        btn.textContent = "🔄 شیکاری نوێ";
     }
 
-    function updateInd(id, val, cls) {
-        let el = document.getElementById(id);
-        el.textContent = val;
-        el.className = 'ind-val ' + cls;
-    }
-
-    function start5MinTimer() {
-        let time = 300; // 5 minutes in seconds
-        const timerBox = document.getElementById('timerBox');
-        const timerVal = document.getElementById('timerVal');
-        const btn = document.getElementById('analyzeBtn');
+    function startSignalTimer() {
+        let t = 300; // 5 minutes
+        const el = document.getElementById('timer');
+        const autoStatus = document.getElementById('autoStatus');
         
-        timerBox.classList.add('active');
-        btn.disabled = true;
-        btn.textContent = "⏳ سیگناڵ چالاکە - چاوەڕوانی بۆ شمعی داهاتوو...";
-
+        el.classList.add('active');
+        autoStatus.classList.remove('active'); // Hide auto status during signal
+        
         if(signalTimer) clearInterval(signalTimer);
-        
         signalTimer = setInterval(() => {
-            let m = Math.floor(time / 60);
-            let s = time % 60;
-            timerVal.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            
-            if(time <= 0) {
+            let m = Math.floor(t/60), s = t%60;
+            el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if(t<=0) {
                 clearInterval(signalTimer);
-                timerBox.classList.remove('active');
-                btn.disabled = false;
-                btn.textContent = "🚀 شیکاری و دەستپێکردن";
-                // Reset to wait
-                document.getElementById('signalCard').className = 'card signal-card wait';
-                document.getElementById('signalArrow').textContent = '⏳';
-                document.getElementById('signalText').textContent = 'چاوەڕێبە...';
+                el.classList.remove('active');
+                
+                // Evaluate the signal result
+                evaluateSignalResult();
+                
+                if(autoMode) {
+                    autoStatus.classList.add('active');
+                    nextCheckTime = 120;
+                    log('🔄 ٥ خولەک تەواو بوو - گەڕانەوە بۆ دۆخی خۆکار');
+                }
             }
-            time--;
+            t--;
         }, 1000);
     }
+
+    async function evaluateSignalResult() {
+        if(!currentSignal) return;
+        
+        try {
+            // Fetch latest price to compare
+            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
+            const data = await res.json();
+            
+            if(data.price) {
+                let currentPrice = parseFloat(data.price);
+                let entryPrice = currentSignal.entryPrice;
+                let isWin = false;
+                
+                // Determine win/loss
+                if(currentSignal.type === 'SELL') {
+                    isWin = currentPrice < entryPrice; // Price went down = Win for Sell
+                } else {
+                    isWin = currentPrice > entryPrice; // Price went up = Win for Buy
+                }
+                
+                // Update stats
+                if(isWin) wins++; else losses++;
+                
+                // Add to history
+                history.unshift({
+                    ...currentSignal,
+                    exitPrice: currentPrice,
+                    result: isWin ? 'WIN' : 'LOSS',
+                    priceChange: (currentPrice - entryPrice).toFixed(2)
+                });
+                
+                updateHistoryUI();
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+            }
+        } catch(e) {
+            console.error('Error evaluating result:', e);
+        }
+        
+        // Reset current signal
+        currentSignal = null;
+    }
+
+    function updateHistoryUI() {
+        const historyCard = document.getElementById('historyCard');
+        const historyList = document.getElementById('historyList');
+        const winRateEl = document.getElementById('winRate');
+        
+        historyCard.style.display = 'block';
+        
+        // Calculate win rate
+        let total = wins + losses;
+        let rate = total > 0 ? Math.round((wins / total) * 100) : 0;
+        winRateEl.textContent = `سەرکەوتن: ${rate}% (${wins}/${total})`;
+        winRateEl.style.color = rate >= 70 ? 'var(--green)' : rate >= 50 ? 'var(--gold)' : 'var(--red)';
+        
+        // Render list
+        historyList.innerHTML = history.map(h => `
+            <div class="history-item ${h.result.toLowerCase()}">
+                <div>
+                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">
+                        ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
+                    </div>
+                    <div class="h-details">
+                        کات: ${h.time} | دڵنیایی: ${h.conf}% | نرخ: ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)}
+                    </div>
+                </div>
+                <div class="h-result ${h.result.toLowerCase()}">
+                    ${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function playNotification() {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoIAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoIAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE');
+        audio.play().catch(e => console.log('Audio play failed'));
+    }
+
+    function log(msg) {
+        document.getElementById('log').textContent = msg;
+        console.log(msg);
+    }
+
+    // Initialize
+    log('ئامادەیە - دوگمەی AUTO داگرە بۆ دەستپێکردن');
 </script>
 </body>
 </html>
