@@ -3,19 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Fast Auto</title>
+<title>Gold Sniper Pro - Day/Night Mode</title>
 <style>
-    :root { --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; --red: #ff4444; --text: #e0e0e0; --blue: #007bff; }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 10px; }
+    :root { 
+        --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; --red: #ff4444; 
+        --text: #e0e0e0; --blue: #007bff; --border: #2a2a35; --btn-text: #000;
+        --log-bg: rgba(0,0,0,0.2); --ind-bg: rgba(255,255,255,0.03);
+    }
+    
+    /* Light Mode Variables */
+    body.light-mode {
+        --bg: #f0f2f5; --card: #ffffff; --gold: #b8860b; --green: #00aa55; --red: #cc0000;
+        --text: #1a1a1a; --blue: #0056b3; --border: #ddd; --btn-text: #fff;
+        --log-bg: rgba(0,0,0,0.05); --ind-bg: rgba(0,0,0,0.03);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s; }
+    body { background: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; }
     
     .container { max-width: 800px; margin: 0 auto; }
-    .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid #2a2a35; }
+    .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
     
-    /* Chart Box */
-    .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid #333; margin-bottom: 12px; }
+    /* Theme Toggle Button */
+    .theme-toggle {
+        position: fixed; top: 15px; left: 15px; z-index: 1000;
+        background: var(--card); border: 1px solid var(--border); border-radius: 50%;
+        width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
     
-    .signal-box { text-align: center; padding: 20px; border: 2px solid #333; border-radius: 12px; position: relative; }
+    .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
+    
+    .signal-box { text-align: center; padding: 20px; border: 2px solid var(--border); border-radius: 12px; position: relative; }
     .signal-box.buy { border-color: var(--green); background: rgba(0,255,136,0.05); }
     .signal-box.sell { border-color: var(--red); background: rgba(255,68,68,0.05); }
     .signal-box.wait { border-color: var(--gold); }
@@ -30,7 +49,7 @@
     .sell .status-text { color: var(--red); }
     .wait .status-text { color: var(--gold); }
     
-    .conf-circle { width: 110px; height: 110px; border-radius: 50%; border: 5px solid #333; margin: 12px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); }
+    .conf-circle { width: 110px; height: 110px; border-radius: 50%; border: 5px solid var(--border); margin: 12px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--log-bg); }
     .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
     .conf-circle.med { border-color: var(--gold); }
     .conf-val { font-size: 30px; font-weight: bold; }
@@ -43,41 +62,40 @@
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    .reasons { text-align: right; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 12px; }
+    .reasons { text-align: right; background: var(--log-bg); padding: 10px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 12px; }
     .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 6px; font-size: 13px; }
     .reason-item { margin-bottom: 5px; font-size: 12px; display: flex; align-items: center; }
     .reason-icon { margin-left: 6px; font-size: 13px; }
     
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 6px; }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: var(--btn-text); font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 6px; }
     .btn:hover { transform: scale(1.02); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; color: #fff; }
     .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
     .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
     
     .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; margin-top: 10px; }
-    .ind-item { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #2a2a35; }
+    .ind-item { background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
     .ind-name { font-size: 10px; color: #888; margin-bottom: 3px; }
     .ind-val { font-weight: bold; font-size: 13px; }
     .up { color: var(--green); }
     .down { color: var(--red); }
     
     .error-msg { color: var(--red); text-align: center; margin-top: 6px; font-size: 12px; display: none; }
-    .log { font-size: 11px; color: #666; text-align: center; margin-top: 6px; padding: 6px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+    .log { font-size: 11px; color: #666; text-align: center; margin-top: 6px; padding: 6px; background: var(--log-bg); border-radius: 8px; }
     
-    /* History & Stats */
-    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
     .win-rate { font-size: 16px; font-weight: bold; }
     .history-list { max-height: 250px; overflow-y: auto; }
     .history-item { 
         display: flex; justify-content: space-between; align-items: center; 
-        padding: 10px; margin-bottom: 6px; background: rgba(255,255,255,0.03); 
+        padding: 10px; margin-bottom: 6px; background: var(--ind-bg); 
         border-radius: 8px; border-right: 4px solid transparent;
     }
     .history-item.win { border-right-color: var(--green); }
     .history-item.loss { border-right-color: var(--red); }
     .h-signal { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
     .h-details { font-size: 10px; color: #888; }
-    .h-result { font-weight: bold; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: rgba(0,0,0,0.3); }
+    .h-result { font-weight: bold; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: var(--log-bg); }
     .h-result.win { color: var(--green); }
     .h-result.loss { color: var(--red); }
     
@@ -86,6 +104,9 @@
 </head>
 <body>
 
+<!-- Theme Toggle Button -->
+<div class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="گۆڕینی شەو/ڕۆژ">🌙</div>
+
 <div class="container">
     <!-- TradingView Chart -->
     <div class="card" style="padding: 8px;">
@@ -93,9 +114,9 @@
     </div>
 
     <div class="card signal-box wait" id="signalCard">
-        <div class="mode-badge" id="modeBadge">🔄 AUTO MODE</div>
+        <div class="mode-badge" id="modeBadge"> AUTO MODE</div>
         <div class="price" id="priceDisplay">--</div>
-        <div class="arrow" id="arrow">⏳</div>
+        <div class="arrow" id="arrow"></div>
         <div class="status-text" id="statusText">چاوەڕێبە...</div>
         
         <div class="conf-circle med" id="confCircle">
@@ -106,13 +127,13 @@
         <div class="timer" id="timer">05:00</div>
         
         <div class="auto-status" id="autoStatus">
-            <div> دۆخی خۆکار چالاکە - هەر ٣٠ چرکە جارێک شیکاری دەکات</div>
-            <div class="next-check" id="nextCheck">٠٠:٣</div>
+            <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+            <div class="next-check" id="nextCheck">٠١:٠٠</div>
             <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
         </div>
         
         <div class="reasons" id="reasonsBox" style="display:none;">
-            <div class="reasons-title"> هۆکارەکانی سیگناڵ:</div>
+            <div class="reasons-title">🔍 هۆکارەکانی سیگناڵ:</div>
             <div id="reasonsList"></div>
         </div>
     </div>
@@ -129,8 +150,8 @@
         <div class="error-msg" id="errorMsg"></div>
         <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
         
-        <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;"> دەستپێکردنی دۆخی خۆکار (AUTO)</button>
-        <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
+        <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;">🤖 دەستپێکردنی دۆخی خۆکار (AUTO)</button>
+        <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;"> شیکاری ئێستا</button>
     </div>
 
     <!-- History & Stats Section -->
@@ -150,20 +171,41 @@
     let autoInterval = null;
     let countdownInterval = null;
     let signalTimer = null;
-    let nextCheckTime = 30; // Changed to 30 seconds
+    let nextCheckTime = 60;
     let isProcessing = false;
-    
-    // Stats Variables
     let history = [];
     let wins = 0;
     let losses = 0;
     let currentSignal = null;
 
+    // Theme Toggle Function
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const btn = document.getElementById('themeBtn');
+        const isLight = document.body.classList.contains('light-mode');
+        btn.textContent = isLight ? '️' : '🌙';
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        
+        // Update TradingView theme dynamically
+        if(window.tvWidget) {
+            window.tvWidget.changeTheme(isLight ? 'light' : 'dark');
+        }
+    }
+
+    // Load saved theme on startup
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme');
+        if(savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('themeBtn').textContent = '☀️';
+        }
+    });
+
     // Initialize TradingView Chart
     new TradingView.widget({
         "autosize": true,
         "symbol": "OANDA:XAUUSD",
-        "interval": "5", // Keeping M5 for accuracy as requested
+        "interval": "5",
         "timezone": "Etc/UTC",
         "theme": "dark",
         "style": "1",
@@ -173,10 +215,10 @@
         "hide_top_toolbar": false,
         "save_image": false,
         "container_id": "tv_chart_container",
-        "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
+        "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"],
+        "onReady": (widget) => { window.tvWidget = widget; }
     });
 
-    // Math Functions
     function rsi(p, n=14) {
         if(p.length < n+1) return 50;
         let g=0, l=0;
@@ -226,7 +268,7 @@
             card.classList.add('auto');
             autoStatus.classList.add('active');
             modeBadge.textContent = ' AUTO ACTIVE';
-            log('🔄 دۆخی خۆکار چالاک کرا - هەر ٣٠ چرکە جارێک شیکاری دەکات');
+            log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
             stopAutoMode();
@@ -250,21 +292,16 @@
         card.classList.remove('auto');
         autoStatus.classList.remove('active');
         modeBadge.textContent = '🔄 AUTO MODE';
-        log('⏹️ دۆخی خۆکار وەستا');
+        log('️ دۆخی خۆکار وەستا');
     }
 
     function startAutoLoop() {
-        nextCheckTime = 30; // Reset to 30 seconds
+        nextCheckTime = 60;
         if(autoInterval) clearInterval(autoInterval);
-        
-        // Run analysis every 30 seconds (30000 ms)
         autoInterval = setInterval(() => {
-            if(!isProcessing && autoMode) {
-                runAnalysis(false);
-            }
-        }, 30000);
+            if(!isProcessing && autoMode) runAnalysis(false);
+        }, 60000);
         
-        // Countdown timer
         if(countdownInterval) clearInterval(countdownInterval);
         countdownInterval = setInterval(() => {
             if(nextCheckTime > 0 && autoMode) {
@@ -272,35 +309,27 @@
                 let m = Math.floor(nextCheckTime / 60);
                 let s = nextCheckTime % 60;
                 document.getElementById('nextCheck').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            } else if(autoMode) {
-                nextCheckTime = 30;
-            }
+            } else if(autoMode) { nextCheckTime = 60; }
         }, 1000);
     }
 
     async function runAnalysis(manual = false) {
         if(isProcessing) return;
         isProcessing = true;
-        
         const logEl = document.getElementById('log');
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) {
-            logEl.textContent = ' شیکاری دەستپێکرد...';
-        } else {
-            logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
-        }
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
-            
             const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`, { signal: controller.signal });
             clearTimeout(timeoutId);
             
             if(!res.ok) throw new Error(`API Error: ${res.status}`);
-            
             const data = await res.json();
             if(data.status !== 'ok' || !data.values) throw new Error('داتای نادروست');
 
@@ -325,16 +354,12 @@
             if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} 
             else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});}
             else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
-
             if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});}
             else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
-            
             if(s.d==='up'){score+=2; reasons.push({t:"Stochastic نزمە", d:'up'});}
             else if(s.d==='down'){score-=2; reasons.push({t:"Stochastic بەرزە", d:'down'});}
-
             if(b.d==='up'){score+=1; reasons.push({t:"Bollinger خوارەوە", d:'up'});}
             else if(b.d==='down'){score-=1; reasons.push({t:"Bollinger سەرەوە", d:'down'});}
-
             if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});}
             else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
 
@@ -349,136 +374,74 @@
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
             if(conf >= 70) {
                 if(autoMode && !manual) playNotification();
-                
                 let direction = score > 0 ? 'BUY' : 'SELL';
-                
-                currentSignal = {
-                    type: direction,
-                    entryPrice: price,
-                    time: new Date().toLocaleTimeString('ku'),
-                    conf: conf
-                };
+                currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf };
                 
                 if(direction === 'BUY') {
-                    card.className = 'card signal-box buy'; 
-                    arrow.textContent='⬆️'; 
-                    txt.textContent='BUY (کڕین)'; 
-                    circle.className='conf-circle high';
+                    card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high';
                     log(`✅ سیگناڵی BUY دۆزرایەوە - دڵنیایی: ${conf}%`);
                 } else {
-                    card.className = 'card signal-box sell'; 
-                    arrow.textContent='⬇️'; 
-                    txt.textContent='SELL (فرۆشتن)'; 
-                    circle.className='conf-circle high';
+                    card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high';
                     log(`✅ سیگناڵی SELL دۆزرایەوە - دڵنیایی: ${conf}%`);
                 }
-                
-                // STOP auto loop during signal timer
                 pauseAutoDuringSignal();
                 startSignalTimer();
-                
             } else {
                 if(autoMode) {
-                    card.className = 'card signal-box wait auto';
-                    arrow.textContent='🔄';
-                    txt.textContent='چاوەڕێ...';
-                    circle.className='conf-circle med';
+                    card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med';
                     log(`⏳ دڵنیایی تەنها ${conf}% - چاوەڕوانی شیکاری داهاتوو...`);
                 } else {
-                    card.className = 'card signal-box wait';
-                    arrow.textContent='✋';
-                    txt.textContent='WAIT (چاوەڕێ)';
-                    circle.className='conf-circle low';
+                    card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low';
                 }
             }
-
         } catch(e) {
-            err.textContent = e.message;
-            err.style.display = 'block';
-            log(`❌ هەڵە: ${e.message}`);
-        } finally {
-            isProcessing = false;
-        }
+            err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`);
+        } finally { isProcessing = false; }
     }
 
     function pauseAutoDuringSignal() {
-        // Pause the auto interval so it doesn't interfere with the 5-min timer
         if(autoInterval) clearInterval(autoInterval);
         if(countdownInterval) clearInterval(countdownInterval);
         document.getElementById('autoStatus').classList.remove('active');
-        log('️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
     }
 
     function resumeAutoAfterSignal() {
-        // Resume auto mode after 5 minutes
-        if(autoMode) {
-            log('▶️ دۆخی خۆکار دووبارە دەست پێ دەکاتەوە...');
-            startAutoLoop();
-        }
+        if(autoMode) { log('▶️ دۆخی خۆکار دووبارە دەست پێ دەکاتەوە...'); startAutoLoop(); }
     }
 
     function startSignalTimer() {
-        let t = 300; // 5 minutes
+        let t = 300;
         const el = document.getElementById('timer');
-        
         el.classList.add('active');
-        
         if(signalTimer) clearInterval(signalTimer);
         signalTimer = setInterval(() => {
             let m = Math.floor(t/60), s = t%60;
             el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if(t<=0) {
-                clearInterval(signalTimer);
-                el.classList.remove('active');
-                
-                // Evaluate result
-                evaluateSignalResult();
-                
-                // Resume auto mode
-                resumeAutoAfterSignal();
-            }
+            if(t<=0) { clearInterval(signalTimer); el.classList.remove('active'); evaluateSignalResult(); resumeAutoAfterSignal(); }
             t--;
         }, 1000);
     }
 
     async function evaluateSignalResult() {
         if(!currentSignal) return;
-        
         try {
             const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
             const data = await res.json();
-            
             if(data.price) {
                 let currentPrice = parseFloat(data.price);
                 let entryPrice = currentSignal.entryPrice;
-                let isWin = false;
-                
-                if(currentSignal.type === 'SELL') {
-                    isWin = currentPrice < entryPrice;
-                } else {
-                    isWin = currentPrice > entryPrice;
-                }
-                
+                let isWin = currentSignal.type === 'SELL' ? currentPrice < entryPrice : currentPrice > entryPrice;
                 if(isWin) wins++; else losses++;
-                
-                history.unshift({
-                    ...currentSignal,
-                    exitPrice: currentPrice,
-                    result: isWin ? 'WIN' : 'LOSS',
-                    priceChange: (currentPrice - entryPrice).toFixed(2)
-                });
-                
+                history.unshift({ ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2) });
                 updateHistoryUI();
                 log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
-        } catch(e) {
-            console.error('Error evaluating result:', e);
-        }
-        
+        } catch(e) { console.error('Error evaluating result:', e); }
         currentSignal = null;
     }
 
@@ -486,27 +449,20 @@
         const historyCard = document.getElementById('historyCard');
         const historyList = document.getElementById('historyList');
         const winRateEl = document.getElementById('winRate');
-        
         historyCard.style.display = 'block';
-        
         let total = wins + losses;
         let rate = total > 0 ? Math.round((wins / total) * 100) : 0;
         winRateEl.textContent = `سەرکەوتن: ${rate}% (${wins}/${total})`;
         winRateEl.style.color = rate >= 70 ? 'var(--green)' : rate >= 50 ? 'var(--gold)' : 'var(--red)';
-        
         historyList.innerHTML = history.map(h => `
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">
-                        ${h.type === 'BUY' ? '️ BUY' : '⬇️ SELL'}
+                        ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
                     </div>
-                    <div class="h-details">
-                        ⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
-                    </div>
+                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
-                <div class="h-result ${h.result.toLowerCase()}">
-                    ${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}
-                </div>
+                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
         `).join('');
     }
@@ -516,11 +472,7 @@
         audio.play().catch(e => console.log('Audio play failed'));
     }
 
-    function log(msg) {
-        document.getElementById('log').textContent = msg;
-        console.log(msg);
-    }
-
+    function log(msg) { document.getElementById('log').textContent = msg; console.log(msg); }
     log('ئامادەیە - دوگمەی AUTO داگرە بۆ دەستپێکردن');
 </script>
 </body>
