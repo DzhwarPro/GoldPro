@@ -3,587 +3,381 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Twelve Data</title>
+<title>Gold Sniper Pro - M5 Precision</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    :root {
+        --bg-dark: #0a0a0f;
+        --card-dark: #12121a;
+        --gold: #d4af37;
+        --gold-light: #f2d06b;
+        --green: #00ff88;
+        --red: #ff4444;
+        --yellow: #ffcc00;
+        --text-main: #e0e0e0;
+        --text-muted: #888899;
+    }
 
-body.dark { background: #050505; color: #e0e0e0; }
-body.light { background: #f4f6f8; color: #1a1a1a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    body { background: var(--bg-dark); color: var(--text-main); transition: all 0.3s; }
+    body.light { background: #f4f6f8; color: #1a1a1a; --card-dark: #ffffff; }
 
-.container { max-width: 800px; margin: 0 auto; padding: 15px; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-h1 { color: #d4af37; font-size: 24px; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+    .container { max-width: 850px; margin: 0 auto; padding: 15px; }
+    
+    .header { 
+        display: flex; justify-content: space-between; align-items: center; 
+        margin-bottom: 20px; padding-bottom: 15px; 
+        border-bottom: 2px solid var(--gold);
+    }
+    .header h1 { color: var(--gold); font-size: 26px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+    .theme-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
 
-.card { background: rgba(20, 20, 20, 0.95); border: 1px solid #333; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-body.light .card { background: #fff; border: 1px solid #ddd; }
+    .card { 
+        background: var(--card-dark); border: 1px solid #2a2a35; 
+        border-radius: 16px; padding: 20px; margin-bottom: 20px; 
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
 
-.chart-container { height: 400px; width: 100%; border-radius: 10px; overflow: hidden; }
+    .chart-box { height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
 
-.prediction-box { text-align: center; padding: 20px; border-radius: 12px; border: 2px solid transparent; position: relative; overflow: hidden; }
-.prediction-box.buy { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
-.prediction-box.sell { border-color: #ff4444; background: rgba(255, 68, 68, 0.05); }
-.prediction-box.wait { border-color: #ffd700; background: rgba(255, 215, 0, 0.05); }
+    /* Signal Box */
+    .signal-card { text-align: center; padding: 25px; position: relative; overflow: hidden; }
+    .signal-card.buy { border: 2px solid var(--green); background: linear-gradient(145deg, rgba(0,255,136,0.05), transparent); }
+    .signal-card.sell { border: 2px solid var(--red); background: linear-gradient(145deg, rgba(255,68,68,0.05), transparent); }
+    .signal-card.wait { border: 2px solid var(--yellow); background: linear-gradient(145deg, rgba(255,204,0,0.05), transparent); }
 
-.signal-arrow { font-size: 60px; margin: 10px 0; animation: bounce 2s infinite; }
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .price-tag { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+    .signal-arrow { font-size: 80px; margin: 10px 0; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
+    .signal-text { font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; }
+    .buy .signal-text { color: var(--green); }
+    .sell .signal-text { color: var(--red); }
+    .wait .signal-text { color: var(--yellow); }
 
-.confidence-circle {
-    width: 120px; height: 120px; border-radius: 50%;
-    border: 5px solid #333; margin: 10px auto;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; font-weight: bold; position: relative;
-}
-.confidence-circle.high { border-color: #00ff88; color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
-.confidence-circle.med { border-color: #ffd700; color: #ffd700; }
-.confidence-circle.low { border-color: #ff4444; color: #ff4444; }
+    /* Confidence Circle */
+    .conf-circle {
+        width: 130px; height: 130px; border-radius: 50%;
+        border: 6px solid #333; margin: 15px auto;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.2);
+    }
+    .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+    .conf-circle.med { border-color: var(--yellow); box-shadow: 0 0 20px rgba(255,204,0,0.3); }
+    .conf-val { font-size: 36px; font-weight: bold; }
+    .conf-label { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
 
-.filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-.filter-item { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; }
-.filter-val.up { color: #00ff88; }
-.filter-val.down { color: #ff4444; }
+    /* Timer */
+    .timer-box {
+        margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); 
+        border-radius: 12px; display: none;
+    }
+    .timer-box.active { display: block; animation: pulseBorder 2s infinite; }
+    @keyframes pulseBorder { 0%,100% { border: 1px solid transparent; } 50% { border: 1px solid var(--gold); } }
+    .timer-val { font-size: 42px; font-weight: bold; font-family: monospace; color: var(--gold); }
+    .timer-label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
 
-.btn-main {
-    width: 100%; padding: 15px; border: none; border-radius: 10px;
-    background: linear-gradient(45deg, #d4af37, #f2d06b);
-    color: #000; font-weight: bold; font-size: 18px; cursor: pointer;
-    margin-top: 10px;
-}
-.btn-main:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-.timer-display { font-size: 40px; font-family: monospace; text-align: center; margin: 10px 0; color: #d4af37; }
+    /* Reasons */
+    .reasons-box { text-align: right; margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; border-right: 4px solid var(--gold); }
+    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 10px; font-size: 15px; }
+    .reason-item { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
+    .reason-icon { margin-left: 10px; font-size: 16px; }
+    .reason-up { color: var(--green); }
+    .reason-down { color: var(--red); }
+    .reason-neutral { color: var(--text-muted); }
 
-.api-input {
-    width: 100%; padding: 10px; margin-bottom: 10px;
-    background: #111; border: 1px solid #333; color: #fff; border-radius: 5px;
-}
-.status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 11px; margin-top: 5px; }
-.status-ok { background: rgba(0,255,136,0.2); color: #00ff88; }
-.status-err { background: rgba(255,68,68,0.2); color: #ff4444; }
+    /* Indicators Grid */
+    .indicators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .ind-item { 
+        background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; 
+        display: flex; justify-content: space-between; align-items: center; 
+        border: 1px solid #2a2a35;
+    }
+    .ind-name { font-size: 12px; color: var(--text-muted); }
+    .ind-val { font-weight: bold; font-size: 14px; }
+    .ind-up { color: var(--green); }
+    .ind-down { color: var(--red); }
 
-.price-display { font-size: 24px; font-weight: bold; text-align: center; margin: 10px 0; color: #d4a017; }
+    /* Buttons */
+    .action-btn {
+        width: 100%; padding: 16px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        color: #000; font-weight: 900; font-size: 20px; cursor: pointer;
+        margin-top: 15px; transition: transform 0.2s;
+    }
+    .action-btn:hover { transform: scale(1.02); }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.reason-list {
-    text-align: right;
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px;
-    border-right: 4px solid #d4af37;
-}
-.reason-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 13px;
-    line-height: 1.6;
-}
-.reason-item:last-child { margin-bottom: 0; }
-.reason-icon { margin-left: 8px; font-size: 16px; }
-.reason-text { flex: 1; }
-.reason-up { color: #00ff88; }
-.reason-down { color: #ff4444; }
-.reason-neutral { color: #aaa; }
-
-.api-section {
-    background: rgba(0,123,255,0.1);
-    border: 2px solid #007bff;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-.api-info {
-    font-size: 12px;
-    opacity: 0.8;
-    margin-top: 8px;
-}
-.api-info a {
-    color: #007bff;
-    text-decoration: none;
-}
+    .disclaimer { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 15px; opacity: 0.7; }
 </style>
 </head>
-<body class="dark">
+<body>
 
 <div class="container">
     <div class="header">
-        <h1>🎯 Gold Sniper Pro</h1>
-        <button onclick="toggleTheme()" style="background:none;border:none;font-size:24px;cursor:pointer;">🌓</button>
-    </div>
-
-    <!-- Twelve Data API Section -->
-    <div class="api-section">
-        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 Twelve Data API Key لێرە دانێ</div>
-        <div class="api-info">
-            Twelve Data API بەکاربهێنە (خۆڕایی - ٨٠٠ داواکاری/ڕۆژ) - 
-            <a href="https://twelvedata.com/register" target="_blank">Lêrê Tûmar Bike</a>
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
-            <input type="text" id="apiKeyInput" class="api-input" style="flex: 1; max-width: 400px;" placeholder="Twelve Data API Keyـت لێرە بنووسە...">
-            <button onclick="saveApiKey()" style="padding: 10px 20px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">💾 پاشکەوتکردن</button>
-        </div>
-        <div id="apiStatus" class="status-badge" style="margin-top: 10px;">⏳ چاوەڕوانی دەستپێکردن...</div>
+        <h1> Gold Sniper M5</h1>
+        <button class="theme-btn" onclick="toggleTheme()"> ڕوون/تاریک</button>
     </div>
 
     <div class="card">
-        <div id="chart_div" class="chart-container"></div>
+        <div id="chart_div" class="chart-box"></div>
     </div>
 
-    <div class="card prediction-box wait" id="predBox">
-        <div style="font-size:14px;opacity:0.8;">دۆخی بازاڕ</div>
-        <div class="price-display">نرخ: <span id="currentPriceDisplay">--</span></div>
-        <div id="signalArrow" class="signal-arrow"></div>
-        <div id="signalText" style="font-size:24px;font-weight:bold;">چاوەڕێبە...</div>
+    <div class="card signal-card wait" id="signalCard">
+        <div class="price-tag">نرخی ئێستا: <span id="priceDisplay">--</span></div>
         
-        <div class="confidence-circle low" id="confCircle">
-            <span id="confValue">0%</span>
-        </div>
-        <div style="font-size:12px;opacity:0.6;">ئاستی دڵنیایی (Accuracy)</div>
+        <div id="signalArrow" class="signal-arrow">⏳</div>
+        <div id="signalText" class="signal-text">چاوەڕێبە...</div>
         
-        <div id="reasonContainer" class="reason-list" style="display: none;">
-            <div style="font-weight:bold;margin-bottom:10px;color:#d4af37;">🔍 هۆکارەکانی سیگناڵ:</div>
-            <div id="reasonList"></div>
+        <div class="conf-circle med" id="confCircle">
+            <div class="conf-val" id="confVal">0%</div>
+            <div class="conf-label">ئاستی دڵنیایی</div>
+        </div>
+
+        <div class="timer-box" id="timerBox">
+            <div class="timer-label">⏳ کاتی ماوە بۆ کۆتایی شمع (٥ خولەک)</div>
+            <div class="timer-val" id="timerVal">05:00</div>
+        </div>
+
+        <div class="reasons-box" id="reasonsBox" style="display: none;">
+            <div class="reasons-title"> هۆکارەکانی بڕیار:</div>
+            <div id="reasonsList"></div>
         </div>
     </div>
 
     <div class="card">
-        <div class="filters-grid" id="filtersContainer">
-            <div class="filter-item"><span>RSI (14)</span><span id="fRSI" class="filter-val">-</span></div>
-            <div class="filter-item"><span>MACD</span><span id="fMACD" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Stochastic</span><span id="fStoch" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Bollinger</span><span id="fBB" class="filter-val">-</span></div>
-            <div class="filter-item"><span>ADX</span><span id="fADX" class="filter-val">-</span></div>
-            <div class="filter-item"><span>CCI</span><span id="fCCI" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Williams %R</span><span id="fWilliams" class="filter-val">-</span></div>
-            <div class="filter-item"><span>ATR</span><span id="fATR" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Ichimoku</span><span id="fIchimoku" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Parabolic SAR</span><span id="fSAR" class="filter-val">-</span></div>
-            <div class="filter-item"><span>VWAP</span><span id="fVWAP" class="filter-val">-</span></div>
-            <div class="filter-item"><span>Momentum</span><span id="fMom" class="filter-val">-</span></div>
+        <div style="font-weight: bold; margin-bottom: 15px; color: var(--gold);">📊 فلتەرە تەکنیکییەکان (M5)</div>
+        <div class="indicators-grid">
+            <div class="ind-item"><span class="ind-name">RSI (14)</span><span class="ind-val" id="indRSI">-</span></div>
+            <div class="ind-item"><span class="ind-name">MACD</span><span class="ind-val" id="indMACD">-</span></div>
+            <div class="ind-item"><span class="ind-name">Stochastic</span><span class="ind-val" id="indStoch">-</span></div>
+            <div class="ind-item"><span class="ind-name">Bollinger</span><span class="ind-val" id="indBB">-</span></div>
+            <div class="ind-item"><span class="ind-name">Momentum</span><span class="ind-val" id="indMom">-</span></div>
         </div>
     </div>
 
     <div class="card">
-        <div class="timer-display" id="timer">00:00</div>
-        <button id="startBtn" class="btn-main" onclick="startAnalysis()">🚀 دەستپێکردنی شیکاری</button>
-        <p style="text-align:center;font-size:11px;margin-top:10px;opacity:0.5;">
-            ⚠️ تێبینی: ئەم سیستمە تەنها کاتێک سیگناڵ دەدات کە دڵنیایی لەسەر ٥٪ بێت.
-        </p>
+        <button class="action-btn" id="analyzeBtn" onclick="runAnalysis()">🚀 شیکاری و دەستپێکردن</button>
+        <div class="disclaimer">⚠️ ئەم بەرنامەیە تەنها بۆ مەبەستی فێربوون و تاقیکردنەوەیە. بازاڕی زێڕ مەترسەی هەیە.</div>
     </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    let priceData = [];
+    // API Key (ئەگەر دەتەوێت بیگۆڕیت، لێرە بیگۆڕە)
+    const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
     let isAnalyzing = false;
-    let userApiKey = localStorage.getItem('twelvedata_api_key') || '';
-    
-    if(userApiKey) document.getElementById('apiKeyInput').value = userApiKey;
+    let signalTimer = null;
 
     // TradingView Chart
     new TradingView.widget({
-        "autosize": true,
-        "symbol": "OANDA:XAUUSD",
-        "interval": "5",
-        "timezone": "Etc/UTC",
-        "theme": "dark",
-        "style": "1",
-        "locale": "ar",
-        "toolbar_bg": "#f1f3f6",
-        "enable_publishing": false,
-        "hide_top_toolbar": false,
-        "save_image": false,
-        "container_id": "chart_div"
+        "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5",
+        "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "ar",
+        "toolbar_bg": "#12121a", "enable_publishing": false, "hide_top_toolbar": false,
+        "save_image": false, "container_id": "chart_div",
+        "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
     });
 
-    function toggleTheme() {
-        document.body.classList.toggle('dark');
-        document.body.classList.toggle('light');
-    }
+    function toggleTheme() { document.body.classList.toggle('light'); }
 
-    function saveApiKey() {
-        const key = document.getElementById('apiKeyInput').value.trim();
-        if(key) {
-            localStorage.setItem('twelvedata_api_key', key);
-            userApiKey = key;
-            alert('✅ API Key پاشکەوت کرا! ئێستا دەتوانیت دەستپێ بکەیت.');
-            testConnection();
-        } else {
-            alert('⚠️ تکایە API Key داخڵ بکە');
+    // --- Technical Indicators Math ---
+    function calcRSI(prices, p=14) {
+        if(prices.length < p+1) return 50;
+        let g=0, l=0;
+        for(let i=prices.length-p; i<prices.length; i++) {
+            let c = prices[i]-prices[i-1];
+            if(c>0) g+=c; else l+=Math.abs(c);
         }
+        let ag=g/p, al=l/p;
+        if(al===0) return 100;
+        return 100 - (100/(1+ag/al));
     }
 
-    async function testConnection() {
-        try {
-            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${userApiKey}`);
-            const data = await res.json();
-            if(data.price) {
-                document.getElementById('apiStatus').className = 'status-badge status-ok';
-                document.getElementById('apiStatus').textContent = '✅ Twelve Data API پەیوەندیدارە';
-            } else {
-                throw new Error('Invalid API key');
-            }
-        } catch(e) {
-            document.getElementById('apiStatus').className = 'status-badge status-err';
-            document.getElementById('apiStatus').textContent = '❌ هەڵە لە API - تکایە کلیکەت چاک بکە';
-        }
-    }
-
-    // وەرگرتنی مێژووی نرخەکان لە Twelve Data
-    async function fetchHistoricalData() {
-        if(!userApiKey) return null;
-        
-        try {
-            // Get 100 candles of 5-minute data
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${userApiKey}`);
-            const data = await res.json();
-            
-            if(data.status === 'ok' && data.values) {
-                // Convert to array of prices (close prices)
-                const prices = data.values.map(v => parseFloat(v.close)).reverse();
-                const currentPrice = parseFloat(data.values[0].close);
-                
-                document.getElementById('currentPriceDisplay').textContent = currentPrice.toFixed(2);
-                document.getElementById('apiStatus').className = 'status-badge status-ok';
-                document.getElementById('apiStatus').textContent = '✅ داتای ڕاستەقینە وەرگیرا';
-                
-                return { prices, currentPrice };
-            } else {
-                throw new Error('No data');
-            }
-        } catch(e) {
-            console.error('Twelve Data Error:', e);
-            document.getElementById('apiStatus').className = 'status-badge status-err';
-            document.getElementById('apiStatus').textContent = ' هەڵە لە API';
-            return null;
-        }
-    }
-
-    // Technical Indicators
-    function calculateRSI(prices, period=14) {
-        if(prices.length < period + 1) return 50;
-        let gains = 0, losses = 0;
-        for(let i = prices.length - period; i < prices.length; i++) {
-            const change = prices[i] - prices[i-1];
-            if(change > 0) gains += change;
-            else losses += Math.abs(change);
-        }
-        const avgGain = gains / period;
-        const avgLoss = losses / period;
-        if(avgLoss === 0) return 100;
-        return 100 - (100 / (1 + avgGain / avgLoss));
-    }
-
-    function calculateSMA(prices, period) {
-        if(prices.length < period) return prices[prices.length-1];
-        const sum = prices.slice(-period).reduce((a,b) => a+b, 0);
-        return sum / period;
-    }
-
-    function calculateEMA(prices, period) {
-        if(prices.length < period) return prices[prices.length-1];
-        const k = 2 / (period + 1);
-        let ema = prices.slice(0, period).reduce((a,b) => a+b, 0) / period;
-        for(let i = period; i < prices.length; i++) {
-            ema = prices[i] * k + ema * (1 - k);
-        }
+    function calcEMA(prices, p) {
+        if(prices.length < p) return prices[prices.length-1];
+        let k = 2/(p+1);
+        let ema = prices.slice(0,p).reduce((a,b)=>a+b,0)/p;
+        for(let i=p; i<prices.length; i++) ema = prices[i]*k + ema*(1-k);
         return ema;
     }
 
-    function calculateMACD(prices) {
-        const ema12 = calculateEMA(prices, 12);
-        const ema26 = calculateEMA(prices, 26);
-        const macdLine = ema12 - ema26;
-        const signalLine = calculateEMA(prices.slice(-26), 9);
-        const histogram = macdLine - signalLine;
-        return { histogram, signal: histogram > 0 ? 'up' : histogram < 0 ? 'down' : 'neutral' };
+    function calcMACD(prices) {
+        let e12 = calcEMA(prices, 12), e26 = calcEMA(prices, 26);
+        let line = e12 - e26;
+        // Simplified signal for M5
+        let signal = calcEMA(prices.slice(-26), 9); 
+        let hist = line - signal;
+        return { hist, dir: hist > 0 ? 'up' : hist < 0 ? 'down' : 'flat' };
     }
 
-    function calculateStochastic(prices, period=14) {
-        const slice = prices.slice(-period);
-        const high = Math.max(...slice);
-        const low = Math.min(...slice);
-        const current = prices[prices.length - 1];
-        const k = ((current - low) / (high - low)) * 100;
-        let signal = 'neutral';
-        if(k < 20) signal = 'up';
-        else if(k > 80) signal = 'down';
-        return { k, signal };
+    function calcStoch(prices, p=14) {
+        let slice = prices.slice(-p);
+        let h = Math.max(...slice), l = Math.min(...slice);
+        let c = prices[prices.length-1];
+        let k = ((c-l)/(h-l))*100;
+        return { k, dir: k<20?'up':k>80?'down':'flat' };
     }
 
-    function calculateBollingerBands(prices, period=20) {
-        const sma = calculateSMA(prices, period);
-        const slice = prices.slice(-period);
-        const variance = slice.reduce((sum, p) => sum + Math.pow(p - sma, 2), 0) / period;
-        const stdDev = Math.sqrt(variance);
-        const upper = sma + (stdDev * 2);
-        const lower = sma - (stdDev * 2);
-        const current = prices[prices.length - 1];
-        let signal = 'neutral';
-        if(current <= lower) signal = 'up';
-        else if(current >= upper) signal = 'down';
-        return { position: current <= lower ? 'lower' : current >= upper ? 'upper' : 'middle', signal };
+    function calcBB(prices, p=20) {
+        let sma = prices.slice(-p).reduce((a,b)=>a+b,0)/p;
+        let std = Math.sqrt(prices.slice(-p).reduce((s,x)=>s+Math.pow(x-sma,2),0)/p);
+        let c = prices[prices.length-1];
+        let upper = sma + 2*std, lower = sma - 2*std;
+        return { pos: c<=lower?'lower':c>=upper?'upper':'mid', dir: c<=lower?'up':c>=upper?'down':'flat' };
     }
 
-    function calculateCCI(prices, period=20) {
-        const slice = prices.slice(-period);
-        const sma = slice.reduce((a,b) => a+b, 0) / period;
-        const meanDeviation = slice.reduce((sum, p) => sum + Math.abs(p - sma), 0) / period;
-        const current = prices[prices.length - 1];
-        const cci = (current - sma) / (0.015 * meanDeviation);
-        let signal = 'neutral';
-        if(cci < -100) signal = 'up';
-        else if(cci > 100) signal = 'down';
-        return { cci, signal };
+    function calcMom(prices, p=10) {
+        let m = prices[prices.length-1] - prices[prices.length-1-p];
+        return { m, dir: m>0?'up':m<0?'down':'flat' };
     }
 
-    function calculateWilliamsR(prices, period=14) {
-        const slice = prices.slice(-period);
-        const high = Math.max(...slice);
-        const low = Math.min(...slice);
-        const current = prices[prices.length - 1];
-        const wr = ((high - current) / (high - low)) * -100;
-        let signal = 'neutral';
-        if(wr < -80) signal = 'up';
-        else if(wr > -20) signal = 'down';
-        return { wr, signal };
-    }
-
-    function calculateMomentum(prices, period=10) {
-        const momentum = prices[prices.length - 1] - prices[prices.length - period];
-        return { momentum, signal: momentum > 0 ? 'up' : momentum < 0 ? 'down' : 'neutral' };
-    }
-
-    function calculateATR(prices, period=14) {
-        let trSum = 0;
-        for(let i = prices.length - period; i < prices.length; i++) {
-            trSum += Math.abs(prices[i] - prices[i-1]);
-        }
-        const atr = trSum / period;
-        const atrPercent = (atr / prices[prices.length - 1]) * 100;
-        return { atr, atrPercent, signal: atrPercent > 0.5 ? 'up' : 'neutral' };
-    }
-
-    function calculateIchimoku(prices) {
-        if(prices.length < 26) return { signal: 'neutral', tenkan: 0, kijun: 0 };
-        const tenkan = (Math.max(...prices.slice(-9)) + Math.min(...prices.slice(-9))) / 2;
-        const kijun = (Math.max(...prices.slice(-26)) + Math.min(...prices.slice(-26))) / 2;
-        const current = prices[prices.length - 1];
-        let signal = 'neutral';
-        if(current > tenkan && current > kijun && tenkan > kijun) signal = 'up';
-        else if(current < tenkan && current < kijun && tenkan < kijun) signal = 'down';
-        return { tenkan, kijun, signal };
-    }
-
-    function calculateParabolicSAR(prices) {
-        const recent = prices.slice(-20);
-        const high = Math.max(...recent);
-        const low = Math.min(...recent);
-        const current = prices[prices.length - 1];
-        const sar = low + 0.02 * (high - low);
-        let signal = 'neutral';
-        if(current > sar) signal = 'up';
-        else if(current < sar) signal = 'down';
-        return { sar, signal };
-    }
-
-    function calculateVWAP(prices) {
-        const slice = prices.slice(-20);
-        const vwap = slice.reduce((a,b) => a+b, 0) / slice.length;
-        const current = prices[prices.length - 1];
-        let signal = 'neutral';
-        if(current > vwap) signal = 'up';
-        else if(current < vwap) signal = 'down';
-        return { vwap, signal };
-    }
-
-    function calculateADX(prices, period=14) {
-        // Simplified ADX
-        return { adx: 25, signal: 'neutral' };
-    }
-
-    async function startAnalysis() {
+    // --- Main Logic ---
+    async function runAnalysis() {
         if(isAnalyzing) return;
         isAnalyzing = true;
-        const btn = document.getElementById('startBtn');
+        const btn = document.getElementById('analyzeBtn');
+        btn.disabled = true; btn.textContent = " وەرگرتنی داتا لە Twelve Data...";
+
+        try {
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`);
+            const data = await res.json();
+            
+            if(data.status !== 'ok' || !data.values) throw new Error('API Error');
+            
+            let prices = data.values.map(v => parseFloat(v.close)).reverse();
+            let currentPrice = prices[prices.length-1];
+            document.getElementById('priceDisplay').textContent = currentPrice.toFixed(2);
+
+            // Calculate
+            let rsi = calcRSI(prices);
+            let macd = calcMACD(prices);
+            let stoch = calcStoch(prices);
+            let bb = calcBB(prices);
+            let mom = calcMom(prices);
+
+            // Update UI Indicators
+            updateInd('indRSI', rsi.toFixed(1), rsi<30?'ind-up':rsi>70?'ind-down':'');
+            updateInd('indMACD', macd.hist.toFixed(2), macd.dir==='up'?'ind-up':macd.dir==='down'?'ind-down':'');
+            updateInd('indStoch', stoch.k.toFixed(1), stoch.dir==='up'?'ind-up':stoch.dir==='down'?'ind-down':'');
+            updateInd('indBB', bb.pos, bb.dir==='up'?'ind-up':bb.dir==='down'?'ind-down':'');
+            updateInd('indMom', mom.m.toFixed(2), mom.dir==='up'?'ind-up':mom.dir==='down'?'ind-down':'');
+
+            // Scoring (Max 10)
+            let score = 0;
+            let reasons = [];
+
+            // RSI (Weight 3)
+            if(rsi < 30) { score += 3; reasons.push({t:`RSI نزمە (${rsi.toFixed(1)}) - بازاڕ زۆر فرۆشراوە`, d:'up'}); }
+            else if(rsi > 70) { score -= 3; reasons.push({t:`RSI بەرزە (${rsi.toFixed(1)}) - بازاڕ زۆر کڕاوە`, d:'down'}); }
+            else { reasons.push({t:`RSI ناوەندییە (${rsi.toFixed(1)})`, d:'neutral'}); }
+
+            // MACD (Weight 3)
+            if(macd.dir === 'up') { score += 3; reasons.push({t:"MACD ئەرێنییە (Bullish)", d:'up'}); }
+            else if(macd.dir === 'down') { score -= 3; reasons.push({t:"MACD نەرێنییە (Bearish)", d:'down'}); }
+            else { reasons.push({t:"MACD لاوازە", d:'neutral'}); }
+
+            // Stoch (Weight 2)
+            if(stoch.dir === 'up') { score += 2; reasons.push({t:"Stochastic نزمە (Oversold)", d:'up'}); }
+            else if(stoch.dir === 'down') { score -= 2; reasons.push({t:"Stochastic بەرزە (Overbought)", d:'down'}); }
+
+            // BB (Weight 1)
+            if(bb.dir === 'up') { score += 1; reasons.push({t:"نرخ گەیشتە باندی خوارەوەی Bollinger", d:'up'}); }
+            else if(bb.dir === 'down') { score -= 1; reasons.push({t:"نرخ گەیشتە باندی سەرەوەی Bollinger", d:'down'}); }
+
+            // Momentum (Weight 1)
+            if(mom.dir === 'up') { score += 1; reasons.push({t:"Momentum ئەرێنییە", d:'up'}); }
+            else if(mom.dir === 'down') { score -= 1; reasons.push({t:"Momentum نەرێنییە", d:'down'}); }
+
+            // Confidence
+            let conf = Math.min(99, Math.abs(score) * 10);
+            document.getElementById('confVal').textContent = conf.toFixed(0) + '%';
+
+            // Decision
+            const card = document.getElementById('signalCard');
+            const arrow = document.getElementById('signalArrow');
+            const text = document.getElementById('signalText');
+            const circle = document.getElementById('confCircle');
+            const reasonsBox = document.getElementById('reasonsBox');
+            const reasonsList = document.getElementById('reasonsList');
+
+            reasonsBox.style.display = 'block';
+            reasonsList.innerHTML = reasons.map(r => `
+                <div class="reason-item">
+                    <span class="reason-icon ${r.d==='up'?'reason-up':r.d==='down'?'reason-down':'reason-neutral'}">
+                        ${r.d==='up'?'✅':r.d==='down'?'🔴':'⚪'}
+                    </span>
+                    <span class="${r.d==='up'?'reason-up':r.d==='down'?'reason-down':'reason-neutral'}">${r.t}</span>
+                </div>
+            `).join('');
+
+            // Threshold: 70% confidence (Score >= 7 or <= -7)
+            if(conf >= 70) {
+                if(score > 0) {
+                    // BUY
+                    card.className = 'card signal-card buy';
+                    arrow.textContent = '⬆️';
+                    text.textContent = 'BUY (کڕین)';
+                    circle.className = 'conf-circle high';
+                    start5MinTimer();
+                } else {
+                    // SELL
+                    card.className = 'card signal-card sell';
+                    arrow.textContent = '⬇️';
+                    text.textContent = 'SELL (فرۆشتن)';
+                    circle.className = 'conf-circle high';
+                    start5MinTimer();
+                }
+            } else {
+                // WAIT
+                card.className = 'card signal-card wait';
+                arrow.textContent = '✋';
+                text.textContent = 'WAIT (چاوەڕێ)';
+                circle.className = 'conf-circle med';
+                document.getElementById('timerBox').classList.remove('active');
+            }
+
+        } catch(e) {
+            alert('هەڵە لە وەرگرتنی داتا: ' + e.message);
+        }
+
+        isAnalyzing = false;
+        btn.disabled = false;
+        btn.textContent = "🔄 شیکاری نوێ";
+    }
+
+    function updateInd(id, val, cls) {
+        let el = document.getElementById(id);
+        el.textContent = val;
+        el.className = 'ind-val ' + cls;
+    }
+
+    function start5MinTimer() {
+        let time = 300; // 5 minutes in seconds
+        const timerBox = document.getElementById('timerBox');
+        const timerVal = document.getElementById('timerVal');
+        const btn = document.getElementById('analyzeBtn');
+        
+        timerBox.classList.add('active');
         btn.disabled = true;
-        btn.textContent = "⏳ کۆکردنەوەی داتا...";
+        btn.textContent = "⏳ سیگناڵ چالاکە - چاوەڕوانی بۆ شمعی داهاتوو...";
 
-        // Fetch real historical data from Twelve Data
-        const data = await fetchHistoricalData();
-        if(!data) {
-            alert("تکایە Twelve Data API Keyـی دروست داخڵ بکە");
-            isAnalyzing = false;
-            btn.disabled = false;
-            btn.textContent = "🚀 دەستپێکردن";
-            return;
-        }
-
-        const { prices, currentPrice } = data;
-        priceData = prices;
-
-        // Calculate all indicators
-        const rsi = calculateRSI(prices);
-        const macd = calculateMACD(prices);
-        const stoch = calculateStochastic(prices);
-        const bb = calculateBollingerBands(prices);
-        const cci = calculateCCI(prices);
-        const williams = calculateWilliamsR(prices);
-        const momentum = calculateMomentum(prices);
-        const atr = calculateATR(prices);
-        const ichimoku = calculateIchimoku(prices);
-        const sar = calculateParabolicSAR(prices);
-        const vwap = calculateVWAP(prices);
-        const adx = calculateADX(prices);
-
-        // Update filter UI
-        document.getElementById('fRSI').textContent = rsi.toFixed(1);
-        document.getElementById('fRSI').className = rsi < 30 ? 'filter-val up' : rsi > 70 ? 'filter-val down' : 'filter-val';
+        if(signalTimer) clearInterval(signalTimer);
         
-        document.getElementById('fMACD').textContent = macd.histogram.toFixed(2);
-        document.getElementById('fMACD').className = macd.signal === 'up' ? 'filter-val up' : macd.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fStoch').textContent = stoch.k.toFixed(1);
-        document.getElementById('fStoch').className = stoch.signal === 'up' ? 'filter-val up' : stoch.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fBB').textContent = bb.position;
-        document.getElementById('fBB').className = bb.signal === 'up' ? 'filter-val up' : bb.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fCCI').textContent = cci.cci.toFixed(1);
-        document.getElementById('fCCI').className = cci.signal === 'up' ? 'filter-val up' : cci.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fWilliams').textContent = williams.wr.toFixed(1);
-        document.getElementById('fWilliams').className = williams.signal === 'up' ? 'filter-val up' : williams.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fMom').textContent = momentum.momentum.toFixed(2);
-        document.getElementById('fMom').className = momentum.signal === 'up' ? 'filter-val up' : momentum.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fATR').textContent = atr.atrPercent.toFixed(2) + '%';
-        document.getElementById('fATR').className = 'filter-val';
-        
-        document.getElementById('fIchimoku').textContent = ichimoku.tenkan.toFixed(2);
-        document.getElementById('fIchimoku').className = ichimoku.signal === 'up' ? 'filter-val up' : ichimoku.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fSAR').textContent = sar.sar.toFixed(2);
-        document.getElementById('fSAR').className = sar.signal === 'up' ? 'filter-val up' : sar.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fVWAP').textContent = vwap.vwap.toFixed(2);
-        document.getElementById('fVWAP').className = vwap.signal === 'up' ? 'filter-val up' : vwap.signal === 'down' ? 'filter-val down' : 'filter-val';
-        
-        document.getElementById('fADX').textContent = adx.adx.toFixed(0);
-        document.getElementById('fADX').className = 'filter-val';
-
-        // Weighted scoring
-        let score = 0;
-        let reasons = [];
-        let upCount = 0, downCount = 0;
-
-        const signals = {
-            rsi: { value: rsi, signal: rsi < 30 ? 'up' : rsi > 70 ? 'down' : rsi < 45 ? 'up' : rsi > 55 ? 'down' : 'neutral', weight: 3 },
-            macd: { signal: macd.signal, weight: 3 },
-            stoch: { signal: stoch.signal, weight: 2 },
-            bb: { signal: bb.signal, weight: 2 },
-            cci: { signal: cci.signal, weight: 1 },
-            williams: { signal: williams.signal, weight: 1 },
-            momentum: { signal: momentum.signal, weight: 2 },
-            atr: { signal: atr.signal, weight: 1 },
-            ichimoku: { signal: ichimoku.signal, weight: 2 },
-            sar: { signal: sar.signal, weight: 2 },
-            vwap: { signal: vwap.signal, weight: 2 },
-            adx: { signal: adx.signal, weight: 1 }
-        };
-
-        Object.entries(signals).forEach(([name, s]) => {
-            if(s.signal === 'up') { score += s.weight; upCount++; }
-            else if(s.signal === 'down') { score -= s.weight; downCount++; }
-        });
-
-        // Calculate confidence
-        const maxPossible = 22;
-        const rawConfidence = (Math.abs(score) / maxPossible) * 100;
-        let finalConfidence = rawConfidence;
-        
-        // Boost if RSI and MACD agree
-        if(signals.rsi.signal !== 'neutral' && signals.macd.signal !== 'neutral' && signals.rsi.signal === signals.macd.signal) {
-            finalConfidence += 15;
-        }
-        
-        finalConfidence = Math.min(98, Math.max(40, finalConfidence));
-
-        // Build reasons list
-        if(rsi < 30) reasons.push({text: `RSI زۆر نزمە (${rsi.toFixed(1)}) - Oversold`, type: 'up'});
-        else if(rsi > 70) reasons.push({text: `RSI زۆر بەرزە (${rsi.toFixed(1)}) - Overbought`, type: 'down'});
-        
-        if(macd.signal === 'up') reasons.push({text: "MACD: خاچەکی سەرەوە (Bullish)", type: 'up'});
-        else if(macd.signal === 'down') reasons.push({text: "MACD: خاچەکی خوارەوە (Bearish)", type: 'down'});
-        
-        if(stoch.signal === 'up') reasons.push({text: "Stochastic: نزمە (Oversold)", type: 'up'});
-        else if(stoch.signal === 'down') reasons.push({text: "Stochastic: بەرزە (Overbought)", type: 'down'});
-        
-        if(bb.signal === 'up') reasons.push({text: "Bollinger: نرخ لە خوارەوەی باند", type: 'up'});
-        else if(bb.signal === 'down') reasons.push({text: "Bollinger: نرخ لە سەرەوەی باند", type: 'down'});
-        
-        if(momentum.signal === 'up') reasons.push({text: "Momentum: ئەرێنی", type: 'up'});
-        else if(momentum.signal === 'down') reasons.push({text: "Momentum: نەرێنی", type: 'down'});
-
-        // Display results
-        const box = document.getElementById('predBox');
-        const arrow = document.getElementById('signalArrow');
-        const text = document.getElementById('signalText');
-        const circle = document.getElementById('confCircle');
-        const confVal = document.getElementById('confValue');
-        const reasonContainer = document.getElementById('reasonContainer');
-        const reasonList = document.getElementById('reasonList');
-
-        confVal.textContent = finalConfidence.toFixed(0) + "%";
-
-        if(finalConfidence < 85) {
-            box.className = "prediction-box wait";
-            arrow.textContent = "";
-            text.textContent = "WAIT (چاوەڕێ - دڵنیایی کەمە)";
-            text.style.color = "#ffd700";
-            circle.className = "confidence-circle med";
-            reasonContainer.style.display = 'block';
-            reasonList.innerHTML = `<div class="reason-item"><span class="reason-icon reason-neutral">⚠️</span><span class="reason-text reason-neutral">دڵنیایی تەنها ${finalConfidence.toFixed(0)}%ە. چاوەڕێ بکە تا بگاتە ٨%+</span></div>`;
-        } else if(score >= 4) {
-            box.className = "prediction-box buy";
-            arrow.textContent = "⬆️";
-            text.textContent = "BUY (کڕین)";
-            text.style.color = "#00ff88";
-            circle.className = "confidence-circle high";
-            reasonContainer.style.display = 'block';
-            reasonList.innerHTML = reasons.filter(r => r.type === 'up').map(r => `
-                <div class="reason-item">
-                    <span class="reason-icon reason-up">✅</span>
-                    <span class="reason-text reason-up">${r.text}</span>
-                </div>
-            `).join('');
-        } else if(score <= -4) {
-            box.className = "prediction-box sell";
-            arrow.textContent = "️";
-            text.textContent = "SELL (فرۆشتن)";
-            text.style.color = "#ff4444";
-            circle.className = "confidence-circle high";
-            reasonContainer.style.display = 'block';
-            reasonList.innerHTML = reasons.filter(r => r.type === 'down').map(r => `
-                <div class="reason-item">
-                    <span class="reason-icon reason-down">❌</span>
-                    <span class="reason-text reason-down">${r.text}</span>
-                </div>
-            `).join('');
-        } else {
-            box.className = "prediction-box wait";
-            arrow.textContent = "✋";
-            text.textContent = "WAIT (چاوەڕێ)";
-            text.style.color = "#ffd700";
-            circle.className = "confidence-circle med";
-            reasonContainer.style.display = 'none';
-        }
-
-        setTimeout(() => {
-            isAnalyzing = false;
-            btn.disabled = false;
-            btn.textContent = "🔄 شیکاری نوێ";
-        }, 5000);
+        signalTimer = setInterval(() => {
+            let m = Math.floor(time / 60);
+            let s = time % 60;
+            timerVal.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            
+            if(time <= 0) {
+                clearInterval(signalTimer);
+                timerBox.classList.remove('active');
+                btn.disabled = false;
+                btn.textContent = "🚀 شیکاری و دەستپێکردن";
+                // Reset to wait
+                document.getElementById('signalCard').className = 'card signal-card wait';
+                document.getElementById('signalArrow').textContent = '⏳';
+                document.getElementById('signalText').textContent = 'چاوەڕێبە...';
+            }
+            time--;
+        }, 1000);
     }
 </script>
 </body>
