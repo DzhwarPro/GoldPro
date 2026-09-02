@@ -74,10 +74,17 @@
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    /* News Widget - Single Column Kurdish Only */
+    /* Two Columns Layout */
+    .info-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    /* News Widget */
     .news-widget {
         padding: 8px;
-        margin-top: 10px;
         border-radius: 8px;
         border: 2px solid var(--green);
         background: rgba(0,255,136,0.1);
@@ -87,26 +94,27 @@
         border-color: #ff4444;
         background: rgba(255,0,0,0.1);
     }
-    .news-title { font-size: 13px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
-    .news-detail { font-size: 11px; color: var(--gold); margin-bottom: 2px; }
-    .news-time { font-size: 10px; color: #aaa; margin-bottom: 2px; }
-    .news-status { font-size: 10px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
+    .news-title { font-size: 12px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
+    .news-detail { font-size: 10px; color: var(--gold); margin-bottom: 2px; }
+    .news-time { font-size: 9px; color: #aaa; margin-bottom: 2px; }
+    .news-status { font-size: 9px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
     .news-warning .news-title { color: #ff4444; }
     .news-warning .news-status { color: #fff; background: #ff4444; }
-
-    /* Signal Reasons Box - Full Width Under News */
+    
+    /* Signal Reasons Box */
     .reasons { 
         text-align: right; 
         background: var(--reasons-bg); 
         padding: 8px; 
         border-radius: 8px; 
-        border-right: 3px solid var(--gold); 
-        margin-top: 10px;
-        width: 100%;
+        border-right: 3px solid var(--gold);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
-    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 4px; font-size: 12px; }
-    .reason-item { margin-bottom: 3px; font-size: 11px; display: flex; align-items: center; }
-    .reason-icon { margin-left: 5px; font-size: 12px; }
+    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 4px; font-size: 11px; }
+    .reason-item { margin-bottom: 3px; font-size: 10px; display: flex; align-items: center; }
+    .reason-icon { margin-left: 4px; font-size: 11px; }
     
     .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 6px; }
     .btn:hover { transform: scale(1.02); }
@@ -140,13 +148,20 @@
     .sync-status { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--green); }
     .user-info { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--gold); display: flex; align-items: center; gap: 8px; }
     .logout-btn { background: none; border: 1px solid var(--red); color: var(--red); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+    
+    /* Responsive */
+    @media (max-width: 600px) {
+        .info-columns {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
     <div class="login-card">
-        <div class="login-title"> Gold Sniper Pro</div>
+        <div class="login-title">🔐 Gold Sniper Pro</div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
         <input type="password" id="loginPassword" class="login-input" placeholder="وشەی نهێنی">
         <button class="login-btn" onclick="handleLogin()">چوونەژوورەوە</button>
@@ -156,8 +171,6 @@
 </div>
 
 <div id="mainApp">
-    <!-- Theme Toggle Removed -->
-
     <div class="container">
         <div class="card" style="padding: 8px;">
             <div id="tv_chart_container" class="chart-box"></div>
@@ -182,23 +195,24 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - هەر  خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠١:٠</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠١:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- News Widget - Kurdish Only -->
-            <div class="news-widget" id="newsWidget">
-                <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
-                <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
-                <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
-            </div>
-            
-            <!-- Signal Reasons Box - Full Width Under News -->
-            <div class="reasons" id="reasonsBox" style="display:none;">
-                <div class="reasons-title">🔍 هۆکارەکان:</div>
-                <div id="reasonsList"></div>
+            <!-- Two Columns: News + Reasons -->
+            <div class="info-columns">
+                <div class="news-widget" id="newsWidget">
+                    <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
+                    <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
+                </div>
+                
+                <div class="reasons" id="reasonsBox" style="display:none;">
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
+                    <div id="reasonsList"></div>
+                </div>
             </div>
         </div>
 
@@ -215,7 +229,7 @@
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
             
             <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;">🤖 دەستپێکردنی دۆخی خۆکار (AUTO)</button>
-            <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
+            <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;"> شیکاری ئێستا</button>
         </div>
 
         <div class="card" id="historyCard" style="display: none;">
@@ -268,6 +282,7 @@
     let losses = 0;
     let currentSignal = null;
 
+    // 1. Account Deletion Detection - Immediate Block
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('loginScreen').style.display = 'none';
@@ -275,18 +290,37 @@
             document.getElementById('userEmail').textContent = user.email;
             initApp();
         } else {
+            // Account deleted - IMMEDIATE STOP
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
-            stopAutoMode();
-            if(autoInterval) clearInterval(autoInterval);
-            if(countdownInterval) clearInterval(countdownInterval);
-            if(signalTimer) clearInterval(signalTimer);
+            
+            // Stop ALL processes immediately
+            autoMode = false;
+            newsPaused = false;
+            if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+            if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+            if(signalTimer) { clearInterval(signalTimer); signalTimer = null; }
+            if(newsResumeTimeout) { clearTimeout(newsResumeTimeout); newsResumeTimeout = null; }
+            
+            // Clear all data
             history = [];
             wins = 0;
             losses = 0;
             currentSignal = null;
-            alert('حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە. تکایە دووبارە بچۆرە ژوورەوە.');
-            log('❌ حسابەکە سڕاوەتەوە - بەرنامەکە وەستا');
+            isProcessing = false;
+            
+            // Reset UI
+            document.getElementById('signalCard').className = 'card signal-box wait';
+            document.getElementById('autoStatus').classList.remove('active');
+            document.getElementById('reasonsBox').style.display = 'none';
+            document.getElementById('timer').classList.remove('active');
+            document.getElementById('autoBtn').classList.remove('active');
+            document.getElementById('autoBtn').textContent = '🤖 دەستپێکردنی دۆخی خۆکار (AUTO)';
+            document.getElementById('manualBtn').style.display = 'none';
+            document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
+            
+            alert('️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.\nتکایە دووبارە بچۆرە ژوورەوە.');
+            log(' حسابەکە سڕاوەتەوە - بەرنامەکە ڕاستەوخۆ وەستا');
         }
     });
 
@@ -303,7 +337,7 @@
         } else {
             btn.textContent = 'چوونەژوورەوە';
             link.textContent = 'حسابی نوێ دروست بکە ←';
-            title.textContent = ' Gold Sniper Pro';
+            title.textContent = '🔐 Gold Sniper Pro';
         }
         document.getElementById('loginError').style.display = 'none';
     }
@@ -331,7 +365,6 @@
     }
 
     function initApp() {
-        // TradingView always dark mode
         new TradingView.widget({
             "autosize": true,
             "symbol": "OANDA:XAUUSD",
@@ -375,8 +408,6 @@
         setInterval(checkNews, 300000);
     }
 
-    // Theme toggle removed entirely
-
     function applyRemoteSignal(data) {
         const card = document.getElementById('signalCard');
         const arrow = document.getElementById('arrow');
@@ -393,7 +424,7 @@
 
         if(data.type === 'BUY') {
             card.className = 'card signal-box buy'; 
-            arrow.textContent='⬆️'; 
+            arrow.textContent='️'; 
             txt.textContent='BUY (کڕین)'; 
             circle.className='conf-circle high';
         } else if(data.type === 'SELL') {
@@ -461,12 +492,12 @@
         const modeBadge = document.getElementById('modeBadge');
         
         if(autoMode) {
-            btn.textContent = '️ وەستاندنی دۆخی خۆکار';
+            btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار';
             btn.classList.add('active');
             manualBtn.style.display = 'block';
             card.classList.add('auto');
             autoStatus.classList.add('active');
-            modeBadge.textContent = '🤖 AUTO ACTIVE';
+            modeBadge.textContent = ' AUTO ACTIVE';
             log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
@@ -476,8 +507,8 @@
 
     function stopAutoMode() {
         autoMode = false;
-        if(autoInterval) clearInterval(autoInterval);
-        if(countdownInterval) clearInterval(countdownInterval);
+        if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+        if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         
         const btn = document.getElementById('autoBtn');
         const manualBtn = document.getElementById('manualBtn');
@@ -491,7 +522,7 @@
         card.classList.remove('auto');
         autoStatus.classList.remove('active');
         modeBadge.textContent = '🔄 AUTO MODE';
-        log('️ دۆخی خۆکار وەستا');
+        log('⏹️ دۆخی خۆکار وەستا');
     }
 
     function startAutoLoop() {
@@ -526,9 +557,9 @@
         err.style.display = 'none';
         
         if(manual) {
-            logEl.textContent = ' شیکاری دەستپێکرد...';
+            logEl.textContent = '🚀 شیکاری دەستپێکرد...';
         } else {
-            logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+            logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
         }
 
         try {
@@ -588,7 +619,7 @@
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
             if(conf >= 70) {
                 const now = Date.now();
@@ -659,8 +690,8 @@
     }
 
     function pauseAutoDuringSignal() {
-        if(autoInterval) clearInterval(autoInterval);
-        if(countdownInterval) clearInterval(countdownInterval);
+        if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+        if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         document.getElementById('autoStatus').classList.remove('active');
         log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
     }
@@ -795,7 +826,6 @@
                 const hours = Math.floor(diffMinutes / 60);
                 const mins = diffMinutes % 60;
                 
-                // WARNING MODE
                 widget.classList.add('warning');
                 card.classList.add('news-warning');
                 
@@ -823,13 +853,12 @@
                     }, timeToResume);
                 }
             } else {
-                // CLEAR MODE
                 widget.classList.remove('warning');
                 card.classList.remove('news-warning');
                 
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) {
