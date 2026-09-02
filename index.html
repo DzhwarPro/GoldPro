@@ -85,20 +85,22 @@
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    /* News Widget Styles - Always Visible */
+    /* News Widget - Compact 2 Lines */
     .news-widget {
         border: 2px solid var(--green);
-        border-radius: 10px;
-        padding: 12px;
+        border-radius: 8px;
+        padding: 6px 10px;
         margin-top: 10px;
         text-align: center;
         background: rgba(0,255,136,0.1);
         display: block;
+        line-height: 1.4;
     }
-    .news-alert { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-    .news-time { font-size: 16px; font-weight: bold; margin: 5px 0; }
-    .news-impact { font-size: 12px; padding: 3px 10px; border-radius: 5px; display: inline-block; margin-top: 5px; }
-    .news-countdown { font-size: 18px; font-weight: bold; margin-top: 5px; }
+    .news-alert { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+    .news-time { font-size: 12px; font-weight: bold; margin: 2px 0; }
+    .news-impact { font-size: 10px; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+    .news-countdown { font-size: 11px; font-weight: bold; margin-top: 2px; }
+    .news-kurdish { font-size: 10px; color: #888; margin-top: 1px; }
     
     .reasons { text-align: right; background: var(--reasons-bg); padding: 10px; border-radius: 10px; border-right: 4px solid var(--gold); margin-top: 12px; }
     .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 6px; font-size: 13px; }
@@ -179,12 +181,12 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
                 <div class="next-check" id="nextCheck">٠١:٠٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٪+)...</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- News Widget - Always Visible -->
+            <!-- News Widget - Compact 2 Lines -->
             <div class="news-widget" id="newsWidget">
                 <div class="news-alert" id="newsAlert">✅ NEWS CLEAR</div>
                 <div class="news-time" id="newsTime">No High Impact News</div>
@@ -193,7 +195,7 @@
             </div>
             
             <div class="reasons" id="reasonsBox" style="display:none;">
-                <div class="reasons-title"> هۆکارەکانی سیگناڵ:</div>
+                <div class="reasons-title">🔍 هۆکارەکانی سیگناڵ:</div>
                 <div id="reasonsList"></div>
             </div>
         </div>
@@ -211,12 +213,12 @@
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
             
             <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;">🤖 دەستپێکردنی دۆخی خۆکار (AUTO)</button>
-            <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;"> شیکاری ئێستا</button>
+            <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
         </div>
 
         <div class="card" id="historyCard" style="display: none;">
             <div class="stats-header">
-                <div style="font-weight: bold; color: var(--gold); font-size: 14px;"> مێژووی سیگناڵەکان</div>
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
                 <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
             </div>
             <div class="history-list" id="historyList"></div>
@@ -274,6 +276,16 @@
         } else {
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
+            stopAutoMode();
+            if(autoInterval) clearInterval(autoInterval);
+            if(countdownInterval) clearInterval(countdownInterval);
+            if(signalTimer) clearInterval(signalTimer);
+            history = [];
+            wins = 0;
+            losses = 0;
+            currentSignal = null;
+            alert('حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە. تکایە دووبارە بچۆرە ژوورەوە.');
+            log('❌ حسابەکە سڕاوەتەوە - بەرنامەکە وەستا');
         }
     });
 
@@ -286,11 +298,11 @@
         if(isRegisterMode) {
             btn.textContent = 'دروستکردنی حساب';
             link.textContent = '← چوونەژوورەوە';
-            title.textContent = ' حسابی نوێ';
+            title.textContent = '📝 حسابی نوێ';
         } else {
             btn.textContent = 'چوونەژوورەوە';
             link.textContent = 'حسابی نوێ دروست بکە ←';
-            title.textContent = '🔐 Gold Sniper Pro';
+            title.textContent = ' Gold Sniper Pro';
         }
         document.getElementById('loginError').style.display = 'none';
     }
@@ -347,7 +359,6 @@
 
             tsRef.once('value').then(tsSnap => {
                 const globalTs = tsSnap.val() || 0;
-                
                 if (data.timestamp > globalTs) {
                     tsRef.set(data.timestamp);
                     applyRemoteSignal(data);
@@ -373,7 +384,7 @@
         isLightMode = !isLightMode;
         document.body.classList.toggle('light-mode');
         const btn = document.getElementById('themeBtn');
-        btn.textContent = isLightMode ? '☀️' : '🌙';
+        btn.textContent = isLightMode ? '☀️' : '';
         localStorage.setItem('goldSniperTheme', isLightMode ? 'light' : 'dark');
         settingsRef.update({ theme: isLightMode ? 'light' : 'dark' }).catch(() => {});
     }
@@ -390,7 +401,7 @@
         document.getElementById('priceDisplay').textContent = data.entryPrice.toFixed(2);
         
         rBox.style.display = 'block';
-        rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+        rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
         if(data.type === 'BUY') {
             card.className = 'card signal-box buy'; 
@@ -399,12 +410,12 @@
             circle.className='conf-circle high';
         } else if(data.type === 'SELL') {
             card.className = 'card signal-box sell'; 
-            arrow.textContent='⬇️'; 
+            arrow.textContent='️'; 
             txt.textContent='SELL (فرۆشتن)'; 
             circle.className='conf-circle high';
         } else {
             card.className = 'card signal-box wait auto';
-            arrow.textContent='';
+            arrow.textContent='🔄';
             txt.textContent='چاوەڕێ...';
             circle.className='conf-circle med';
         }
@@ -462,12 +473,12 @@
         const modeBadge = document.getElementById('modeBadge');
         
         if(autoMode) {
-            btn.textContent = '️ وەستاندنی دۆخی خۆکار';
+            btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار';
             btn.classList.add('active');
             manualBtn.style.display = 'block';
             card.classList.add('auto');
             autoStatus.classList.add('active');
-            modeBadge.textContent = ' AUTO ACTIVE';
+            modeBadge.textContent = '🤖 AUTO ACTIVE';
             log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
@@ -491,8 +502,8 @@
         manualBtn.style.display = 'none';
         card.classList.remove('auto');
         autoStatus.classList.remove('active');
-        modeBadge.textContent = '🔄 AUTO MODE';
-        log('️ دۆخی خۆکار وەستا');
+        modeBadge.textContent = ' AUTO MODE';
+        log('⏹️ دۆخی خۆکار وەستا');
     }
 
     function startAutoLoop() {
@@ -589,11 +600,10 @@
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
             if(conf >= 70) {
                 const now = Date.now();
-                
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
@@ -642,7 +652,7 @@
                     arrow.textContent='🔄';
                     txt.textContent='چاوەڕێ...';
                     circle.className='conf-circle med';
-                    log(` دڵنیایی تەنها ${conf}% - چاوەڕوانی شیکاری داهاتوو...`);
+                    log(`⏳ دڵنیایی تەنها ${conf}% - چاوەڕوانی شیکاری داهاتوو...`);
                 } else {
                     card.className = 'card signal-box wait';
                     arrow.textContent='';
@@ -654,7 +664,7 @@
         } catch(e) {
             err.textContent = e.message;
             err.style.display = 'block';
-            log(` هەڵە: ${e.message}`);
+            log(`❌ هەڵە: ${e.message}`);
         } finally {
             isProcessing = false;
         }
@@ -664,7 +674,7 @@
         if(autoInterval) clearInterval(autoInterval);
         if(countdownInterval) clearInterval(countdownInterval);
         document.getElementById('autoStatus').classList.remove('active');
-        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
+        log('️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
     }
 
     function resumeAutoAfterSignal() {
@@ -677,7 +687,6 @@
     function startSignalTimer() {
         let t = 300;
         const el = document.getElementById('timer');
-        
         el.classList.add('active');
         
         if(signalTimer) clearInterval(signalTimer);
@@ -687,7 +696,6 @@
             if(t<=0) {
                 clearInterval(signalTimer);
                 el.classList.remove('active');
-                
                 evaluateSignalResult();
                 resumeAutoAfterSignal();
             }
@@ -722,8 +730,7 @@
                 };
                 
                 historyRef.push(result).catch(e => console.error("Firebase history error:", e));
-                
-                log(`${isWin ? '✅' : ''} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
         } catch(e) {
             console.error('Error evaluating result:', e);
@@ -748,10 +755,10 @@
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">
-                        ${h.type === 'BUY' ? '️ BUY' : '⬇️ SELL'}
+                        ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
                     </div>
                     <div class="h-details">
-                         ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
+                        ⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
                     </div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">
@@ -763,12 +770,12 @@
 
     function playNotification() {
         const audio = new Audio('data:audio/wav;base64,UklGRnoIAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoIAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE');
+        audio.loop = true;
         audio.play().catch(e => console.log('Audio play failed'));
-        
-        // Stop after 15 seconds
         setTimeout(() => {
             audio.pause();
             audio.currentTime = 0;
+            audio.loop = false;
         }, 15000);
     }
 
@@ -777,7 +784,7 @@
         console.log(msg);
     }
 
-    // News Filter Function - Always Visible (English + Kurdish)
+    // News Filter Function - Compact 2 Lines (EN + KU)
     async function checkNews() {
         try {
             const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
@@ -794,7 +801,6 @@
             const card = document.getElementById('signalCard');
             
             if(upcoming.length > 0) {
-                // HIGH IMPACT NEWS EXISTS
                 const newsItem = upcoming[0];
                 const newsTime = new Date(newsItem.date);
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
@@ -804,24 +810,29 @@
                 widget.style.background = 'rgba(255,0,0,0.15)';
                 widget.style.borderColor = '#ff4444';
                 
-                // English + Kurdish
-                document.getElementById('newsAlert').innerHTML = '<span style="color: #ff4444;">⚠️ HIGH IMPACT NEWS</span>';
+                document.getElementById('newsAlert').innerHTML = `
+                    <span style="color: #ff4444; font-size: 13px;">⚠️ HIGH IMPACT NEWS</span><br>
+                    <span class="news-kurdish" style="color: #ff8888; font-size: 10px;">هەواڵی گرنگی ئابووری</span>
+                `;
                 document.getElementById('newsTime').innerHTML = `
-                    <div style="font-size: 14px; color: var(--gold);">${newsItem.country} - ${newsItem.title}</div>
-                    <div style="font-size: 12px; color: #888;">هەواڵی گرنگی ئابووری</div>
+                    <span style="color: var(--gold); font-size: 12px;">${newsItem.country} - ${newsItem.title}</span><br>
+                    <span class="news-kurdish">${newsItem.country} - ${newsItem.title}</span>
                 `;
                 document.getElementById('newsCountdown').innerHTML = `
-                    <span style="color: var(--green);">In: ${hours > 0 ? hours + 'h ' : ''}${mins}m</span> | 
-                    <span style="color: var(--gold);">ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک</span>
+                    <span style="color: var(--green); font-size: 11px;">In: ${hours > 0 ? hours + 'h ' : ''}${mins}m</span> | 
+                    <span class="news-kurdish" style="color: var(--gold); font-size: 10px;">ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک</span>
                 `;
-                document.getElementById('newsImpact').innerHTML = '<span style="background: #ff4444; color: #fff;">USD HIGH IMPACT</span> | <span style="background: #ff4444; color: #fff;">هەواڵی گرنگ</span>';
+                document.getElementById('newsImpact').innerHTML = `
+                    <span style="background: #ff4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 3px;">USD HIGH</span>
+                    <span class="news-kurdish" style="background: #ff4444; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 3px; margin-right: 4px;">هەواڵی گرنگ</span>
+                `;
                 
                 card.classList.add('news-warning');
                 
                 if(autoMode && !newsPaused) {
                     newsPaused = true;
                     stopAutoMode();
-                    log('️ AUTO PAUSED - High Impact News! | هەواڵی گرنگ هەیە');
+                    log('⚠️ AUTO PAUSED - High Impact News!');
                     
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
@@ -830,28 +841,32 @@
                     newsResumeTimeout = setTimeout(() => {
                         newsPaused = false;
                         card.classList.remove('news-warning');
-                        log('✅ News completed - AUTO resuming... | هەواڵ تەواو بوو');
+                        log('✅ News completed - AUTO resuming...');
                         if(autoMode) {
                             toggleAutoMode();
                         }
                     }, timeToResume);
                 }
             } else {
-                // NO HIGH IMPACT NEWS
                 widget.style.background = 'rgba(0,255,136,0.1)';
                 widget.style.borderColor = '#00ff88';
                 
-                // English + Kurdish
-                document.getElementById('newsAlert').innerHTML = '<span style="color: var(--green);">✅ NEWS CLEAR</span>';
+                document.getElementById('newsAlert').innerHTML = `
+                    <span style="color: var(--green); font-size: 13px;">✅ NEWS CLEAR</span><br>
+                    <span class="news-kurdish" style="color: #88ff88; font-size: 10px;">هەواڵی گرنگ نییە</span>
+                `;
                 document.getElementById('newsTime').innerHTML = `
-                    <div style="font-size: 16px; color: var(--gold);">No High Impact News</div>
-                    <div style="font-size: 13px; color: #888;">هەواڵی گرنگ نییە - بازاڕ ئاساییە</div>
+                    <span style="color: var(--gold); font-size: 12px;">No High Impact News</span><br>
+                    <span class="news-kurdish">بازاڕ ئاساییە</span>
                 `;
                 document.getElementById('newsCountdown').innerHTML = `
-                    <span style="color: var(--green);">Next check in 5 min</span> | 
-                    <span style="color: var(--gold);">پشکنینی داهاتوو لە ٥ خولەکدا</span>
+                    <span style="color: var(--green); font-size: 11px;">Next check in 5 min</span> | 
+                    <span class="news-kurdish" style="color: var(--gold); font-size: 10px;">پشکنینی داهاتوو لە ٥ خولەکدا</span>
                 `;
-                document.getElementById('newsImpact').innerHTML = '<span style="background: var(--green); color: #000;">SAFE TO TRADE</span> | <span style="background: var(--green); color: #000;">کاتی گونجاوە</span>';
+                document.getElementById('newsImpact').innerHTML = `
+                    <span style="background: var(--green); color: #000; font-size: 10px; padding: 2px 6px; border-radius: 3px;">SAFE TO TRADE</span>
+                    <span class="news-kurdish" style="background: var(--green); color: #000; font-size: 9px; padding: 2px 6px; border-radius: 3px; margin-right: 4px;">کاتی گونجاوە</span>
+                `;
                 
                 card.classList.remove('news-warning');
             }
