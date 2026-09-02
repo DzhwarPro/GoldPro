@@ -195,23 +195,23 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠١:٠</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر  خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠١:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- Two Columns: Reasons (Right) + News (Left) -->
+            <!-- Two Columns: News (Right) + Reasons (Left) -->
             <div class="info-columns">
-                <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title">🔍 هۆکارەکان:</div>
-                    <div id="reasonsList"></div>
-                </div>
-                
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
+                </div>
+                
+                <div class="reasons" id="reasonsBox" style="display:none;">
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
+                    <div id="reasonsList"></div>
                 </div>
             </div>
         </div>
@@ -315,7 +315,7 @@
             document.getElementById('reasonsBox').style.display = 'none';
             document.getElementById('timer').classList.remove('active');
             document.getElementById('autoBtn').classList.remove('active');
-            document.getElementById('autoBtn').textContent = ' دەستپێکردنی دۆخی خۆکار (AUTO)';
+            document.getElementById('autoBtn').textContent = '🤖 دەستپێکردنی دۆخی خۆکار (AUTO)';
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
             
@@ -429,7 +429,7 @@
             circle.className='conf-circle high';
         } else if(data.type === 'SELL') {
             card.className = 'card signal-box sell'; 
-            arrow.textContent='️'; 
+            arrow.textContent='⬇️'; 
             txt.textContent='SELL (فرۆشتن)'; 
             circle.className='conf-circle high';
         } else {
@@ -497,7 +497,7 @@
             manualBtn.style.display = 'block';
             card.classList.add('auto');
             autoStatus.classList.add('active');
-            modeBadge.textContent = '🤖 AUTO ACTIVE';
+            modeBadge.textContent = ' AUTO ACTIVE';
             log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
@@ -557,7 +557,7 @@
         err.style.display = 'none';
         
         if(manual) {
-            logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+            logEl.textContent = ' شیکاری دەستپێکرد...';
         } else {
             logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
         }
@@ -683,7 +683,7 @@
         } catch(e) {
             err.textContent = e.message;
             err.style.display = 'block';
-            log(` هەڵە: ${e.message}`);
+            log(`❌ هەڵە: ${e.message}`);
         } finally {
             isProcessing = false;
         }
@@ -693,7 +693,7 @@
         if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
         if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         document.getElementById('autoStatus').classList.remove('active');
-        log('️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک تەواو دەبێت...');
     }
 
     function resumeAutoAfterSignal() {
@@ -858,7 +858,7 @@
                 
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) {
