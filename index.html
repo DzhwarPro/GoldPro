@@ -85,7 +85,6 @@
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    /* News Widget Styles */
     .news-widget {
         background: rgba(255,0,0,0.15);
         border: 2px solid #ff4444;
@@ -170,7 +169,7 @@
             </div>
             <div class="sync-status" id="syncStatus">☁️ Synced</div>
             <div class="price" id="priceDisplay">--</div>
-            <div class="arrow" id="arrow">⏳</div>
+            <div class="arrow" id="arrow"></div>
             <div class="status-text" id="statusText">چاوەڕێبە...</div>
             
             <div class="conf-circle med" id="confCircle">
@@ -181,14 +180,13 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠١:٠٠</div>
+                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠١:٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- News Widget -->
             <div class="news-widget" id="newsWidget">
-                <div class="news-alert">⚠️ هەواڵی گرنگی ئابووری</div>
+                <div class="news-alert">⚠️ HIGH IMPACT NEWS</div>
                 <div class="news-time" id="newsTime">--:--</div>
                 <div class="news-countdown" id="newsCountdown">--:--</div>
                 <div class="news-impact">HIGH IMPACT</div>
@@ -248,6 +246,7 @@
     const signalsRef = db.ref('signals');
     const historyRef = db.ref('history');
     const settingsRef = db.ref('settings');
+    const timestampRef = db.ref('lastSignalTimestamp');
 
     const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
     let autoMode = false;
@@ -257,7 +256,6 @@
     let nextCheckTime = 60;
     let isProcessing = false;
     let isLightMode = false;
-    let lastSignalTimestamp = 0;
     let isRegisterMode = false;
     let newsPaused = false;
     let newsResumeTimeout = null;
@@ -343,11 +341,21 @@
             "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
         });
 
-        signalsRef.on('value', (snapshot) => {
+        // Listen for signals with Firebase timestamp sync
+        signalsRef.on('value', async (snapshot) => {
             const data = snapshot.val();
-            if(data && data.timestamp && data.timestamp !== lastSignalTimestamp) {
-                lastSignalTimestamp = data.timestamp;
-                applyRemoteSignal(data);
+            if (!data || !data.timestamp) return;
+
+            try {
+                const tsSnapshot = await timestampRef.once('value');
+                const savedTimestamp = tsSnapshot.val() || 0;
+                
+                if (data.timestamp > savedTimestamp) {
+                    await timestampRef.set(data.timestamp);
+                    applyRemoteSignal(data);
+                }
+            } catch(e) {
+                console.error('Timestamp sync error:', e);
             }
         });
 
@@ -361,7 +369,6 @@
             }
         });
 
-        // Start news checking
         checkNews();
         setInterval(checkNews, 300000);
     }
@@ -370,7 +377,7 @@
         isLightMode = !isLightMode;
         document.body.classList.toggle('light-mode');
         const btn = document.getElementById('themeBtn');
-        btn.textContent = isLightMode ? '☀️' : '🌙';
+        btn.textContent = isLightMode ? '☀️' : '';
         localStorage.setItem('goldSniperTheme', isLightMode ? 'light' : 'dark');
         settingsRef.update({ theme: isLightMode ? 'light' : 'dark' }).catch(() => {});
     }
@@ -391,7 +398,7 @@
 
         if(data.type === 'BUY') {
             card.className = 'card signal-box buy'; 
-            arrow.textContent='️'; 
+            arrow.textContent='⬆️'; 
             txt.textContent='BUY (کڕین)'; 
             circle.className='conf-circle high';
         } else if(data.type === 'SELL') {
@@ -401,7 +408,7 @@
             circle.className='conf-circle high';
         } else {
             card.className = 'card signal-box wait auto';
-            arrow.textContent='';
+            arrow.textContent='🔄';
             txt.textContent='چاوەڕێ...';
             circle.className='conf-circle med';
         }
@@ -464,8 +471,8 @@
             manualBtn.style.display = 'block';
             card.classList.add('auto');
             autoStatus.classList.add('active');
-            modeBadge.textContent = ' AUTO ACTIVE';
-            log('🔄 دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
+            modeBadge.textContent = '🤖 AUTO ACTIVE';
+            log(' دۆخی خۆکار چالاک کرا - هەر ١ خولەک جارێک شیکاری دەکات');
             startAutoLoop();
         } else {
             stopAutoMode();
@@ -526,7 +533,7 @@
         if(manual) {
             logEl.textContent = '🚀 شیکاری دەستپێکرد...';
         } else {
-            logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+            logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
         }
 
         try {
@@ -586,12 +593,17 @@
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
             if(conf >= 70) {
                 const now = Date.now();
-                if(now - lastSignalTimestamp < 60000) {
-                    log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە');
+                
+                // Check timestamp from Firebase
+                const tsSnapshot = await timestampRef.once('value');
+                const savedTimestamp = tsSnapshot.val() || 0;
+                
+                if(now - savedTimestamp < 60000) {
+                    log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە');
                     isProcessing = false;
                     return;
                 }
@@ -609,17 +621,19 @@
                     reasons: reasons
                 };
                 
-                signalsRef.set(currentSignal).catch(e => console.error("Firebase write error:", e));
+                // Save to Firebase with timestamp
+                await signalsRef.set(currentSignal);
+                await timestampRef.set(now);
                 
                 if(direction === 'BUY') {
                     card.className = 'card signal-box buy'; 
-                    arrow.textContent='⬆️'; 
+                    arrow.textContent='️'; 
                     txt.textContent='BUY (کڕین)'; 
                     circle.className='conf-circle high';
                     log(`✅ سیگناڵی BUY دۆزرایەوە - دڵنیایی: ${conf}%`);
                 } else {
                     card.className = 'card signal-box sell'; 
-                    arrow.textContent='️'; 
+                    arrow.textContent='⬇️'; 
                     txt.textContent='SELL (فرۆشتن)'; 
                     circle.className='conf-circle high';
                     log(`✅ سیگناڵی SELL دۆزرایەوە - دڵنیایی: ${conf}%`);
@@ -631,13 +645,13 @@
             } else {
                 if(autoMode) {
                     card.className = 'card signal-box wait auto';
-                    arrow.textContent='';
+                    arrow.textContent='🔄';
                     txt.textContent='چاوەڕێ...';
                     circle.className='conf-circle med';
                     log(`⏳ دڵنیایی تەنها ${conf}% - چاوەڕوانی شیکاری داهاتوو...`);
                 } else {
                     card.className = 'card signal-box wait';
-                    arrow.textContent='';
+                    arrow.textContent='✋';
                     txt.textContent='WAIT (چاوەڕێ)';
                     circle.className='conf-circle low';
                 }
@@ -715,7 +729,7 @@
                 
                 historyRef.push(result).catch(e => console.error("Firebase history error:", e));
                 
-                log(`${isWin ? '✅' : ''} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
         } catch(e) {
             console.error('Error evaluating result:', e);
@@ -740,10 +754,10 @@
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">
-                        ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
+                        ${h.type === 'BUY' ? '️ BUY' : '⬇️ SELL'}
                     </div>
                     <div class="h-details">
-                         ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
+                        ⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
                     </div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">
@@ -763,7 +777,7 @@
         console.log(msg);
     }
 
-    // News Filter Function
+    // News Filter Function with English text
     async function checkNews() {
         try {
             const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
@@ -788,16 +802,15 @@
                 
                 widget.classList.add('active');
                 document.getElementById('newsTime').textContent = `${newsItem.country} - ${newsItem.title}`;
-                document.getElementById('newsCountdown').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
+                document.getElementById('newsCountdown').textContent = `In: ${hours > 0 ? hours + 'h ' : ''}${mins}m`;
                 
                 card.classList.add('news-warning');
                 
                 if(autoMode && !newsPaused) {
                     newsPaused = true;
                     stopAutoMode();
-                    log('⚠️ AUTO وەستا - هەواڵی گرنگ هەیە!');
+                    log('⚠️ AUTO PAUSED - High Impact News!');
                     
-                    // Auto resume after news + 15 minutes
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     
@@ -806,7 +819,7 @@
                         newsPaused = false;
                         widget.classList.remove('active');
                         card.classList.remove('news-warning');
-                        log('✅ هەواڵ تەواو بوو - AUTO دەست پێ دەکاتەوە...');
+                        log('✅ News completed - AUTO resuming...');
                         if(autoMode) {
                             toggleAutoMode();
                         }
