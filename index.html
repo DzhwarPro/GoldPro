@@ -3,18 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Secure & Synced</title>
+<title>Gold Sniper Pro - Dark Mode</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
         --red: #ff4444; --text: #e0e0e0; --blue: #007bff; --border: #2a2a35;
         --ind-bg: rgba(255,255,255,0.03); --log-bg: rgba(0,0,0,0.2);
         --auto-bg: rgba(0,123,255,0.1); --reasons-bg: rgba(0,0,0,0.3);
-    }
-    body.light-mode {
-        --bg: #f0f2f5; --card: #ffffff; --text: #1a1a2e; --border: #d1d5db;
-        --ind-bg: rgba(0,0,0,0.05); --log-bg: rgba(0,0,0,0.05);
-        --auto-bg: rgba(0,123,255,0.08); --reasons-bg: rgba(0,0,0,0.05);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
     body { background: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; }
@@ -47,12 +42,6 @@
     
     .container { max-width: 800px; margin: 0 auto; }
     .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
-    .theme-toggle {
-        position: fixed; top: 15px; left: 15px; z-index: 1000;
-        width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--border);
-        background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center;
-        font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); color: var(--text);
-    }
     .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
     
     .signal-box { text-align: center; padding: 20px; border: 2px solid var(--border); border-radius: 12px; position: relative; }
@@ -85,40 +74,27 @@
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    /* News Widget - Two Columns */
+    /* News Widget - Single Column Kurdish Only */
     .news-widget {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
         padding: 8px;
         margin-top: 10px;
         border-radius: 8px;
         border: 2px solid var(--green);
         background: rgba(0,255,136,0.1);
+        text-align: center;
     }
     .news-widget.warning {
         border-color: #ff4444;
         background: rgba(255,0,0,0.1);
     }
-    .news-col {
-        text-align: center;
-        padding: 4px;
-    }
-    .news-col-en {
-        border-left: 1px solid var(--border);
-    }
-    .news-title-en { font-size: 12px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
-    .news-title-ku { font-size: 11px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
-    .news-detail-en { font-size: 10px; color: var(--gold); margin-bottom: 2px; }
-    .news-detail-ku { font-size: 9px; color: #aaa; margin-bottom: 2px; }
-    .news-status-en { font-size: 10px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
-    .news-status-ku { font-size: 9px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
-    .news-warning .news-title-en,
-    .news-warning .news-title-ku { color: #ff4444; }
-    .news-warning .news-status-en,
-    .news-warning .news-status-ku { color: #fff; background: #ff4444; }
+    .news-title { font-size: 13px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
+    .news-detail { font-size: 11px; color: var(--gold); margin-bottom: 2px; }
+    .news-time { font-size: 10px; color: #aaa; margin-bottom: 2px; }
+    .news-status { font-size: 10px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
+    .news-warning .news-title { color: #ff4444; }
+    .news-warning .news-status { color: #fff; background: #ff4444; }
 
-    /* Signal Reasons Box - Compact & Bottom Left */
+    /* Signal Reasons Box - Full Width Under News */
     .reasons { 
         text-align: right; 
         background: var(--reasons-bg); 
@@ -126,8 +102,7 @@
         border-radius: 8px; 
         border-right: 3px solid var(--gold); 
         margin-top: 10px;
-        max-width: 250px; /*限制了宽度，使其更紧凑*/
-        margin-right: auto; /*推到左边 (因为dir=rtl)*/
+        width: 100%;
     }
     .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 4px; font-size: 12px; }
     .reason-item { margin-bottom: 3px; font-size: 11px; display: flex; align-items: center; }
@@ -181,7 +156,7 @@
 </div>
 
 <div id="mainApp">
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="گۆڕینی دۆخی شەو/ڕۆژ"></button>
+    <!-- Theme Toggle Removed -->
 
     <div class="container">
         <div class="card" style="padding: 8px;">
@@ -207,36 +182,28 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠١:٠٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٠٪+)...</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر  خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠١:٠</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- News Widget - Two Columns (EN | KU) -->
+            <!-- News Widget - Kurdish Only -->
             <div class="news-widget" id="newsWidget">
-                <div class="news-col news-col-en">
-                    <div class="news-title-en" id="newsTitleEn">✅ NEWS CLEAR</div>
-                    <div class="news-detail-en" id="newsDetailEn">No High Impact News</div>
-                    <div class="news-detail-en" id="newsTimeEn">Next check in 5 min</div>
-                    <div class="news-status-en" id="newsStatusEn">SAFE TO TRADE</div>
-                </div>
-                <div class="news-col">
-                    <div class="news-title-ku" id="newsTitleKu">✅ هەواڵی گرنگ نییە</div>
-                    <div class="news-detail-ku" id="newsDetailKu">بازاڕ ئاساییە</div>
-                    <div class="news-detail-ku" id="newsTimeKu">پشکنینی داهاتوو لە ٥ خولەکدا</div>
-                    <div class="news-status-ku" id="newsStatusKu">کاتی گونجاوە</div>
-                </div>
+                <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
+                <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
+                <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
+                <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
             </div>
             
-            <!-- Signal Reasons Box - Compact & Bottom Left -->
+            <!-- Signal Reasons Box - Full Width Under News -->
             <div class="reasons" id="reasonsBox" style="display:none;">
-                <div class="reasons-title"> هۆکارەکان:</div>
+                <div class="reasons-title">🔍 هۆکارەکان:</div>
                 <div id="reasonsList"></div>
             </div>
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;"> فلتەرە تەکنیکییەکان</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
             <div class="indicators">
                 <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -292,7 +259,6 @@
     let signalTimer = null;
     let nextCheckTime = 60;
     let isProcessing = false;
-    let isLightMode = false;
     let isRegisterMode = false;
     let newsPaused = false;
     let newsResumeTimeout = null;
@@ -365,22 +331,16 @@
     }
 
     function initApp() {
-        const savedTheme = localStorage.getItem('goldSniperTheme');
-        if(savedTheme === 'light') {
-            isLightMode = true;
-            document.body.classList.add('light-mode');
-            document.getElementById('themeBtn').textContent = '️';
-        }
-
+        // TradingView always dark mode
         new TradingView.widget({
             "autosize": true,
             "symbol": "OANDA:XAUUSD",
             "interval": "5",
             "timezone": "Etc/UTC",
-            "theme": isLightMode ? "light" : "dark",
+            "theme": "dark",
             "style": "1",
             "locale": "ar",
-            "toolbar_bg": isLightMode ? "#ffffff" : "#12121a",
+            "toolbar_bg": "#12121a",
             "enable_publishing": false,
             "hide_top_toolbar": false,
             "save_image": false,
@@ -415,14 +375,7 @@
         setInterval(checkNews, 300000);
     }
 
-    function toggleTheme() {
-        isLightMode = !isLightMode;
-        document.body.classList.toggle('light-mode');
-        const btn = document.getElementById('themeBtn');
-        btn.textContent = isLightMode ? '☀️' : '🌙';
-        localStorage.setItem('goldSniperTheme', isLightMode ? 'light' : 'dark');
-        settingsRef.update({ theme: isLightMode ? 'light' : 'dark' }).catch(() => {});
-    }
+    // Theme toggle removed entirely
 
     function applyRemoteSignal(data) {
         const card = document.getElementById('signalCard');
@@ -573,7 +526,7 @@
         err.style.display = 'none';
         
         if(manual) {
-            logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+            logEl.textContent = ' شیکاری دەستپێکرد...';
         } else {
             logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
         }
@@ -790,7 +743,7 @@
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">
-                        ${h.type === 'BUY' ? '⬆️ BUY' : '️ SELL'}
+                        ${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}
                     </div>
                     <div class="h-details">
                         ⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})
@@ -819,7 +772,7 @@
         console.log(msg);
     }
 
-    // News Filter Function - Two Columns (EN | KU)
+    // News Filter Function - Kurdish Only
     async function checkNews() {
         try {
             const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
@@ -846,22 +799,15 @@
                 widget.classList.add('warning');
                 card.classList.add('news-warning');
                 
-                // English Column
-                document.getElementById('newsTitleEn').textContent = '⚠️ HIGH IMPACT NEWS';
-                document.getElementById('newsDetailEn').textContent = `${newsItem.country} - ${newsItem.title}`;
-                document.getElementById('newsTimeEn').textContent = `In: ${hours > 0 ? hours + 'h ' : ''}${mins}m`;
-                document.getElementById('newsStatusEn').textContent = 'HIGH RISK';
-                
-                // Kurdish Column
-                document.getElementById('newsTitleKu').textContent = '⚠️ هەواڵی گرنگ';
-                document.getElementById('newsDetailKu').textContent = `${newsItem.country} - ${newsItem.title}`;
-                document.getElementById('newsTimeKu').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
-                document.getElementById('newsStatusKu').textContent = 'مەترسیدارە';
+                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
+                document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
+                document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
+                document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 
                 if(autoMode && !newsPaused) {
                     newsPaused = true;
                     stopAutoMode();
-                    log('️ AUTO PAUSED - High Impact News!');
+                    log('⚠️ AUTO PAUSED - High Impact News!');
                     
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
@@ -881,17 +827,10 @@
                 widget.classList.remove('warning');
                 card.classList.remove('news-warning');
                 
-                // English Column
-                document.getElementById('newsTitleEn').textContent = '✅ NEWS CLEAR';
-                document.getElementById('newsDetailEn').textContent = 'No High Impact News';
-                document.getElementById('newsTimeEn').textContent = 'Next check in 5 min';
-                document.getElementById('newsStatusEn').textContent = 'SAFE TO TRADE';
-                
-                // Kurdish Column
-                document.getElementById('newsTitleKu').textContent = '✅ هەواڵی گرنگ نییە';
-                document.getElementById('newsDetailKu').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTimeKu').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
-                document.getElementById('newsStatusKu').textContent = 'کاتی گونجاوە';
+                document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
+                document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
+                document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) {
             console.log('News check failed:', e);
