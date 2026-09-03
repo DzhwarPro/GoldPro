@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Multi-Timeframe</title>
+<title>Gold Sniper Pro - Ultimate MTF</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -40,7 +40,7 @@
     
     #mainApp { display: none; }
     
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
     .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
     .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
     
@@ -96,10 +96,10 @@
     .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
     .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
     
-    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; margin-top: 10px; }
+    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 6px; margin-top: 10px; }
     .ind-item { background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
-    .ind-name { font-size: 10px; color: #888; margin-bottom: 3px; }
-    .ind-val { font-weight: bold; font-size: 13px; }
+    .ind-name { font-size: 9px; color: #888; margin-bottom: 3px; }
+    .ind-val { font-weight: bold; font-size: 11px; }
     .up { color: var(--green); }
     .down { color: var(--red); }
     
@@ -151,7 +151,7 @@
                 <span id="userEmail"></span>
                 <button class="logout-btn" onclick="handleLogout()">دەرچوون</button>
             </div>
-            <div class="sync-status" id="syncStatus">️ Synced</div>
+            <div class="sync-status" id="syncStatus">☁️ Synced</div>
             <div class="price" id="priceDisplay">--</div>
             <div class="arrow" id="arrow"></div>
             <div class="status-text" id="statusText">چاوەڕێبە...</div>
@@ -164,7 +164,7 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div>🤖 دۆخی خۆکار چالاکە - شیکاری چەند کاتێک</div>
                 <div class="next-check" id="nextCheck">٠١:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
@@ -178,20 +178,25 @@
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان (5m / 15m / 1H / EMA)</div>
             <div class="indicators">
                 <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
                 <div class="ind-item"><div class="ind-name">Stoch</div><div class="ind-val" id="iStoch">-</div></div>
                 <div class="ind-item"><div class="ind-name">BB</div><div class="ind-val" id="iBB">-</div></div>
                 <div class="ind-item"><div class="ind-name">Mom</div><div class="ind-val" id="iMom">-</div></div>
+                <div class="ind-item"><div class="ind-name">EMA 20</div><div class="ind-val" id="iEMA20">-</div></div>
+                <div class="ind-item"><div class="ind-name">EMA 50</div><div class="ind-val" id="iEMA50">-</div></div>
+                <div class="ind-item"><div class="ind-name">EMA 200</div><div class="ind-val" id="iEMA200">-</div></div>
+                <div class="ind-item"><div class="ind-name">15m Status</div><div class="ind-val" id="i15m">-</div></div>
+                <div class="ind-item"><div class="ind-name">1H Status</div><div class="ind-val" id="i1H">-</div></div>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
@@ -202,7 +207,7 @@
 
         <div class="card" id="historyCard" style="display: none;">
             <div class="stats-header">
-                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;"> مێژووی سیگناڵەکان</div>
                 <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
             </div>
             <div class="history-list" id="historyList"></div>
@@ -367,7 +372,7 @@
         const message = `
 🔔 <b>GOLD SNIPER SIGNAL</b>
 
- <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
  <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
@@ -375,7 +380,7 @@
  <b>Indicators:</b>
 ${reasonsText}
 
-⏳ <b>Duration:</b> 5 minutes
+ <b>Duration:</b> 5 minutes
         `;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -392,7 +397,7 @@ ${reasonsText}
             if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام');
             else log('❌ هەڵەی تێلێگرام: ' + data.description);
         })
-        .catch(e => log('❌ ناردنی تێلێگرام شکستی هێنا'));
+        .catch(e => log(' ناردنی تێلێگرام شکستی هێنا'));
     }
 
     function applyRemoteSignal(data) {
@@ -410,7 +415,7 @@ ${reasonsText}
         rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
         if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
-        else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
+        else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
         pauseAutoDuringSignal();
@@ -418,28 +423,85 @@ ${reasonsText}
         log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
     }
 
-    function rsi(p, n=14) { if(p.length < n+1) return 50; let g=0, l=0; for(let i=p.length-n; i<p.length; i++) { let c=p[i]-p[i-1]; if(c>0) g+=c; else l+=Math.abs(c); } let ag=g/n, al=l/n; return al===0 ? 100 : 100 - (100/(1+ag/al)); }
-    function ema(p, n) { if(p.length < n) return p[p.length-1]; let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; for(let i=n; i<p.length; i++) e = p[i]*k + e*(1-k); return e; }
-    function macd(p) { let e12=ema(p,12), e26=ema(p,26), line=e12-e26; let sig=ema(p.slice(-26), 9), hist=line-sig; return { h: hist, d: hist>0?'up':hist<0?'down':'flat' }; }
-    function stoch(p, n=14) { let s=p.slice(-n), h=Math.max(...s), l=Math.min(...s), c=p[p.length-1]; let k=((c-l)/(h-l))*100; return { k, d: k<20?'up':k>80?'down':'flat' }; }
-    function bb(p, n=20) { let sma=p.slice(-n).reduce((a,b)=>a+b,0)/n; let std=Math.sqrt(p.slice(-n).reduce((s,x)=>s+Math.pow(x-sma,2),0)/n); let c=p[p.length-1], u=sma+2*std, lo=sma-2*std; return { pos: c<=lo?'Lower':c>=u?'Upper':'Mid', d: c<=lo?'up':c>=u?'down':'flat' }; }
-    function mom(p, n=10) { let m=p[p.length-1]-p[p.length-1-n]; return { m, d: m>0?'up':m<0?'down':'flat' }; }
+    // --- Technical Analysis Functions ---
+    function ema(p, n) { 
+        if(p.length < n) return p[p.length-1]; 
+        let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; 
+        for(let i=n; i<p.length; i++) e = p[i]*k + e*(1-k); 
+        return e; 
+    }
+    
+    function rsi(p, n=14) { 
+        if(p.length < n+1) return 50; 
+        let g=0, l=0; 
+        for(let i=p.length-n; i<p.length; i++) { 
+            let c=p[i]-p[i-1]; 
+            if(c>0) g+=c; else l+=Math.abs(c); 
+        } 
+        let ag=g/n, al=l/n; 
+        return al===0 ? 100 : 100 - (100/(1+ag/al)); 
+    }
+    
+    function macd(p) { 
+        let e12=ema(p,12), e26=ema(p,26), line=e12-e26; 
+        let sig=ema(p.slice(-26), 9), hist=line-sig; 
+        return { h: hist, d: hist>0?'up':hist<0?'down':'flat' }; 
+    }
+    
+    function stoch(p, n=14) { 
+        let s=p.slice(-n), h=Math.max(...s), l=Math.min(...s), c=p[p.length-1]; 
+        let k=((c-l)/(h-l))*100; 
+        return { k, d: k<20?'up':k>80?'down':'flat' }; 
+    }
+    
+    function bb(p, n=20) { 
+        let sma=p.slice(-n).reduce((a,b)=>a+b,0)/n; 
+        let std=Math.sqrt(p.slice(-n).reduce((s,x)=>s+Math.pow(x-sma,2),0)/n); 
+        let c=p[p.length-1], u=sma+2*std, lo=sma-2*std; 
+        return { pos: c<=lo?'Lower':c>=u?'Upper':'Mid', d: c<=lo?'up':c>=u?'down':'flat' }; 
+    }
+    
+    function mom(p, n=10) { 
+        let m=p[p.length-1]-p[p.length-1-n]; 
+        return { m, d: m>0?'up':m<0?'down':'flat' }; 
+    }
 
-    // NEW: Fetch 15-minute data for confirmation
-    async function get15MinData() {
+    // --- Multi-Timeframe Fetchers ---
+    async function getMTFData(interval) {
         try {
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=15min&outputsize=100&apikey=${API_KEY}`);
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=200&apikey=${API_KEY}`);
             const data = await res.json();
             if(data.status !== 'ok') return null;
             return data.values.map(v => parseFloat(v.close)).reverse();
         } catch(e) { 
-            console.log('15min data error:', e);
+            console.log(`${interval} data error:`, e);
             return null; 
         }
     }
 
+    function analyzeTF(prices) {
+        if(!prices) return { score: 0, emas: {} };
+        let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
+        let e20 = ema(prices, 20), e50 = ema(prices, 50), e200 = ema(prices, 200);
+        let price = prices[prices.length-1];
+        
+        let score = 0;
+        if(r<30) score+=3; else if(r>70) score-=3;
+        if(m.d==='up') score+=3; else if(m.d==='down') score-=3;
+        if(s.d==='up') score+=2; else if(s.d==='down') score-=2;
+        if(b.d==='up') score+=1; else if(b.d==='down') score-=1;
+        if(mo.d==='up') score+=1; else if(mo.d==='down') score-=1;
+        
+        // EMA Trend Filter
+        let trend = 'neutral';
+        if(price > e20 && e20 > e50 && e50 > e200) { score += 2; trend = 'bullish'; }
+        else if(price < e20 && e20 < e50 && e50 < e200) { score -= 2; trend = 'bearish'; }
+        
+        return { score, trend, emas: { e20, e50, e200, price } };
+    }
+
     function toggleAutoMode() {
-        if(newsPaused) { log('⚠️ AUTO PAUSED - High Impact News!'); return; }
+        if(newsPaused) { log('️ AUTO PAUSED - High Impact News!'); return; }
         autoMode = !autoMode;
         const btn = document.getElementById('autoBtn');
         const manualBtn = document.getElementById('manualBtn');
@@ -491,58 +553,53 @@ ${reasonsText}
         else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            if(!res.ok) throw new Error(`API Error: ${res.status}`);
-            const data = await res.json();
-            if(data.status !== 'ok' || !data.values) throw new Error('داتای نادروست');
+            // Fetch all timeframes in parallel
+            const [res5m, prices15, prices1H] = await Promise.all([
+                fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=200&apikey=${API_KEY}`),
+                getMTFData('15min'),
+                getMTFData('1hour')
+            ]);
 
-            let prices = data.values.map(v => parseFloat(v.close)).reverse();
-            let price = prices[prices.length-1];
+            const data5m = await res5m.json();
+            if(data5m.status !== 'ok' || !data5m.values) throw new Error('داتای نادروست');
+
+            let prices5m = data5m.values.map(v => parseFloat(v.close)).reverse();
+            let price = prices5m[prices5m.length-1];
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
-            let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
+            // Analyze all timeframes
+            const tf5m = analyzeTF(prices5m);
+            const tf15m = analyzeTF(prices15);
+            const tf1H = analyzeTF(prices1H);
 
-            document.getElementById('iRSI').textContent = r.toFixed(1); document.getElementById('iRSI').className = r<30?'ind-val up':r>70?'ind-val down':'ind-val';
-            document.getElementById('iMACD').textContent = m.h.toFixed(2); document.getElementById('iMACD').className = m.d==='up'?'ind-val up':m.d==='down'?'ind-val down':'ind-val';
-            document.getElementById('iStoch').textContent = s.k.toFixed(1); document.getElementById('iStoch').className = s.d==='up'?'ind-val up':s.d==='down'?'ind-val down':'ind-val';
-            document.getElementById('iBB').textContent = b.pos; document.getElementById('iBB').className = b.d==='up'?'ind-val up':b.d==='down'?'ind-val down':'ind-val';
-            document.getElementById('iMom').textContent = mo.m.toFixed(2); document.getElementById('iMom').className = mo.d==='up'?'ind-val up':mo.d==='down'?'ind-val down':'ind-val';
-
-            let score = 0, reasons = [];
-            if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});} else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
-            if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});} else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
-            if(s.d==='up'){score+=2; reasons.push({t:"Stochastic نزمە", d:'up'});} else if(s.d==='down'){score-=2; reasons.push({t:"Stochastic بەرزە", d:'down'});}
-            if(b.d==='up'){score+=1; reasons.push({t:"Bollinger خوارەوە", d:'up'});} else if(b.d==='down'){score-=1; reasons.push({t:"Bollinger سەرەوە", d:'down'});}
-            if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});} else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
-
-            let conf = Math.min(99, Math.abs(score)*10);
-            document.getElementById('confVal').textContent = conf+'%';
+            // Update UI Indicators
+            document.getElementById('iRSI').textContent = rsi(prices5m).toFixed(1);
+            document.getElementById('iMACD').textContent = macd(prices5m).h.toFixed(2);
+            document.getElementById('iStoch').textContent = stoch(prices5m).k.toFixed(1);
+            document.getElementById('iBB').textContent = bb(prices5m).pos;
+            document.getElementById('iMom').textContent = mom(prices5m).m.toFixed(2);
             
-            // NEW: Check 15-minute timeframe for confirmation
-            let prices15 = await get15MinData();
-            let confirmSignal = true;
+            // EMA Display
+            document.getElementById('iEMA20').textContent = tf5m.emas.e20?.toFixed(2) || '-';
+            document.getElementById('iEMA50').textContent = tf5m.emas.e50?.toFixed(2) || '-';
+            document.getElementById('iEMA200').textContent = tf5m.emas.e200?.toFixed(2) || '-';
             
-            if (prices15) {
-                let r15 = rsi(prices15), m15 = macd(prices15), s15 = stoch(prices15);
-                let score15 = 0;
-                
-                if(r15<30) score15+=3; else if(r15>70) score15-=3;
-                if(m15.d==='up') score15+=3; else if(m15.d==='down') score15-=3;
-                if(s15.d==='up') score15+=2; else if(s15.d==='down') score15-=2;
-                
-                // If 5min and 15min don't agree, don't send signal
-                if ((score > 0 && score15 < 0) || (score < 0 && score15 > 0)) {
-                    confirmSignal = false;
-                    log('⚠️ 5m و 15m یەک ئاراستە نین - سیگناڵ نەنێردرا');
-                } else {
-                    log(`✅ 5m و 15m یەک ئاراستەن - Score: ${score} / ${score15}`);
-                }
-            } else {
-                log('⚠️ نەیتوانی داتای 15 خولەک وەربگرێت');
-            }
+            // MTF Status Display
+            const setStatus = (id, val) => {
+                const el = document.getElementById(id);
+                el.textContent = val > 0 ? 'BUY' : val < 0 ? 'SELL' : 'WAIT';
+                el.className = `ind-val ${val > 0 ? 'up' : val < 0 ? 'down' : ''}`;
+            };
+            setStatus('i15m', tf15m.score);
+            setStatus('i1H', tf1H.score);
+
+            // --- ULTIMATE CONFIRMATION LOGIC ---
+            // All 3 timeframes must agree AND be above threshold
+            const totalScore = tf5m.score + tf15m.score + tf1H.score;
+            const agree = (tf5m.score > 0 && tf15m.score > 0 && tf1H.score > 0) || 
+                          (tf5m.score < 0 && tf15m.score < 0 && tf1H.score < 0);
+            
+            let conf = Math.min(99, Math.abs(totalScore) * 5); // Adjusted scaling for combined score
             
             const card = document.getElementById('signalCard');
             const arrow = document.getElementById('arrow');
@@ -552,16 +609,23 @@ ${reasonsText}
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
+            let reasons = [];
+            if(tf5m.trend !== 'neutral') reasons.push({t:`5m Trend: ${tf5m.trend}`, d: tf5m.score > 0 ? 'up' : 'down'});
+            if(tf15m.trend !== 'neutral') reasons.push({t:`15m Trend: ${tf15m.trend}`, d: tf15m.score > 0 ? 'up' : 'down'});
+            if(tf1H.trend !== 'neutral') reasons.push({t:`1H Trend: ${tf1H.trend}`, d: tf1H.score > 0 ? 'up' : 'down'});
+            
             rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-            if(conf >= 70 && confirmSignal) {
+            document.getElementById('confVal').textContent = conf+'%';
+
+            if(conf >= 70 && agree) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
-                let direction = score > 0 ? 'BUY' : 'SELL';
+                let direction = totalScore > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
                 
                 signalsRef.set(currentSignal);
@@ -572,16 +636,16 @@ ${reasonsText}
                 
                 if(autoMode && !manual) playNotification();
                 
-                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
+                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
                 else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی تەنها ${conf}% یان 15m ڕەتیکردەوە`); } 
-                else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
+                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(` دڵنیایی ${conf}% یان کاتەکان نایەکگرن`); } 
+                else { card.className = 'card signal-box wait'; arrow.textContent=''; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
             }
-        } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
+        } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(` هەڵە: ${e.message}`); } 
         finally { isProcessing = false; }
     }
 
@@ -641,7 +705,7 @@ ${reasonsText}
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
                     <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
-                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : ' هەڵە'}</div>
+                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
         `).join('');
     }
@@ -668,7 +732,7 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
@@ -683,7 +747,7 @@ ${reasonsText}
                 widget.classList.remove('warning'); card.classList.remove('news-warning');
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) { console.log('News check failed:', e); }
