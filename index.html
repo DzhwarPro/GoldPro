@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - MTF 1m</title>
+<title>Gold Sniper Pro - MTF</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -96,11 +96,11 @@
     .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
     .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
     
-    .indicators { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+    .indicators { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
     .ind-item { 
         background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05)); 
-        padding: 10px; 
-        border-radius: 10px; 
+        padding: 8px 4px; 
+        border-radius: 8px; 
         text-align: center; 
         border: 2px solid rgba(212,175,55,0.3);
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -113,8 +113,8 @@
         background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,136,0.05));
         border-color: rgba(0,255,136,0.4);
     }
-    .ind-name { font-size: 10px; color: var(--gold); margin-bottom: 3px; font-weight: 600; }
-    .ind-val { font-weight: bold; font-size: 14px; }
+    .ind-name { font-size: 9px; color: var(--gold); margin-bottom: 2px; font-weight: 600; }
+    .ind-val { font-weight: bold; font-size: 12px; }
     .up { color: var(--green); text-shadow: 0 0 10px rgba(0,255,136,0.5); }
     .down { color: var(--red); text-shadow: 0 0 10px rgba(255,68,68,0.5); }
     .neutral { color: #888; }
@@ -182,7 +182,7 @@
             <div class="auto-status" id="autoStatus">
                 <div> دۆخی خۆکار چالاکە - شیکاری چەند کاتێک</div>
                 <div class="next-check" id="nextCheck">٠١:٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٦٠٪+)...</div>
             </div>
             
             <div class="info-columns">
@@ -201,7 +201,7 @@
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان (5m / 15m / 1m / EMA)</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center; font-size: 14px;"> فلتەرە تەکنیکییەکان (5m / 15m / 1H / EMA)</div>
             <div class="indicators">
                 <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -212,7 +212,7 @@
                 <div class="ind-item"><div class="ind-name">EMA 50</div><div class="ind-val" id="iEMA50">-</div></div>
                 <div class="ind-item"><div class="ind-name">EMA 200</div><div class="ind-val" id="iEMA200">-</div></div>
                 <div class="ind-item"><div class="ind-name">15m Status</div><div class="ind-val" id="i15m">-</div></div>
-                <div class="ind-item"><div class="ind-name">1m Status</div><div class="ind-val" id="i1m">-</div></div>
+                <div class="ind-item"><div class="ind-name">1H Status</div><div class="ind-val" id="i1H">-</div></div>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
@@ -296,7 +296,7 @@
             document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)';
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
-            alert('️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
+            alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
             log('❌ حسابەکە سڕاوەتەوە');
         }
     });
@@ -307,7 +307,7 @@
         const link = document.querySelector('.register-link');
         const title = document.querySelector('.login-title');
         if(isRegisterMode) {
-            btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ';
+            btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = ' حسابی نوێ';
         } else {
             btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro';
         }
@@ -367,7 +367,7 @@
 
     function sendBrowserNotification(signalData) {
         if ("Notification" in window && Notification.permission === "granted") {
-            const title = `🔔 Gold Sniper: ${signalData.type} Signal!`;
+            const title = ` Gold Sniper: ${signalData.type} Signal!`;
             const options = {
                 body: `Price: ${signalData.entryPrice.toFixed(2)} | Confidence: ${signalData.conf}%`,
                 icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
@@ -388,12 +388,12 @@
         const message = `
 🔔 <b>GOLD SNIPER SIGNAL</b>
 
-📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '️'}
+📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
- <b>Confidence:</b> ${signalData.conf}%
-⏰ <b>Time:</b> ${signalData.time}
+🎯 <b>Confidence:</b> ${signalData.conf}%
+ <b>Time:</b> ${signalData.time}
 
- <b>Indicators:</b>
+📈 <b>Indicators:</b>
 ${reasonsText}
 
 ⏳ <b>Duration:</b> 5 minutes
@@ -439,7 +439,6 @@ ${reasonsText}
         log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
     }
 
-    // --- Technical Analysis Functions ---
     function ema(p, n) { 
         if(p.length < n) return p[p.length-1]; 
         let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; 
@@ -482,7 +481,6 @@ ${reasonsText}
         return { m, d: m>0?'up':m<0?'down':'flat' }; 
     }
 
-    // --- Multi-Timeframe Fetchers ---
     async function getMTFData(interval) {
         try {
             const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=200&apikey=${API_KEY}`);
@@ -569,10 +567,10 @@ ${reasonsText}
         else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
-            const [res5m, prices15, prices1m] = await Promise.all([
+            const [res5m, prices15, prices1H] = await Promise.all([
                 fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=200&apikey=${API_KEY}`),
                 getMTFData('15min'),
-                getMTFData('1min')
+                getMTFData('1hour')
             ]);
 
             const data5m = await res5m.json();
@@ -584,9 +582,8 @@ ${reasonsText}
 
             const tf5m = analyzeTF(prices5m);
             const tf15m = analyzeTF(prices15);
-            const tf1m = analyzeTF(prices1m);
+            const tf1H = analyzeTF(prices1H);
 
-            // Update UI Indicators with color classes
             const setIndicator = (id, val, condition) => {
                 const el = document.getElementById(id);
                 el.textContent = val;
@@ -609,27 +606,28 @@ ${reasonsText}
                 el.parentElement.className = `ind-item ${val > 0 ? 'buy' : val < 0 ? 'sell' : ''}`;
             };
             setStatus('i15m', tf15m.score);
-            setStatus('i1m', tf1m.score);
+            setStatus('i1H', tf1H.score);
 
-            // --- RELAXED CONFIRMATION LOGIC ---
-            const totalScore = tf5m.score + tf15m.score + tf1m.score;
+            // --- RELAXED LOGIC FOR MORE SIGNALS ---
+            const totalScore = tf5m.score + tf15m.score + tf1H.score;
 
             let agreeCount = 0;
             if(tf5m.score > 0 && tf15m.score > 0) agreeCount++;
-            if(tf5m.score > 0 && tf1m.score > 0) agreeCount++;
-            if(tf15m.score > 0 && tf1m.score > 0) agreeCount++;
+            if(tf5m.score > 0 && tf1H.score > 0) agreeCount++;
+            if(tf15m.score > 0 && tf1H.score > 0) agreeCount++;
             if(tf5m.score < 0 && tf15m.score < 0) agreeCount++;
-            if(tf5m.score < 0 && tf1m.score < 0) agreeCount++;
-            if(tf15m.score < 0 && tf1m.score < 0) agreeCount++;
+            if(tf5m.score < 0 && tf1H.score < 0) agreeCount++;
+            if(tf15m.score < 0 && tf1H.score < 0) agreeCount++;
 
-            const strong5m = Math.abs(tf5m.score) >= 5;
+            // Relaxed: 5m score >= 3 (instead of 5) + at least 2 agree
+            const strong5m = Math.abs(tf5m.score) >= 3;
             const twoAgree = agreeCount >= 2;
-            const veryStrong5m = Math.abs(tf5m.score) >= 8;
+            const veryStrong5m = Math.abs(tf5m.score) >= 6;
 
             const shouldSignal = (strong5m && twoAgree) || veryStrong5m;
 
             let conf = Math.min(99, Math.abs(totalScore) * 4);
-            if(veryStrong5m) conf = Math.max(conf, 75);
+            if(veryStrong5m) conf = Math.max(conf, 70);
             
             const card = document.getElementById('signalCard');
             const arrow = document.getElementById('arrow');
@@ -651,13 +649,13 @@ ${reasonsText}
             reasons.push({t:`Stoch: ${tf15m.stoch.toFixed(1)} | BB: ${tf15m.bb} | Mom: ${tf15m.mom.toFixed(2)}`, d: tf15m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Trend: ${tf15m.trend} | EMA20: ${tf15m.emas.e20.toFixed(2)}`, d: tf15m.trend === 'bullish' ? 'up' : tf15m.trend === 'bearish' ? 'down' : 'neutral'});
 
-            reasons.push({t:`━━━ 1 خولەک ━━`, d:'neutral'});
-            reasons.push({t:`RSI: ${tf1m.rsi.toFixed(1)} | MACD: ${tf1m.macd.toFixed(2)}`, d: tf1m.score > 0 ? 'up' : 'down'});
-            reasons.push({t:`Stoch: ${tf1m.stoch.toFixed(1)} | BB: ${tf1m.bb} | Mom: ${tf1m.mom.toFixed(2)}`, d: tf1m.score > 0 ? 'up' : 'down'});
-            reasons.push({t:`Trend: ${tf1m.trend} | EMA20: ${tf1m.emas.e20.toFixed(2)}`, d: tf1m.trend === 'bullish' ? 'up' : tf1m.trend === 'bearish' ? 'down' : 'neutral'});
+            reasons.push({t:`━━━ 1 کاتژمێر ━━━`, d:'neutral'});
+            reasons.push({t:`RSI: ${tf1H.rsi.toFixed(1)} | MACD: ${tf1H.macd.toFixed(2)}`, d: tf1H.score > 0 ? 'up' : 'down'});
+            reasons.push({t:`Stoch: ${tf1H.stoch.toFixed(1)} | BB: ${tf1H.bb} | Mom: ${tf1H.mom.toFixed(2)}`, d: tf1H.score > 0 ? 'up' : 'down'});
+            reasons.push({t:`Trend: ${tf1H.trend} | EMA20: ${tf1H.emas.e20.toFixed(2)}`, d: tf1H.trend === 'bullish' ? 'up' : tf1H.trend === 'bearish' ? 'down' : 'neutral'});
             
             rList.innerHTML = reasons.map(x => {
-                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '⚪';
+                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '';
                 let color = x.d==='up' ? 'var(--green)' : x.d==='down' ? 'var(--red)' : '#888';
                 let bold = x.t.includes('━━━') ? 'font-weight:bold; color:var(--gold);' : '';
                 return `<div class="reason-item" style="${bold}"><span class="reason-icon">${icon}</span> <span style="color:${color}">${x.t}</span></div>`;
@@ -665,7 +663,8 @@ ${reasonsText}
 
             document.getElementById('confVal').textContent = conf+'%';
 
-            if(conf >= 70 && shouldSignal) {
+            // Confidence >= 60% (instead of 70%)
+            if(conf >= 60 && shouldSignal) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
@@ -684,12 +683,12 @@ ${reasonsText}
                 if(autoMode && !manual) playNotification();
                 
                 if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
-                else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
+                else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی ${conf}% یان مەرجەکان تەواو نین`); } 
+                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(` دڵنیایی ${conf}% یان مەرجەکان تەواو نین`); } 
                 else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
             }
         } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
@@ -784,7 +783,7 @@ ${reasonsText}
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
