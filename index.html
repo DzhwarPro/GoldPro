@@ -503,9 +503,9 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - شیکاری چەند کاتێک</div>
+                <div> دۆخی خۆکار چالاکە - شیکاری چەند کاتێک</div>
                 <div class="next-check" id="nextCheck">١:٠٠</div>
-                <div>چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
+                <div>چاوەڕوانی سیگناڵی بەهێز (٦٠٪+)...</div>
             </div>
             
             <div class="info-columns">
@@ -517,7 +517,7 @@
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
@@ -619,7 +619,7 @@
             document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)';
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
-            alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
+            alert('️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
             log('❌ حسابەکە سڕاوەتەوە');
         }
     });
@@ -711,15 +711,15 @@
         const message = `
 🔔 <b>GOLD SNIPER SIGNAL</b>
 
- <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
-💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
+📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
+ <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
 
 📈 <b>Indicators:</b>
 ${reasonsText}
 
- <b>Duration:</b> 5 minutes
+⏳ <b>Duration:</b> 5 minutes
         `;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -753,7 +753,7 @@ ${reasonsText}
         rBox.style.display = 'block';
         rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
+        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
         else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
@@ -762,7 +762,6 @@ ${reasonsText}
         log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
     }
 
-    // --- Technical Analysis Functions ---
     function ema(p, n) { 
         if(p.length < n) return p[p.length-1]; 
         let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; 
@@ -805,7 +804,6 @@ ${reasonsText}
         return { m, d: m>0?'up':m<0?'down':'flat' }; 
     }
 
-    // --- Multi-Timeframe Fetchers ---
     async function getMTFData(interval) {
         try {
             const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=200&apikey=${API_KEY}`);
@@ -888,8 +886,8 @@ ${reasonsText}
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) logEl.textContent = ' شیکاری دەستپێکرد...';
-        else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const [res5m, prices15, prices1H] = await Promise.all([
@@ -927,11 +925,27 @@ ${reasonsText}
             setStatus('i15m', tf15m.score);
             setStatus('i1H', tf1H.score);
 
+            // --- نەرمکردنی مەرجی یەکگرتن ---
             const totalScore = tf5m.score + tf15m.score + tf1H.score;
-            const agree = (tf5m.score > 0 && tf15m.score > 0 && tf1H.score > 0) || 
-                          (tf5m.score < 0 && tf15m.score < 0 && tf1H.score < 0);
-            
-            let conf = Math.min(99, Math.abs(totalScore) * 5);
+
+            // ژماردنی کاتە یەکگرتووەکان
+            let agreeCount = 0;
+            if(tf5m.score > 0 && tf15m.score > 0) agreeCount++;
+            if(tf5m.score > 0 && tf1H.score > 0) agreeCount++;
+            if(tf15m.score > 0 && tf1H.score > 0) agreeCount++;
+            if(tf5m.score < 0 && tf15m.score < 0) agreeCount++;
+            if(tf5m.score < 0 && tf1H.score < 0) agreeCount++;
+            if(tf15m.score < 0 && tf1H.score < 0) agreeCount++;
+
+            // مەرجی نەرمتر: 5m دەبێت بەهێز بێت + لایەنی کەم 2 کات یەک بن
+            const strong5m = Math.abs(tf5m.score) >= 5;
+            const twoAgree = agreeCount >= 2;
+            const veryStrong5m = Math.abs(tf5m.score) >= 8;
+
+            const shouldSignal = (strong5m && twoAgree) || veryStrong5m;
+
+            let conf = Math.min(99, Math.abs(totalScore) * 4);
+            if(veryStrong5m) conf = Math.max(conf, 75);
             
             const card = document.getElementById('signalCard');
             const arrow = document.getElementById('arrow');
@@ -943,12 +957,12 @@ ${reasonsText}
             rBox.style.display = 'block';
             let reasons = [];
 
-            reasons.push({t:`━━━ 5 خولەک ━━`, d:'neutral'});
+            reasons.push({t:`━━━ 5 خولەک ━`, d:'neutral'});
             reasons.push({t:`RSI: ${tf5m.rsi.toFixed(1)} | MACD: ${tf5m.macd.toFixed(2)}`, d: tf5m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Stoch: ${tf5m.stoch.toFixed(1)} | BB: ${tf5m.bb} | Mom: ${tf5m.mom.toFixed(2)}`, d: tf5m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Trend: ${tf5m.trend} | EMA20: ${tf5m.emas.e20.toFixed(2)}`, d: tf5m.trend === 'bullish' ? 'up' : tf5m.trend === 'bearish' ? 'down' : 'neutral'});
 
-            reasons.push({t:`━━━ 15 خولەک ━━━`, d:'neutral'});
+            reasons.push({t:`━━━ 15 خولەک ━━`, d:'neutral'});
             reasons.push({t:`RSI: ${tf15m.rsi.toFixed(1)} | MACD: ${tf15m.macd.toFixed(2)}`, d: tf15m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Stoch: ${tf15m.stoch.toFixed(1)} | BB: ${tf15m.bb} | Mom: ${tf15m.mom.toFixed(2)}`, d: tf15m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Trend: ${tf15m.trend} | EMA20: ${tf15m.emas.e20.toFixed(2)}`, d: tf15m.trend === 'bullish' ? 'up' : tf15m.trend === 'bearish' ? 'down' : 'neutral'});
@@ -959,7 +973,7 @@ ${reasonsText}
             reasons.push({t:`Trend: ${tf1H.trend} | EMA20: ${tf1H.emas.e20.toFixed(2)}`, d: tf1H.trend === 'bullish' ? 'up' : tf1H.trend === 'bearish' ? 'down' : 'neutral'});
             
             rList.innerHTML = reasons.map(x => {
-                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '' : '⚪';
+                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '⚪';
                 let color = x.d==='up' ? 'var(--green)' : x.d==='down' ? 'var(--red)' : '#888';
                 let bold = x.t.includes('━━━') ? 'font-weight:bold; color:var(--gold);' : '';
                 return `<div class="reason-item" style="${bold}"><span class="reason-icon">${icon}</span> <span style="color:${color}">${x.t}</span></div>`;
@@ -967,12 +981,12 @@ ${reasonsText}
 
             document.getElementById('confVal').textContent = conf+'%';
 
-            if(conf >= 70 && agree) {
+            if(conf >= 60 && shouldSignal) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = totalScore > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -986,12 +1000,12 @@ ${reasonsText}
                 if(autoMode && !manual) playNotification();
                 
                 if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
-                else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
+                else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی ${conf}% یان کاتەکان نایەکگرن`); } 
+                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی ${conf}% یان مەرجەکان تەواو نین`); } 
                 else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
             }
         } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
@@ -1002,7 +1016,7 @@ ${reasonsText}
         if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
         if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         document.getElementById('autoStatus').classList.remove('active');
-        log('️ دۆخی خۆکار وەستا تا ٥ خولەک');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
     }
 
     function resumeAutoAfterSignal() {
@@ -1052,7 +1066,7 @@ ${reasonsText}
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
-                    <div class="h-details">⏰ ${h.time} |  ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
@@ -1086,7 +1100,7 @@ ${reasonsText}
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
