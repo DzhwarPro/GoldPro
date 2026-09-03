@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Browser Notifications</title>
+<title>Gold Sniper Pro - Multi-Timeframe</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -130,7 +130,7 @@
 
 <div id="loginScreen">
     <div class="login-card">
-        <div class="login-title"> Gold Sniper Pro</div>
+        <div class="login-title">🔐 Gold Sniper Pro</div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
         <input type="password" id="loginPassword" class="login-input" placeholder="وشەی نهێنی">
         <button class="login-btn" onclick="handleLogin()">چوونەژوورەوە</button>
@@ -151,7 +151,7 @@
                 <span id="userEmail"></span>
                 <button class="logout-btn" onclick="handleLogout()">دەرچوون</button>
             </div>
-            <div class="sync-status" id="syncStatus">☁️ Synced</div>
+            <div class="sync-status" id="syncStatus">️ Synced</div>
             <div class="price" id="priceDisplay">--</div>
             <div class="arrow" id="arrow"></div>
             <div class="status-text" id="statusText">چاوەڕێبە...</div>
@@ -164,12 +164,11 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠:٠٠</div>
+                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠١:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
-            <!-- Two Columns: Reasons (Right) + News (Left) -->
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
                     <div class="reasons-title">🔍 هۆکارەکان:</div>
@@ -179,7 +178,7 @@
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
@@ -203,7 +202,7 @@
 
         <div class="card" id="historyCard" style="display: none;">
             <div class="stats-header">
-                <div style="font-weight: bold; color: var(--gold); font-size: 14px;"> مێژووی سیگناڵەکان</div>
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
                 <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
             </div>
             <div class="history-list" id="historyList"></div>
@@ -235,8 +234,6 @@
     const tsRef = db.ref('lastSignalTimestamp');
 
     const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
-    
-    // Telegram Configuration
     const TELEGRAM_BOT_TOKEN = '8666040478:AAFIY2Ksc5dSY-kLT_Xv1C2xrFmkPhkV2cI';
     const TELEGRAM_CHAT_ID = '1961847647';
 
@@ -338,12 +335,9 @@
 
         checkNews();
         setInterval(checkNews, 300000);
-        
-        // Request Browser Notification Permission on Init
         requestNotificationPermission();
     }
 
-    // --- NEW: Browser Notification Functions ---
     function requestNotificationPermission() {
         if ("Notification" in window && Notification.permission !== "granted") {
             Notification.requestPermission();
@@ -361,9 +355,7 @@
             new Notification(title, options);
         }
     }
-    // -------------------------------------------
 
-    // Telegram Function
     function sendTelegramSignal(signalData) {
         if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
 
@@ -375,12 +367,12 @@
         const message = `
 🔔 <b>GOLD SNIPER SIGNAL</b>
 
-📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
-🎯 <b>Confidence:</b> ${signalData.conf}%
+ <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
 
-📈 <b>Indicators:</b>
+ <b>Indicators:</b>
 ${reasonsText}
 
 ⏳ <b>Duration:</b> 5 minutes
@@ -417,7 +409,7 @@ ${reasonsText}
         rBox.style.display = 'block';
         rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
+        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
         else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
@@ -432,6 +424,19 @@ ${reasonsText}
     function stoch(p, n=14) { let s=p.slice(-n), h=Math.max(...s), l=Math.min(...s), c=p[p.length-1]; let k=((c-l)/(h-l))*100; return { k, d: k<20?'up':k>80?'down':'flat' }; }
     function bb(p, n=20) { let sma=p.slice(-n).reduce((a,b)=>a+b,0)/n; let std=Math.sqrt(p.slice(-n).reduce((s,x)=>s+Math.pow(x-sma,2),0)/n); let c=p[p.length-1], u=sma+2*std, lo=sma-2*std; return { pos: c<=lo?'Lower':c>=u?'Upper':'Mid', d: c<=lo?'up':c>=u?'down':'flat' }; }
     function mom(p, n=10) { let m=p[p.length-1]-p[p.length-1-n]; return { m, d: m>0?'up':m<0?'down':'flat' }; }
+
+    // NEW: Fetch 15-minute data for confirmation
+    async function get15MinData() {
+        try {
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=15min&outputsize=100&apikey=${API_KEY}`);
+            const data = await res.json();
+            if(data.status !== 'ok') return null;
+            return data.values.map(v => parseFloat(v.close)).reverse();
+        } catch(e) { 
+            console.log('15min data error:', e);
+            return null; 
+        }
+    }
 
     function toggleAutoMode() {
         if(newsPaused) { log('⚠️ AUTO PAUSED - High Impact News!'); return; }
@@ -516,6 +521,29 @@ ${reasonsText}
             let conf = Math.min(99, Math.abs(score)*10);
             document.getElementById('confVal').textContent = conf+'%';
             
+            // NEW: Check 15-minute timeframe for confirmation
+            let prices15 = await get15MinData();
+            let confirmSignal = true;
+            
+            if (prices15) {
+                let r15 = rsi(prices15), m15 = macd(prices15), s15 = stoch(prices15);
+                let score15 = 0;
+                
+                if(r15<30) score15+=3; else if(r15>70) score15-=3;
+                if(m15.d==='up') score15+=3; else if(m15.d==='down') score15-=3;
+                if(s15.d==='up') score15+=2; else if(s15.d==='down') score15-=2;
+                
+                // If 5min and 15min don't agree, don't send signal
+                if ((score > 0 && score15 < 0) || (score < 0 && score15 > 0)) {
+                    confirmSignal = false;
+                    log('⚠️ 5m و 15m یەک ئاراستە نین - سیگناڵ نەنێردرا');
+                } else {
+                    log(`✅ 5m و 15m یەک ئاراستەن - Score: ${score} / ${score15}`);
+                }
+            } else {
+                log('⚠️ نەیتوانی داتای 15 خولەک وەربگرێت');
+            }
+            
             const card = document.getElementById('signalCard');
             const arrow = document.getElementById('arrow');
             const txt = document.getElementById('statusText');
@@ -524,9 +552,9 @@ ${reasonsText}
             const rList = document.getElementById('reasonsList');
 
             rBox.style.display = 'block';
-            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-            if(conf >= 70) {
+            if(conf >= 70 && confirmSignal) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
@@ -539,9 +567,8 @@ ${reasonsText}
                 signalsRef.set(currentSignal);
                 tsRef.set(now);
                 
-                // Send to Telegram & Browser
                 sendTelegramSignal(currentSignal);
-                sendBrowserNotification(currentSignal); // NEW
+                sendBrowserNotification(currentSignal);
                 
                 if(autoMode && !manual) playNotification();
                 
@@ -551,8 +578,8 @@ ${reasonsText}
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی تەنها ${conf}%`); } 
-                else { card.className = 'card signal-box wait'; arrow.textContent=''; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
+                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ دڵنیایی تەنها ${conf}% یان 15m ڕەتیکردەوە`); } 
+                else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
             }
         } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
         finally { isProcessing = false; }
@@ -614,7 +641,7 @@ ${reasonsText}
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
                     <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
-                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
+                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : ' هەڵە'}</div>
             </div>
         `).join('');
     }
@@ -641,7 +668,7 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
@@ -656,7 +683,7 @@ ${reasonsText}
                 widget.classList.remove('warning'); card.classList.remove('news-warning');
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) { console.log('News check failed:', e); }
