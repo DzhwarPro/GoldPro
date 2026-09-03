@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Ultimate MTF</title>
+<title>Gold Sniper Pro - MTF 1m</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -12,457 +12,118 @@
         --auto-bg: rgba(0,123,255,0.1); --reasons-bg: rgba(0,0,0,0.3);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
-    body { 
-        background: var(--bg); 
-        color: var(--text); 
-        padding: 20px; 
-        min-height: 100vh;
-        margin: 0 40px;
-    }
+    body { background: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; }
     
     #loginScreen {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center;
     }
     .login-card {
-        background: var(--card); 
-        border: 3px solid var(--gold); 
-        border-radius: 25px;
-        padding: 50px; 
-        width: 90%; 
-        max-width: 500px; 
-        text-align: center;
-        box-shadow: 0 0 50px rgba(212,175,55,0.3);
+        background: var(--card); border: 2px solid var(--gold); border-radius: 20px;
+        padding: 40px; width: 90%; max-width: 400px; text-align: center;
+        box-shadow: 0 0 40px rgba(212,175,55,0.2);
     }
-    .login-title { font-size: 32px; font-weight: 900; color: var(--gold); margin-bottom: 30px; }
+    .login-title { font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 20px; }
     .login-input {
-        width: 100%; 
-        padding: 18px; 
-        margin-bottom: 15px; 
-        border-radius: 12px;
-        border: 3px solid var(--border); 
-        background: var(--ind-bg); 
-        color: var(--text);
-        font-size: 18px; 
-        outline: none;
+        width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px;
+        border: 2px solid var(--border); background: var(--ind-bg); color: var(--text);
+        font-size: 16px; outline: none;
     }
     .login-input:focus { border-color: var(--gold); }
     .login-btn {
-        width: 100%; 
-        padding: 18px; 
-        border: none; 
-        border-radius: 12px;
+        width: 100%; padding: 14px; border: none; border-radius: 10px;
         background: linear-gradient(135deg, var(--gold), #f2d06b);
-        color: #000; 
-        font-weight: 900; 
-        font-size: 18px; 
-        cursor: pointer; 
-        margin-top: 10px;
+        color: #000; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 8px;
     }
-    .login-error { color: var(--red); font-size: 14px; margin-top: 12px; display: none; }
-    .register-link { color: var(--blue); font-size: 15px; margin-top: 20px; cursor: pointer; }
+    .login-error { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+    .register-link { color: var(--blue); font-size: 13px; margin-top: 15px; cursor: pointer; }
     
     #mainApp { display: none; }
     
-    .container { 
-        max-width: 1200px; 
-        margin: 0 auto; 
-        padding: 0 20px;
-    }
-    .card { 
-        background: var(--card); 
-        border-radius: 20px; 
-        padding: 25px; 
-        margin-bottom: 25px; 
-        border: 2px solid var(--border);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    .chart-box { 
-        height: 400px; 
-        width: 100%; 
-        border-radius: 15px; 
-        overflow: hidden; 
-        border: 2px solid var(--border); 
-        margin-bottom: 20px; 
-    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
     
-    .signal-box { 
-        text-align: center; 
-        padding: 40px; 
-        border: 3px solid var(--border); 
-        border-radius: 20px; 
-        position: relative; 
-    }
-    .signal-box.buy { 
-        border-color: var(--green); 
-        background: rgba(0,255,136,0.08); 
-        box-shadow: 0 0 30px rgba(0,255,136,0.2);
-    }
-    .signal-box.sell { 
-        border-color: var(--red); 
-        background: rgba(255,68,68,0.08);
-        box-shadow: 0 0 30px rgba(255,68,68,0.2);
-    }
-    .signal-box.wait { 
-        border-color: var(--gold); 
-    }
-    .signal-box.auto { 
-        border-color: var(--blue); 
-        box-shadow: 0 0 40px rgba(0,123,255,0.4); 
-        animation: pulse 2s infinite; 
-    }
-    .signal-box.news-warning { 
-        border-color: var(--red); 
-        box-shadow: 0 0 50px rgba(255,68,68,0.6); 
-        animation: newsPulse 1.5s infinite; 
-    }
+    .signal-box { text-align: center; padding: 20px; border: 2px solid var(--border); border-radius: 12px; position: relative; }
+    .signal-box.buy { border-color: var(--green); background: rgba(0,255,136,0.05); }
+    .signal-box.sell { border-color: var(--red); background: rgba(255,68,68,0.05); }
+    .signal-box.wait { border-color: var(--gold); }
+    .signal-box.auto { border-color: var(--blue); box-shadow: 0 0 20px rgba(0,123,255,0.3); animation: pulse 2s infinite; }
+    .signal-box.news-warning { border-color: var(--red); box-shadow: 0 0 30px rgba(255,68,68,0.5); animation: newsPulse 1.5s infinite; }
     
-    @keyframes pulse { 
-        0%,100% { box-shadow: 0 0 20px rgba(0,123,255,0.3); } 
-        50% { box-shadow: 0 0 50px rgba(0,123,255,0.6); } 
-    }
-    @keyframes newsPulse { 
-        0%,100% { box-shadow: 0 0 30px rgba(255,68,68,0.5); } 
-        50% { box-shadow: 0 0 70px rgba(255,68,68,0.9); } 
-    }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 20px rgba(0,123,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,123,255,0.6); } }
+    @keyframes newsPulse { 0%,100% { box-shadow: 0 0 30px rgba(255,68,68,0.5); } 50% { box-shadow: 0 0 60px rgba(255,68,68,0.8); } }
     
-    .price { 
-        font-size: 42px; 
-        font-weight: bold; 
-        color: var(--gold); 
-        margin-bottom: 10px; 
-    }
-    .arrow { 
-        font-size: 100px; 
-        margin: 10px 0; 
-    }
-    .status-text { 
-        font-size: 36px; 
-        font-weight: 900; 
-        letter-spacing: 3px; 
-        margin-bottom: 15px; 
-    }
+    .price { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
+    .arrow { font-size: 80px; margin: 5px 0; }
+    .status-text { font-size: 26px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
     .buy .status-text { color: var(--green); }
     .sell .status-text { color: var(--red); }
     .wait .status-text { color: var(--gold); }
     
-    .conf-circle { 
-        width: 140px; 
-        height: 140px; 
-        border-radius: 50%; 
-        border: 6px solid var(--border); 
-        margin: 20px auto; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        justify-content: center; 
-        background: var(--reasons-bg); 
-    }
-    .conf-circle.high { 
-        border-color: var(--green); 
-        box-shadow: 0 0 30px rgba(0,255,136,0.4); 
-    }
-    .conf-circle.med { 
-        border-color: var(--gold); 
-    }
-    .conf-val { 
-        font-size: 40px; 
-        font-weight: bold; 
-    }
-    .conf-label { 
-        font-size: 13px; 
-        color: #888; 
-        margin-top: 5px; 
-    }
+    .conf-circle { width: 110px; height: 110px; border-radius: 50%; border: 5px solid var(--border); margin: 12px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--reasons-bg); }
+    .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+    .conf-circle.med { border-color: var(--gold); }
+    .conf-val { font-size: 30px; font-weight: bold; }
+    .conf-label { font-size: 11px; color: #888; margin-top: 4px; }
     
-    .timer { 
-        font-size: 50px; 
-        font-family: monospace; 
-        color: var(--gold); 
-        margin: 20px 0; 
-        display: none; 
-        font-weight: bold; 
-    }
-    .timer.active { 
-        display: block; 
-        animation: pulse 1s infinite; 
-    }
+    .timer { font-size: 40px; font-family: monospace; color: var(--gold); margin: 12px 0; display: none; font-weight: bold; }
+    .timer.active { display: block; animation: pulse 1s infinite; }
     
-    .auto-status { 
-        background: var(--auto-bg); 
-        border: 3px solid var(--blue); 
-        border-radius: 15px; 
-        padding: 20px; 
-        margin: 20px 0; 
-        text-align: center; 
-        display: none; 
-    }
-    .auto-status.active { 
-        display: block; 
-    }
-    .auto-status .next-check { 
-        font-size: 28px; 
-        font-weight: bold; 
-        color: var(--blue); 
-        margin-top: 10px; 
-    }
-    .auto-status div:first-child {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-    .auto-status div:last-child {
-        font-size: 12px;
-        margin-top: 8px;
-        color: #aaa;
-    }
+    .auto-status { background: var(--auto-bg); border: 2px solid var(--blue); border-radius: 10px; padding: 10px; margin: 12px 0; text-align: center; display: none; }
+    .auto-status.active { display: block; }
+    .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
     
-    .info-columns { 
-        display: grid; 
-        grid-template-columns: 1fr 1fr; 
-        gap: 20px; 
-        margin-top: 20px; 
-    }
+    .info-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     
-    .news-widget { 
-        padding: 15px; 
-        border-radius: 12px; 
-        border: 3px solid var(--green); 
-        background: rgba(0,255,136,0.1); 
-        text-align: center; 
-    }
-    .news-widget.warning { 
-        border-color: #ff4444; 
-        background: rgba(255,0,0,0.15); 
-    }
-    .news-title { 
-        font-size: 16px; 
-        font-weight: bold; 
-        color: var(--green); 
-        margin-bottom: 5px; 
-    }
-    .news-detail { 
-        font-size: 13px; 
-        color: var(--gold); 
-        margin-bottom: 4px; 
-    }
-    .news-time { 
-        font-size: 11px; 
-        color: #aaa; 
-        margin-bottom: 4px; 
-    }
-    .news-status { 
-        font-size: 11px; 
-        font-weight: bold; 
-        color: var(--green); 
-        background: rgba(0,255,136,0.2); 
-        padding: 4px 10px; 
-        border-radius: 5px; 
-        display: inline-block; 
-    }
+    .news-widget { padding: 8px; border-radius: 8px; border: 2px solid var(--green); background: rgba(0,255,136,0.1); text-align: center; }
+    .news-widget.warning { border-color: #ff4444; background: rgba(255,0,0,0.1); }
+    .news-title { font-size: 12px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
+    .news-detail { font-size: 10px; color: var(--gold); margin-bottom: 2px; }
+    .news-time { font-size: 9px; color: #aaa; margin-bottom: 2px; }
+    .news-status { font-size: 9px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
     .news-warning .news-title { color: #ff4444; }
     .news-warning .news-status { color: #fff; background: #ff4444; }
     
-    .reasons { 
-        text-align: right; 
-        background: var(--reasons-bg); 
-        padding: 20px; 
-        border-radius: 12px; 
-        border-right: 5px solid var(--gold); 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: flex-start; 
-        max-height: 400px; 
-        overflow-y: auto; 
-    }
-    .reasons-title { 
-        font-weight: bold; 
-        color: var(--gold); 
-        margin-bottom: 10px; 
-        font-size: 16px; 
-    }
-    .reason-item { 
-        margin-bottom: 6px; 
-        font-size: 13px; 
-        display: flex; 
-        align-items: center;
-        padding: 4px 0;
-    }
-    .reason-icon { 
-        margin-left: 8px; 
-        font-size: 14px; 
-    }
+    .reasons { text-align: right; background: var(--reasons-bg); padding: 8px; border-radius: 8px; border-right: 3px solid var(--gold); display: flex; flex-direction: column; justify-content: flex-start; max-height: 300px; overflow-y: auto; }
+    .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 4px; font-size: 11px; }
+    .reason-item { margin-bottom: 3px; font-size: 10px; display: flex; align-items: center; }
+    .reason-icon { margin-left: 4px; font-size: 11px; }
     
-    .btn { 
-        width: 100%; 
-        padding: 20px; 
-        border: none; 
-        border-radius: 15px; 
-        background: linear-gradient(135deg, var(--gold), #f2d06b); 
-        color: #000; 
-        font-weight: 900; 
-        font-size: 20px; 
-        cursor: pointer; 
-        transition: 0.2s; 
-        margin-bottom: 10px; 
-    }
-    .btn:hover { 
-        transform: scale(1.03); 
-    }
-    .btn:disabled { 
-        opacity: 0.5; 
-        cursor: not-allowed; 
-        transform: none; 
-        background: #555; 
-        color: #fff; 
-    }
-    .btn-auto { 
-        background: linear-gradient(135deg, var(--blue), #0056b3); 
-        color: #fff; 
-    }
-    .btn-auto.active { 
-        background: linear-gradient(135deg, var(--red), #cc0000); 
-        animation: pulse 1.5s infinite; 
-    }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 6px; }
+    .btn:hover { transform: scale(1.02); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; color: #fff; }
+    .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
+    .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
     
-    .indicators { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
-        gap: 12px; 
-        margin-top: 20px; 
-    }
-    .ind-item { 
-        background: var(--ind-bg); 
-        padding: 15px; 
-        border-radius: 12px; 
-        text-align: center; 
-        border: 2px solid var(--border); 
-    }
-    .ind-name { 
-        font-size: 12px; 
-        color: #888; 
-        margin-bottom: 6px; 
-    }
-    .ind-val { 
-        font-weight: bold; 
-        font-size: 16px; 
-    }
+    .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; margin-top: 10px; }
+    .ind-item { background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+    .ind-name { font-size: 10px; color: #888; margin-bottom: 3px; }
+    .ind-val { font-weight: bold; font-size: 13px; }
     .up { color: var(--green); }
     .down { color: var(--red); }
     
-    .error-msg { 
-        color: var(--red); 
-        text-align: center; 
-        margin-top: 10px; 
-        font-size: 14px; 
-        display: none; 
-    }
-    .log { 
-        font-size: 14px; 
-        color: #666; 
-        text-align: center; 
-        margin-top: 10px; 
-        padding: 12px; 
-        background: var(--log-bg); 
-        border-radius: 12px; 
-    }
+    .error-msg { color: var(--red); text-align: center; margin-top: 6px; font-size: 12px; display: none; }
+    .log { font-size: 11px; color: #666; text-align: center; margin-top: 6px; padding: 6px; background: var(--log-bg); border-radius: 8px; }
     
-    .stats-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 15px; 
-        padding-bottom: 10px; 
-        border-bottom: 2px solid var(--border); 
-    }
-    .win-rate { 
-        font-size: 20px; 
-        font-weight: bold; 
-    }
-    .history-list { 
-        max-height: 350px; 
-        overflow-y: auto; 
-    }
-    .history-item { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        padding: 15px; 
-        margin-bottom: 10px; 
-        background: var(--ind-bg); 
-        border-radius: 12px; 
-        border-right: 5px solid transparent; 
-    }
-    .history-item.win { 
-        border-right-color: var(--green); 
-    }
-    .history-item.loss { 
-        border-right-color: var(--red); 
-    }
-    .h-signal { 
-        font-weight: bold; 
-        font-size: 18px; 
-        margin-bottom: 5px; 
-    }
-    .h-details { 
-        font-size: 12px; 
-        color: #888; 
-    }
-    .h-result { 
-        font-weight: bold; 
-        font-size: 14px; 
-        padding: 5px 12px; 
-        border-radius: 8px; 
-        background: var(--log-bg); 
-    }
+    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .win-rate { font-size: 16px; font-weight: bold; }
+    .history-list { max-height: 250px; overflow-y: auto; }
+    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 6px; background: var(--ind-bg); border-radius: 8px; border-right: 4px solid transparent; }
+    .history-item.win { border-right-color: var(--green); }
+    .history-item.loss { border-right-color: var(--red); }
+    .h-signal { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+    .h-details { font-size: 10px; color: #888; }
+    .h-result { font-weight: bold; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: var(--log-bg); }
     .h-result.win { color: var(--green); }
     .h-result.loss { color: var(--red); }
     
-    .mode-badge { 
-        position: absolute; 
-        top: 10px; 
-        left: 10px; 
-        font-size: 12px; 
-        color: var(--blue); 
-        font-weight: bold; 
-        background: rgba(0,123,255,0.2);
-        padding: 4px 10px;
-        border-radius: 6px;
-    }
-    .sync-status { 
-        position: absolute; 
-        top: 10px; 
-        right: 10px; 
-        font-size: 12px; 
-        color: var(--green); 
-    }
-    .user-info { 
-        position: absolute; 
-        top: 10px; 
-        right: 10px; 
-        font-size: 12px; 
-        color: var(--gold); 
-        display: flex; 
-        align-items: center; 
-        gap: 10px; 
-    }
-    .logout-btn { 
-        background: none; 
-        border: 2px solid var(--red); 
-        color: var(--red); 
-        padding: 4px 12px; 
-        border-radius: 6px; 
-        cursor: pointer; 
-        font-size: 12px; 
-    }
+    .mode-badge { position: absolute; top: 6px; left: 6px; font-size: 10px; color: var(--blue); font-weight: bold; }
+    .sync-status { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--green); }
+    .user-info { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+    .logout-btn { background: none; border: 1px solid var(--red); color: var(--red); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
     
-    @media (max-width: 768px) { 
-        body { margin: 0 10px; padding: 10px; }
-        .info-columns { grid-template-columns: 1fr; }
-        .container { padding: 0 10px; }
-        .price { font-size: 32px; }
-        .arrow { font-size: 70px; }
-        .status-text { font-size: 28px; }
-    }
+    @media (max-width: 600px) { .info-columns { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -480,7 +141,7 @@
 
 <div id="mainApp">
     <div class="container">
-        <div class="card" style="padding: 15px;">
+        <div class="card" style="padding: 8px;">
             <div id="tv_chart_container" class="chart-box"></div>
         </div>
 
@@ -504,8 +165,8 @@
             
             <div class="auto-status" id="autoStatus">
                 <div> دۆخی خۆکار چالاکە - شیکاری چەند کاتێک</div>
-                <div class="next-check" id="nextCheck">١:٠٠</div>
-                <div>چاوەڕوانی سیگناڵی بەهێز (٦٠٪+)...</div>
+                <div class="next-check" id="nextCheck">٠١:٠٠</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
             <div class="info-columns">
@@ -524,7 +185,7 @@
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 15px; color: var(--gold); text-align: center; font-size: 20px;">📊 فلتەرە تەکنیکییەکان (5m / 15m / 1H / EMA)</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان (5m / 15m / 1m / EMA)</div>
             <div class="indicators">
                 <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -535,18 +196,18 @@
                 <div class="ind-item"><div class="ind-name">EMA 50</div><div class="ind-val" id="iEMA50">-</div></div>
                 <div class="ind-item"><div class="ind-name">EMA 200</div><div class="ind-val" id="iEMA200">-</div></div>
                 <div class="ind-item"><div class="ind-name">15m Status</div><div class="ind-val" id="i15m">-</div></div>
-                <div class="ind-item"><div class="ind-name">1H Status</div><div class="ind-val" id="i1H">-</div></div>
+                <div class="ind-item"><div class="ind-name">1m Status</div><div class="ind-val" id="i1m">-</div></div>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
             
-            <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:20px;">دەستپێکردنی دۆخی خۆکار (AUTO)</button>
+            <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;">دەستپێکردنی دۆخی خۆکار (AUTO)</button>
             <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
         </div>
 
         <div class="card" id="historyCard" style="display: none;">
             <div class="stats-header">
-                <div style="font-weight: bold; color: var(--gold); font-size: 18px;">📈 مێژووی سیگناڵەکان</div>
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
                 <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
             </div>
             <div class="history-list" id="historyList"></div>
@@ -619,8 +280,8 @@
             document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)';
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
-            alert('️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
-            log('❌ حسابەکە سڕاوەتەوە');
+            alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
+            log(' حسابەکە سڕاوەتەوە');
         }
     });
 
@@ -690,7 +351,7 @@
 
     function sendBrowserNotification(signalData) {
         if ("Notification" in window && Notification.permission === "granted") {
-            const title = ` Gold Sniper: ${signalData.type} Signal!`;
+            const title = `🔔 Gold Sniper: ${signalData.type} Signal!`;
             const options = {
                 body: `Price: ${signalData.entryPrice.toFixed(2)} | Confidence: ${signalData.conf}%`,
                 icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
@@ -704,22 +365,22 @@
         if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
 
         const reasonsText = signalData.reasons.map(r => {
-            let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '🔴' : '➖');
+            let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '' : '➖');
             return `${icon} ${r.t}`;
         }).join('\n');
 
         const message = `
 🔔 <b>GOLD SNIPER SIGNAL</b>
 
-📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
- <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
+💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
 
 📈 <b>Indicators:</b>
 ${reasonsText}
 
-⏳ <b>Duration:</b> 5 minutes
+ <b>Duration:</b> 5 minutes
         `;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -736,7 +397,7 @@ ${reasonsText}
             if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام');
             else log('❌ هەڵەی تێلێگرام: ' + data.description);
         })
-        .catch(e => log('❌ ناردنی تێلێگرام شکستی هێنا'));
+        .catch(e => log(' ناردنی تێلێگرام شکستی هێنا'));
     }
 
     function applyRemoteSignal(data) {
@@ -753,7 +414,7 @@ ${reasonsText}
         rBox.style.display = 'block';
         rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
+        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
         else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
@@ -762,6 +423,7 @@ ${reasonsText}
         log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
     }
 
+    // --- Technical Analysis Functions ---
     function ema(p, n) { 
         if(p.length < n) return p[p.length-1]; 
         let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; 
@@ -804,6 +466,7 @@ ${reasonsText}
         return { m, d: m>0?'up':m<0?'down':'flat' }; 
     }
 
+    // --- Multi-Timeframe Fetchers ---
     async function getMTFData(interval) {
         try {
             const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=200&apikey=${API_KEY}`);
@@ -848,7 +511,7 @@ ${reasonsText}
         
         if(autoMode) {
             btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block';
-            card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = '🤖 AUTO ACTIVE';
+            card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = ' AUTO ACTIVE';
             log('🔄 دۆخی خۆکار چالاک کرا'); startAutoLoop();
         } else { stopAutoMode(); }
     }
@@ -890,10 +553,11 @@ ${reasonsText}
         else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
-            const [res5m, prices15, prices1H] = await Promise.all([
+            // Fetch 5m, 15m, and 1m (instead of 1H)
+            const [res5m, prices15, prices1m] = await Promise.all([
                 fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=200&apikey=${API_KEY}`),
                 getMTFData('15min'),
-                getMTFData('1hour')
+                getMTFData('1min')
             ]);
 
             const data5m = await res5m.json();
@@ -903,47 +567,52 @@ ${reasonsText}
             let price = prices5m[prices5m.length-1];
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
+            // Analyze all timeframes
             const tf5m = analyzeTF(prices5m);
             const tf15m = analyzeTF(prices15);
-            const tf1H = analyzeTF(prices1H);
+            const tf1m = analyzeTF(prices1m);
 
+            // Update UI Indicators
             document.getElementById('iRSI').textContent = rsi(prices5m).toFixed(1);
             document.getElementById('iMACD').textContent = macd(prices5m).h.toFixed(2);
             document.getElementById('iStoch').textContent = stoch(prices5m).k.toFixed(1);
             document.getElementById('iBB').textContent = bb(prices5m).pos;
             document.getElementById('iMom').textContent = mom(prices5m).m.toFixed(2);
             
+            // EMA Display
             document.getElementById('iEMA20').textContent = tf5m.emas.e20?.toFixed(2) || '-';
             document.getElementById('iEMA50').textContent = tf5m.emas.e50?.toFixed(2) || '-';
             document.getElementById('iEMA200').textContent = tf5m.emas.e200?.toFixed(2) || '-';
             
+            // MTF Status Display
             const setStatus = (id, val) => {
                 const el = document.getElementById(id);
                 el.textContent = val > 0 ? 'BUY' : val < 0 ? 'SELL' : 'WAIT';
                 el.className = `ind-val ${val > 0 ? 'up' : val < 0 ? 'down' : ''}`;
             };
             setStatus('i15m', tf15m.score);
-            setStatus('i1H', tf1H.score);
+            setStatus('i1m', tf1m.score);
 
-            // --- نەرمکردنی مەرجی یەکگرتن ---
-            const totalScore = tf5m.score + tf15m.score + tf1H.score;
+            // --- RELAXED CONFIRMATION LOGIC ---
+            const totalScore = tf5m.score + tf15m.score + tf1m.score;
 
-            // ژماردنی کاتە یەکگرتووەکان
+            // Count agreements
             let agreeCount = 0;
             if(tf5m.score > 0 && tf15m.score > 0) agreeCount++;
-            if(tf5m.score > 0 && tf1H.score > 0) agreeCount++;
-            if(tf15m.score > 0 && tf1H.score > 0) agreeCount++;
+            if(tf5m.score > 0 && tf1m.score > 0) agreeCount++;
+            if(tf15m.score > 0 && tf1m.score > 0) agreeCount++;
             if(tf5m.score < 0 && tf15m.score < 0) agreeCount++;
-            if(tf5m.score < 0 && tf1H.score < 0) agreeCount++;
-            if(tf15m.score < 0 && tf1H.score < 0) agreeCount++;
+            if(tf5m.score < 0 && tf1m.score < 0) agreeCount++;
+            if(tf15m.score < 0 && tf1m.score < 0) agreeCount++;
 
-            // مەرجی نەرمتر: 5m دەبێت بەهێز بێت + لایەنی کەم 2 کات یەک بن
+            // Relaxed condition: 5m must be strong + at least 2 agree OR 5m is very strong alone
             const strong5m = Math.abs(tf5m.score) >= 5;
             const twoAgree = agreeCount >= 2;
             const veryStrong5m = Math.abs(tf5m.score) >= 8;
 
             const shouldSignal = (strong5m && twoAgree) || veryStrong5m;
 
+            // Confidence calculation
             let conf = Math.min(99, Math.abs(totalScore) * 4);
             if(veryStrong5m) conf = Math.max(conf, 75);
             
@@ -957,23 +626,26 @@ ${reasonsText}
             rBox.style.display = 'block';
             let reasons = [];
 
-            reasons.push({t:`━━━ 5 خولەک ━`, d:'neutral'});
+            // 5m Details
+            reasons.push({t:`━━━ 5 خولەک ━━`, d:'neutral'});
             reasons.push({t:`RSI: ${tf5m.rsi.toFixed(1)} | MACD: ${tf5m.macd.toFixed(2)}`, d: tf5m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Stoch: ${tf5m.stoch.toFixed(1)} | BB: ${tf5m.bb} | Mom: ${tf5m.mom.toFixed(2)}`, d: tf5m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Trend: ${tf5m.trend} | EMA20: ${tf5m.emas.e20.toFixed(2)}`, d: tf5m.trend === 'bullish' ? 'up' : tf5m.trend === 'bearish' ? 'down' : 'neutral'});
 
-            reasons.push({t:`━━━ 15 خولەک ━━`, d:'neutral'});
+            // 15m Details
+            reasons.push({t:`━━━ 15 خولەک ━━━`, d:'neutral'});
             reasons.push({t:`RSI: ${tf15m.rsi.toFixed(1)} | MACD: ${tf15m.macd.toFixed(2)}`, d: tf15m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Stoch: ${tf15m.stoch.toFixed(1)} | BB: ${tf15m.bb} | Mom: ${tf15m.mom.toFixed(2)}`, d: tf15m.score > 0 ? 'up' : 'down'});
             reasons.push({t:`Trend: ${tf15m.trend} | EMA20: ${tf15m.emas.e20.toFixed(2)}`, d: tf15m.trend === 'bullish' ? 'up' : tf15m.trend === 'bearish' ? 'down' : 'neutral'});
 
-            reasons.push({t:`━━━ 1 کاتژمێر ━━━`, d:'neutral'});
-            reasons.push({t:`RSI: ${tf1H.rsi.toFixed(1)} | MACD: ${tf1H.macd.toFixed(2)}`, d: tf1H.score > 0 ? 'up' : 'down'});
-            reasons.push({t:`Stoch: ${tf1H.stoch.toFixed(1)} | BB: ${tf1H.bb} | Mom: ${tf1H.mom.toFixed(2)}`, d: tf1H.score > 0 ? 'up' : 'down'});
-            reasons.push({t:`Trend: ${tf1H.trend} | EMA20: ${tf1H.emas.e20.toFixed(2)}`, d: tf1H.trend === 'bullish' ? 'up' : tf1H.trend === 'bearish' ? 'down' : 'neutral'});
+            // 1m Details (Replaced 1H)
+            reasons.push({t:`━━━ 1 خولەک ━━`, d:'neutral'});
+            reasons.push({t:`RSI: ${tf1m.rsi.toFixed(1)} | MACD: ${tf1m.macd.toFixed(2)}`, d: tf1m.score > 0 ? 'up' : 'down'});
+            reasons.push({t:`Stoch: ${tf1m.stoch.toFixed(1)} | BB: ${tf1m.bb} | Mom: ${tf1m.mom.toFixed(2)}`, d: tf1m.score > 0 ? 'up' : 'down'});
+            reasons.push({t:`Trend: ${tf1m.trend} | EMA20: ${tf1m.emas.e20.toFixed(2)}`, d: tf1m.trend === 'bullish' ? 'up' : tf1m.trend === 'bearish' ? 'down' : 'neutral'});
             
             rList.innerHTML = reasons.map(x => {
-                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '⚪';
+                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '';
                 let color = x.d==='up' ? 'var(--green)' : x.d==='down' ? 'var(--red)' : '#888';
                 let bold = x.t.includes('━━━') ? 'font-weight:bold; color:var(--gold);' : '';
                 return `<div class="reason-item" style="${bold}"><span class="reason-icon">${icon}</span> <span style="color:${color}">${x.t}</span></div>`;
@@ -981,12 +653,13 @@ ${reasonsText}
 
             document.getElementById('confVal').textContent = conf+'%';
 
-            if(conf >= 60 && shouldSignal) {
+            // Check confidence >= 70% AND relaxed agreement logic
+            if(conf >= 70 && shouldSignal) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = totalScore > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -999,7 +672,7 @@ ${reasonsText}
                 
                 if(autoMode && !manual) playNotification();
                 
-                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
+                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
                 else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
@@ -1016,7 +689,7 @@ ${reasonsText}
         if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
         if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         document.getElementById('autoStatus').classList.remove('active');
-        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
+        log('⏸️ دۆخی خۆکار وەستا تا  خولەک');
     }
 
     function resumeAutoAfterSignal() {
@@ -1066,7 +739,7 @@ ${reasonsText}
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
                     <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
-                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                    <div class="h-details"> ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
@@ -1100,7 +773,7 @@ ${reasonsText}
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
@@ -1110,7 +783,7 @@ ${reasonsText}
                 widget.classList.remove('warning'); card.classList.remove('news-warning');
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) { console.log('News check failed:', e); }
