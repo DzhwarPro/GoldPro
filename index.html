@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - Balanced v3</title>
+<title>Gold Sniper Pro - Balanced v3 (Single API)</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -130,7 +130,7 @@
 
 <div id="loginScreen">
     <div class="login-card">
-        <div class="login-title"> Gold Sniper Pro</div>
+        <div class="login-title">🔐 Gold Sniper Pro</div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
         <input type="password" id="loginPassword" class="login-input" placeholder="وشەی نهێنی">
         <button class="login-btn" onclick="handleLogin()">چوونەژوورەوە</button>
@@ -165,13 +165,13 @@
             
             <div class="auto-status" id="autoStatus">
                 <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠١:٠٠</div>
+                <div class="next-check" id="nextCheck">٠١:٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (±6+)...</div>
             </div>
             
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title"> هۆکارەکان:</div>
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
                     <div id="reasonsList"></div>
                 </div>
                 
@@ -185,7 +185,7 @@
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;"> فلتەرە تەکنیکییەکان (Balanced v3)</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان (Balanced v3)</div>
             <div class="indicators">
                 <div class="ind-item"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -220,28 +220,22 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
-    // ============================================
-    // ⚠️ SECURITY WARNING: Do not expose these keys in public HTML!
-    // Move them to a backend server or use environment variables.
-    // ============================================
-    const CONFIG = {
-        firebase: {
-            apiKey: "AIzaSyBURpbco2IQC6_l4nQmQ9TICA4Cy9zPuIc",
-            authDomain: "goldpro-6a79c.firebaseapp.com",
-            databaseURL: "https://goldpro-6a79c-default-rtdb.firebaseio.com",
-            projectId: "goldpro-6a79c",
-            storageBucket: "goldpro-6a79c.firebasestorage.app",
-            messagingSenderId: "875401412444",
-            appId: "1:875401412444:web:2dfd640e841c06f704cb99"
-        },
-        api: {
-            twelveData: "dc1b7bb8236f4158bfe16ae9161dd14e",
-            telegramBot: "8666040478:AAFIY2Ksc5dSY-kLT_Xv1C2xrFmkPhkV2cI",
-            telegramChat: "1961847647"
-        }
+    // ✅ SINGLE API KEY - Back to original format
+    const firebaseConfig = {
+        apiKey: "AIzaSyBURpbco2IQC6_l4nQmQ9TICA4Cy9zPuIc",
+        authDomain: "goldpro-6a79c.firebaseapp.com",
+        databaseURL: "https://goldpro-6a79c-default-rtdb.firebaseio.com",
+        projectId: "goldpro-6a79c",
+        storageBucket: "goldpro-6a79c.firebasestorage.app",
+        messagingSenderId: "875401412444",
+        appId: "1:875401412444:web:2dfd640e841c06f704cb99"
     };
 
-    firebase.initializeApp(CONFIG.firebase);
+    const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e';
+    const TELEGRAM_BOT_TOKEN = '8666040478:AAFIY2Ksc5dSY-kLT_Xv1C2xrFmkPhkV2cI';
+    const TELEGRAM_CHAT_ID = '1961847647';
+
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
     const signalsRef = db.ref('signals');
@@ -297,9 +291,9 @@
         const link = document.querySelector('.register-link');
         const title = document.querySelector('.login-title');
         if(isRegisterMode) {
-            btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = ' حسابی نوێ';
+            btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ';
         } else {
-            btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = ' Gold Sniper Pro';
+            btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro';
         }
         document.getElementById('loginError').style.display = 'none';
     }
@@ -368,7 +362,7 @@
     }
 
     function sendTelegramSignal(signalData) {
-        if (!CONFIG.api.telegramBot || !CONFIG.api.telegramChat) return;
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
 
         const reasonsText = signalData.reasons.map(r => {
             let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '🔴' : '➖');
@@ -376,24 +370,24 @@
         }).join('\n');
 
         const message = `
-🔔 <b>GOLD SNIPER SIGNAL</b>
+ <b>GOLD SNIPER SIGNAL</b>
 
 📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
- <b>Time:</b> ${signalData.time}
+⏰ <b>Time:</b> ${signalData.time}
 
 📈 <b>Indicators:</b>
 ${reasonsText}
 
- <b>Duration:</b> 5 minutes
+⏳ <b>Duration:</b> 5 minutes
         `;
 
-        fetch(`https://api.telegram.org/bot${CONFIG.api.telegramBot}/sendMessage`, {
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                chat_id: CONFIG.api.telegramChat,
+                chat_id: TELEGRAM_CHAT_ID,
                 text: message,
                 parse_mode: 'HTML'
             })
@@ -451,7 +445,6 @@ ${reasonsText}
     // FIXED: Proper MACD with Signal Line
     function macd(p) { 
         let e12=ema(p,12), e26=ema(p,26), line=e12-e26; 
-        // Calculate Signal Line (9-period EMA of MACD Line)
         let sigLine = ema(p.map((_, i) => {
             if(i < 26) return 0;
             return ema(p.slice(0, i+1), 12) - ema(p.slice(0, i+1), 26);
@@ -480,7 +473,7 @@ ${reasonsText}
 
     async function get15MinData() {
         try {
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=15min&outputsize=100&apikey=${CONFIG.api.twelveData}`);
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=15min&outputsize=100&apikey=${API_KEY}`);
             const data = await res.json();
             if(data.status !== 'ok') return null;
             return data.values.map(v => parseFloat(v.close)).reverse();
@@ -501,7 +494,7 @@ ${reasonsText}
         
         if(autoMode) {
             btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block';
-            card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = ' AUTO ACTIVE';
+            card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = '🤖 AUTO ACTIVE';
             log('🔄 دۆخی خۆکار چالاک کرا'); startAutoLoop();
         } else { stopAutoMode(); }
     }
@@ -539,13 +532,13 @@ ${reasonsText}
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) logEl.textContent = ' شیکاری دەستپێکرد...';
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
         else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
-            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=250&apikey=${CONFIG.api.twelveData}`, { signal: controller.signal });
+            const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=250&apikey=${API_KEY}`, { signal: controller.signal });
             clearTimeout(timeoutId);
             if(!res.ok) throw new Error(`API Error: ${res.status}`);
             const data = await res.json();
@@ -578,15 +571,15 @@ ${reasonsText}
             document.getElementById('iEMA200').textContent = ema200.toFixed(2);
 
             // ============================================
-            // BALANCED SCORING SYSTEM v3 (FIXED)
+            // BALANCED SCORING SYSTEM v3
             // Max Score: ±10
-            // +6 to +10 →  BUY
+            // +6 to +10 → 🟢 BUY
             // -6 to -10 → 🔴 SELL
             // -5 to +5  →  WAIT
             // ============================================
             let score = 0, reasons = [];
 
-            // 1. RSI (14) - Bonus ±1 (Not primary trigger)
+            // 1. RSI (14) - Bonus ±1
             if(r < 30) { 
                 score += 1; 
                 reasons.push({t:`RSI نزمە (${r.toFixed(1)}) → +1`, d:'up'}); 
@@ -674,7 +667,6 @@ ${reasonsText}
             reasons.push({t:`TOTAL SCORE: ${score > 0 ? '+' : ''}${score} → ${signalType}`, d: score >= 6 ? 'up' : score <= -6 ? 'down' : 'neutral'});
 
             // REAL CONFIDENCE CALCULATION
-            // Max possible score = 10, so confidence = |score| / 10 * 100
             let conf = Math.min(99, Math.round(Math.abs(score) / 10 * 100));
             document.getElementById('confVal').textContent = conf+'%';
             
@@ -697,7 +689,7 @@ ${reasonsText}
                     log(`✅ 5m و 15m یەک ئاراستەن - Score: ${score} / ${score15}`);
                 }
             } else {
-                log('️ نەیتوانی داتای 15 خولەک وەربگرێت');
+                log('⚠️ نەیتوانی داتای 15 خولەک وەربگرێت');
             }
             
             const card = document.getElementById('signalCard');
@@ -709,17 +701,15 @@ ${reasonsText}
 
             rBox.style.display = 'block';
             rList.innerHTML = reasons.map(x => {
-                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '';
+                let icon = x.d==='up' ? '🟢' : x.d==='down' ? '🔴' : '⚪';
                 let color = x.d==='up' ? 'var(--green)' : x.d==='down' ? 'var(--red)' : '#888';
                 let bold = x.t.includes('TOTAL') || x.t.includes('━━') ? 'font-weight:bold; color:var(--gold);' : '';
                 return `<div class="reason-item" style="${bold}"><span class="reason-icon">${icon}</span> <span style="color:${color}">${x.t}</span></div>`;
             }).join('');
 
-            let now = new Date();
-            let minutes = now.getMinutes();
-            let isCandleClosed = (minutes % 5 === 0 && now.getSeconds() > 10); 
+            // ✅ INSTANT MODE: No candle close check
+            let isCandleClosed = true;
             
-            // Signal thresholds: ±6 or more
             if(Math.abs(score) >= 6 && confirmSignal && isCandleClosed) {
                 const nowTs = Date.now();
                 const tsSnap = await tsRef.once('value');
@@ -744,10 +734,7 @@ ${reasonsText}
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
-                if(!isCandleClosed) {
-                    log(' شەمعەکە هێشتا نەداخراوە - چاوەڕێبە...');
-                }
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ Score: ${score} - نەگەیشتە ئاستی ±6`); } 
+                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(`⏳ Score: ${score} - نەگەیشتە ئاستی ±6`); } 
                 else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
             }
         } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
@@ -758,7 +745,7 @@ ${reasonsText}
         if(autoInterval) { clearInterval(autoInterval); autoInterval = null; }
         if(countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         document.getElementById('autoStatus').classList.remove('active');
-        log('️ دۆخی خۆکار وەستا تا ٥ خولەک');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
     }
 
     function resumeAutoAfterSignal() {
@@ -781,7 +768,7 @@ ${reasonsText}
     async function evaluateSignalResult() {
         if(!currentSignal) return;
         try {
-            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${CONFIG.api.twelveData}`);
+            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
             const data = await res.json();
             if(data.price) {
                 let currentPrice = parseFloat(data.price);
@@ -789,7 +776,7 @@ ${reasonsText}
                 let isWin = (currentSignal.type === 'SELL') ? (currentPrice < entryPrice) : (currentPrice > entryPrice);
                 const result = { ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2), timestamp: Date.now() };
                 historyRef.push(result).catch(e => console.error("Firebase history error:", e));
-                log(`${isWin ? '✅' : ''} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
         } catch(e) { console.error('Error evaluating result:', e); }
         currentSignal = null;
@@ -807,10 +794,10 @@ ${reasonsText}
         historyList.innerHTML = history.map(h => `
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
-                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '️ BUY' : '⬇️ SELL'}</div>
-                    <div class="h-details"> ${h.time} |  ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
+                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% |  ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
-                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : ' هەڵە'}</div>
+                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
         `).join('');
     }
@@ -837,7 +824,7 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
