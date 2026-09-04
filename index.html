@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - EMA 10 + Score 6 + 3/5</title>
+<title>Gold Sniper Pro - EMA 5 + Score 6 + 3/5</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -98,7 +98,6 @@
     
     .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; margin-top: 10px; }
     
-    /* UPDATED: Full Box Coloring */
     .ind-item { 
         background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; 
         border: 1px solid var(--border); transition: all 0.3s ease; 
@@ -144,7 +143,7 @@
 
 <div id="loginScreen">
     <div class="login-card">
-        <div class="login-title"> Gold Sniper Pro</div>
+        <div class="login-title">🔐 Gold Sniper Pro</div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
         <input type="password" id="loginPassword" class="login-input" placeholder="وشەی نهێنی">
         <button class="login-btn" onclick="handleLogin()">چوونەژوورەوە</button>
@@ -179,7 +178,7 @@
             
             <div class="auto-status" id="autoStatus">
                 <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠٠:٠٠</div>
+                <div class="next-check" id="nextCheck">٠:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 6, 3/5 Ind)...</div>
             </div>
             
@@ -192,7 +191,7 @@
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
@@ -206,7 +205,7 @@
                 <div class="ind-item" id="boxStoch"><div class="ind-name">Stoch</div><div class="ind-val" id="iStoch">-</div></div>
                 <div class="ind-item" id="boxBB"><div class="ind-name">BB</div><div class="ind-val" id="iBB">-</div></div>
                 <div class="ind-item" id="boxMom"><div class="ind-name">Mom</div><div class="ind-val" id="iMom">-</div></div>
-                <div class="ind-item" id="boxEMA"><div class="ind-name">EMA 10</div><div class="ind-val" id="iEMA">-</div></div>
+                <div class="ind-item" id="boxEMA"><div class="ind-name">EMA 5</div><div class="ind-val" id="iEMA">-</div></div>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
@@ -354,7 +353,7 @@
     function sendTelegramSignal(signalData) {
         if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
         const reasonsText = signalData.reasons.map(r => {
-            let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '' : '➖');
+            let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '🔴' : '➖');
             return `${icon} ${r.t}`;
         }).join('\n');
 
@@ -362,11 +361,11 @@
 <b>GOLD SNIPER SIGNAL</b>
 📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
-🎯 <b>Confidence:</b> ${signalData.conf}%
+ <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
-📈 <b>Indicators:</b>
+ <b>Indicators:</b>
 ${reasonsText}
- <b>Duration:</b> 5 minutes`;
+⏳ <b>Duration:</b> 5 minutes`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -395,7 +394,7 @@ ${reasonsText}
 
         pauseAutoDuringSignal();
         startSignalTimer();
-        log(` سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
+        log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
     }
 
     function rsi(p, n=14) { if(p.length < n+1) return 50; let g=0, l=0; for(let i=p.length-n; i<p.length; i++) { let c=p[i]-p[i-1]; if(c>0) g+=c; else l+=Math.abs(c); } let ag=g/n, al=l/n; return al===0 ? 100 : 100 - (100/(1+ag/al)); }
@@ -454,7 +453,7 @@ ${reasonsText}
         err.style.display = 'none';
         
         if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
-        else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const controller = new AbortController();
@@ -470,9 +469,8 @@ ${reasonsText}
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
             let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
-            let ema10 = ema(prices, 10); 
+            let ema5 = ema(prices, 5); // CHANGED FROM 10 TO 5
             
-            // UPDATED: Apply classes to the parent BOXES
             document.getElementById('iRSI').textContent = r.toFixed(1);
             document.getElementById('boxRSI').className = 'ind-item ' + (r<30?'up':r>70?'down':'');
             
@@ -488,14 +486,14 @@ ${reasonsText}
             document.getElementById('iMom').textContent = mo.m.toFixed(2);
             document.getElementById('boxMom').className = 'ind-item ' + (mo.d==='up'?'up':mo.d==='down'?'down':'');
             
-            document.getElementById('iEMA').textContent = ema10.toFixed(2);
-            document.getElementById('boxEMA').className = 'ind-item ' + (price > ema10 ? 'up' : 'down');
+            document.getElementById('iEMA').textContent = ema5.toFixed(2);
+            document.getElementById('boxEMA').className = 'ind-item ' + (price > ema5 ? 'up' : 'down');
 
-            let trend = price > ema10 ? 'UP' : 'DOWN';
+            let trend = price > ema5 ? 'UP' : 'DOWN'; // CHANGED FROM ema10 TO ema5
             let score = 0, reasons = [];
             
-            if(trend === 'UP') reasons.push({t:`EMA 10 سەرەوە (Bullish)`, d:'up'}); 
-            else reasons.push({t:`EMA 10 خوارەوە (Bearish)`, d:'down'});
+            if(trend === 'UP') reasons.push({t:`EMA 5 سەرەوە (Bullish)`, d:'up'}); 
+            else reasons.push({t:`EMA 5 خوارەوە (Bearish)`, d:'down'});
 
             if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} 
             else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});} 
@@ -541,7 +539,7 @@ ${reasonsText}
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -561,7 +559,7 @@ ${reasonsText}
                 startSignalTimer();
             } else {
                 if(autoMode) { 
-                    card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
+                    card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
                     log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Trend: ${trend})`); 
                 } else { 
                     card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; 
@@ -574,7 +572,7 @@ ${reasonsText}
     function pauseAutoDuringSignal() {
         if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval);
         document.getElementById('autoStatus').classList.remove('active');
-        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
+        log('️ دۆخی خۆکار وەستا تا ٥ خولەک');
     }
 
     function resumeAutoAfterSignal() {
