@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - EMA 5 + Score 6 + 3/5</title>
+<title>Gold Sniper Pro - EMA 5 + Score 4 + 2/5</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -179,7 +179,7 @@
             <div class="auto-status" id="autoStatus">
                 <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
                 <div class="next-check" id="nextCheck">٠:٠٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 6, 3/5 Ind)...</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div>
             </div>
             
             <div class="info-columns">
@@ -191,7 +191,7 @@
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
@@ -277,7 +277,7 @@
             document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)';
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
-            alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
+            alert('️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
             log('❌ حسابەکە سڕاوەتەوە');
         }
     });
@@ -361,17 +361,17 @@
 <b>GOLD SNIPER SIGNAL</b>
 📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
- <b>Confidence:</b> ${signalData.conf}%
+🎯 <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
- <b>Indicators:</b>
+📈 <b>Indicators:</b>
 ${reasonsText}
-⏳ <b>Duration:</b> 5 minutes`;
+ <b>Duration:</b> 5 minutes`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
         }).then(res => res.json()).then(data => {
-            if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام'); else log('❌ هەڵەی تێلێگرام: ' + data.description);
+            if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام'); else log(' هەڵەی تێلێگرام: ' + data.description);
         }).catch(e => log('❌ ناردنی تێلێگرام شکستی هێنا'));
     }
 
@@ -386,10 +386,10 @@ ${reasonsText}
         document.getElementById('confVal').textContent = data.conf + '%';
         document.getElementById('priceDisplay').textContent = data.entryPrice.toFixed(2);
         rBox.style.display = 'block';
-        rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+        rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
         if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
-        else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
+        else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
         pauseAutoDuringSignal();
@@ -428,7 +428,7 @@ ${reasonsText}
         const modeBadge = document.getElementById('modeBadge');
         btn.textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)'; btn.classList.remove('active'); manualBtn.style.display = 'none';
         card.classList.remove('auto'); autoStatus.classList.remove('active'); modeBadge.textContent = '🔄 AUTO MODE';
-        log('⏹️ دۆخی خۆکار وەستا');
+        log('️ دۆخی خۆکار وەستا');
     }
 
     function startAutoLoop() {
@@ -469,7 +469,7 @@ ${reasonsText}
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
             let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
-            let ema5 = ema(prices, 5); // CHANGED FROM 10 TO 5
+            let ema5 = ema(prices, 5); 
             
             document.getElementById('iRSI').textContent = r.toFixed(1);
             document.getElementById('boxRSI').className = 'ind-item ' + (r<30?'up':r>70?'down':'');
@@ -489,7 +489,7 @@ ${reasonsText}
             document.getElementById('iEMA').textContent = ema5.toFixed(2);
             document.getElementById('boxEMA').className = 'ind-item ' + (price > ema5 ? 'up' : 'down');
 
-            let trend = price > ema5 ? 'UP' : 'DOWN'; // CHANGED FROM ema10 TO ema5
+            let trend = price > ema5 ? 'UP' : 'DOWN'; 
             let score = 0, reasons = [];
             
             if(trend === 'UP') reasons.push({t:`EMA 5 سەرەوە (Bullish)`, d:'up'}); 
@@ -531,8 +531,9 @@ ${reasonsText}
             if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++;
             if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
 
-            let isValidBuy = (score >= 6) && (buySignals >= 3) && (trend === 'UP');
-            let isValidSell = (score <= -6) && (sellSignals >= 3) && (trend === 'DOWN');
+            // UPDATED LOGIC: Score >= 4 AND 2/5 Indicators AND Trend Filter
+            let isValidBuy = (score >= 4) && (buySignals >= 2) && (trend === 'UP');
+            let isValidSell = (score <= -4) && (sellSignals >= 2) && (trend === 'DOWN');
 
             if (isValidBuy || isValidSell) {
                 const now = Date.now();
@@ -553,13 +554,13 @@ ${reasonsText}
                 if(autoMode && !manual) playNotification();
                 
                 if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - Score: ${score}, Indicators: ${buySignals}/5`); } 
-                else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5`); }
+                else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
                 if(autoMode) { 
-                    card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
+                    card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
                     log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Trend: ${trend})`); 
                 } else { 
                     card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; 
@@ -572,7 +573,7 @@ ${reasonsText}
     function pauseAutoDuringSignal() {
         if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval);
         document.getElementById('autoStatus').classList.remove('active');
-        log('️ دۆخی خۆکار وەستا تا ٥ خولەک');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
     }
 
     function resumeAutoAfterSignal() {
