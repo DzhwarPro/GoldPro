@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Sniper Pro - EMA 200 Filter</title>
+<title>Gold Sniper Pro - EMA 50 Filter</title>
 <style>
     :root { 
         --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
@@ -151,7 +151,7 @@
                 <span id="userEmail"></span>
                 <button class="logout-btn" onclick="handleLogout()">دەرچوون</button>
             </div>
-            <div class="sync-status" id="syncStatus">☁️ Synced</div>
+            <div class="sync-status" id="syncStatus">️ Synced</div>
             <div class="price" id="priceDisplay">--</div>
             <div class="arrow" id="arrow"></div>
             <div class="status-text" id="statusText">چاوەڕێبە...</div>
@@ -166,20 +166,20 @@
             <div class="auto-status" id="autoStatus">
                 <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
                 <div class="next-check" id="nextCheck">٠٠:٠٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٠٪+)...</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (٧٠٪+)...</div>
             </div>
             
             <!-- Two Columns: Reasons (Right) + News (Left) -->
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title">🔍 هۆکارەکان:</div>
+                    <div class="reasons-title"> هۆکارەکان:</div>
                     <div id="reasonsList"></div>
                 </div>
                 
                 <div class="news-widget" id="newsWidget">
                     <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
                     <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
-                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە  خولەکدا</div>
                     <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
                 </div>
             </div>
@@ -193,7 +193,7 @@
                 <div class="ind-item"><div class="ind-name">Stoch</div><div class="ind-val" id="iStoch">-</div></div>
                 <div class="ind-item"><div class="ind-name">BB</div><div class="ind-val" id="iBB">-</div></div>
                 <div class="ind-item"><div class="ind-name">Mom</div><div class="ind-val" id="iMom">-</div></div>
-                <div class="ind-item"><div class="ind-name">EMA 200</div><div class="ind-val" id="iEMA">-</div></div>
+                <div class="ind-item"><div class="ind-name">EMA 50</div><div class="ind-val" id="iEMA">-</div></div>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
@@ -204,7 +204,7 @@
 
         <div class="card" id="historyCard" style="display: none;">
             <div class="stats-header">
-                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;"> مێژووی سیگناڵەکان</div>
                 <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
             </div>
             <div class="history-list" id="historyList"></div>
@@ -280,7 +280,7 @@
             document.getElementById('manualBtn').style.display = 'none';
             document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
             alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
-            log('❌ حسابەکە سڕاوەتەوە');
+            log(' حسابەکە سڕاوەتەوە');
         }
     });
 
@@ -376,7 +376,7 @@
         const message = `
  <b>GOLD SNIPER SIGNAL</b>
 
-📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
 ⏰ <b>Time:</b> ${signalData.time}
@@ -384,7 +384,7 @@
 📈 <b>Indicators:</b>
 ${reasonsText}
 
-⏳ <b>Duration:</b> 5 minutes
+ <b>Duration:</b> 5 minutes
         `;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -418,7 +418,7 @@ ${reasonsText}
         rBox.style.display = 'block';
         rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
-        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
+        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
         else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
         else { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
@@ -502,7 +502,7 @@ ${reasonsText}
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
 
             let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
-            let ema200 = ema(prices, 200); // Calculate EMA 200
+            let ema50 = ema(prices, 50); // CHANGED FROM 200 TO 50
             
             // Display Indicators
             document.getElementById('iRSI').textContent = r.toFixed(1); document.getElementById('iRSI').className = r<30?'ind-val up':r>70?'ind-val down':'ind-val';
@@ -510,17 +510,17 @@ ${reasonsText}
             document.getElementById('iStoch').textContent = s.k.toFixed(1); document.getElementById('iStoch').className = s.d==='up'?'ind-val up':s.d==='down'?'ind-val down':'ind-val';
             document.getElementById('iBB').textContent = b.pos; document.getElementById('iBB').className = b.d==='up'?'ind-val up':b.d==='down'?'ind-val down':'ind-val';
             document.getElementById('iMom').textContent = mo.m.toFixed(2); document.getElementById('iMom').className = mo.d==='up'?'ind-val up':mo.d==='down'?'ind-val down':'ind-val';
-            document.getElementById('iEMA').textContent = ema200.toFixed(2); 
-            document.getElementById('iEMA').className = price > ema200 ? 'ind-val up' : 'ind-val down';
+            document.getElementById('iEMA').textContent = ema50.toFixed(2); 
+            document.getElementById('iEMA').className = price > ema50 ? 'ind-val up' : 'ind-val down';
 
-            // Determine Trend Direction based on EMA 200
-            let trend = price > ema200 ? 'UP' : 'DOWN';
+            // Determine Trend Direction based on EMA 50
+            let trend = price > ema50 ? 'UP' : 'DOWN';
 
             let score = 0, reasons = [];
             
-            // Add EMA 200 Reason
-            if(trend === 'UP') { reasons.push({t:`EMA 200 سەرەوە (Bullish)`, d:'up'}); } 
-            else { reasons.push({t:`EMA 200 خوارەوە (Bearish)`, d:'down'}); }
+            // Add EMA 50 Reason
+            if(trend === 'UP') { reasons.push({t:`EMA 50 سەرەوە (Bullish)`, d:'up'}); } 
+            else { reasons.push({t:`EMA 50 خوارەوە (Bearish)`, d:'down'}); }
 
             if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});} else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
             if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});} else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
@@ -550,7 +550,7 @@ ${reasonsText}
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 
-                // --- EMA 200 TREND FILTER LOGIC ---
+                // --- EMA 50 TREND FILTER LOGIC ---
                 // Only allow BUY if trend is UP, Only allow SELL if trend is DOWN
                 if ((direction === 'BUY' && trend !== 'UP') || (direction === 'SELL' && trend !== 'DOWN')) {
                     log(`⛔ سیگناڵی ${direction} ڕەتکرایەوە (دژبازاڕ)`);
@@ -575,7 +575,7 @@ ${reasonsText}
                 
                 if(autoMode && !manual) playNotification();
                 
-                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
+                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - دڵنیایی: ${conf}%`); } 
                 else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - دڵنیایی: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
@@ -641,8 +641,8 @@ ${reasonsText}
         historyList.innerHTML = history.map(h => `
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
-                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '️ SELL'}</div>
-                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '️ BUY' : '️ SELL'}</div>
+                    <div class="h-details"> ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
