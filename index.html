@@ -34,9 +34,15 @@
     }
     .login-title { font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .app-logo { 
-        width: 50px; height: 50px; background: linear-gradient(135deg, var(--gold), #f2d06b);
-        border-radius: 10px; display: flex; align-items: center; justify-content: center;
-        font-size: 30px; font-weight: bold; color: #000;
+        width: 50px; height: 50px; 
+        border-radius: 10px; 
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+    }
+    .app-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     .login-input {
         width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px;
@@ -158,7 +164,9 @@
 <div id="loginScreen">
     <div class="login-card">
         <div class="login-title">
-            <div class="app-logo">G</div>
+            <div class="app-logo">
+                <img src="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png" alt="Gold Sniper">
+            </div>
             <span>Gold Sniper Pro</span>
         </div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
@@ -195,13 +203,13 @@
             
             <div class="auto-status" id="autoStatus">
                 <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠:٠٠</div>
+                <div class="next-check" id="nextCheck">٠٠:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div>
             </div>
             
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title">🔍 هۆکارەکان:</div>
+                    <div class="reasons-title"> هۆکارەکان:</div>
                     <div id="reasonsList"></div>
                 </div>
                 
@@ -215,7 +223,7 @@
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;"> فلتەرە تەکنیکییەکان</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
             <div class="indicators">
                 <div class="ind-item" id="boxRSI"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item" id="boxMACD"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -304,8 +312,8 @@
         const btn = document.querySelector('.login-btn');
         const link = document.querySelector('.register-link');
         const title = document.querySelector('.login-title');
-        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ'; } 
-        else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = ' Gold Sniper Pro'; }
+        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = ' حسابی نوێ'; } 
+        else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro'; }
         document.getElementById('loginError').style.display = 'none';
     }
 
@@ -362,7 +370,7 @@
         if ("Notification" in window && Notification.permission === "granted") {
             new Notification(`🔔 Gold Sniper: ${signalData.type} Signal!`, {
                 body: `Price: ${signalData.entryPrice.toFixed(2)} | Confidence: ${signalData.conf}%`,
-                icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png', vibrate: [200, 100, 200]
+                icon: 'https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png', vibrate: [200, 100, 200]
             });
         }
     }
@@ -379,10 +387,10 @@
 📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
-⏰ <b>Time:</b> ${signalData.time}
+ <b>Time:</b> ${signalData.time}
 📈 <b>Indicators:</b>
 ${reasonsText}
-⏳ <b>Duration:</b> 5 minutes`;
+ <b>Duration:</b> 5 minutes`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -422,7 +430,7 @@ ${reasonsText}
     function mom(p, n=10) { let m=p[p.length-1]-p[p.length-1-n]; return { m, d: m>0?'up':m<0?'down':'flat' }; }
 
     function toggleAutoMode() {
-        if(newsPaused) { log('️ AUTO PAUSED - High Impact News!'); return; }
+        if(newsPaused) { log('⚠️ AUTO PAUSED - High Impact News!'); return; }
         autoMode = !autoMode;
         const btn = document.getElementById('autoBtn');
         const manualBtn = document.getElementById('manualBtn');
@@ -431,9 +439,9 @@ ${reasonsText}
         const modeBadge = document.getElementById('modeBadge');
         
         if(autoMode) {
-            btn.textContent = '️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block';
+            btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block';
             card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = '🤖 AUTO ACTIVE';
-            log(' دۆخی خۆکار چالاک کرا'); startAutoLoop();
+            log('🔄 دۆخی خۆکار چالاک کرا'); startAutoLoop();
         } else { stopAutoMode(); }
     }
 
@@ -469,8 +477,8 @@ ${reasonsText}
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
-        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        if(manual) logEl.textContent = ' شیکاری دەستپێکرد...';
+        else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const controller = new AbortController();
@@ -557,7 +565,7 @@ ${reasonsText}
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -621,7 +629,7 @@ ${reasonsText}
                 let isWin = (currentSignal.type === 'SELL') ? (currentPrice < entryPrice) : (currentPrice > entryPrice);
                 const result = { ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2), timestamp: Date.now() };
                 historyRef.push(result).catch(e => console.error("Firebase history error:", e));
-                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تةواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
         } catch(e) { console.error('Error evaluating result:', e); }
         currentSignal = null;
@@ -669,12 +677,12 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
