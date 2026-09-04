@@ -202,14 +202,14 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
                 <div class="next-check" id="nextCheck">٠٠:٠٠</div>
                 <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div>
             </div>
             
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title"> هۆکارەکان:</div>
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
                     <div id="reasonsList"></div>
                 </div>
                 
@@ -223,7 +223,7 @@
         </div>
 
         <div class="card">
-            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;"> فلتەرە تەکنیکییەکان</div>
             <div class="indicators">
                 <div class="ind-item" id="boxRSI"><div class="ind-name">RSI (14)</div><div class="ind-val" id="iRSI">-</div></div>
                 <div class="ind-item" id="boxMACD"><div class="ind-name">MACD</div><div class="ind-val" id="iMACD">-</div></div>
@@ -312,8 +312,8 @@
         const btn = document.querySelector('.login-btn');
         const link = document.querySelector('.register-link');
         const title = document.querySelector('.login-title');
-        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = ' حسابی نوێ'; } 
-        else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro'; }
+        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ'; } 
+        else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = ' Gold Sniper Pro'; }
         document.getElementById('loginError').style.display = 'none';
     }
 
@@ -390,7 +390,7 @@
  <b>Time:</b> ${signalData.time}
 📈 <b>Indicators:</b>
 ${reasonsText}
- <b>Duration:</b> 5 minutes`;
+⏳ <b>Duration:</b> 5 minutes`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -415,7 +415,7 @@ ${reasonsText}
 
         if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
         else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
-        else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
+        else { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
 
         pauseAutoDuringSignal();
         startSignalTimer();
@@ -477,7 +477,7 @@ ${reasonsText}
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) logEl.textContent = ' شیکاری دەستپێکرد...';
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
         else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
@@ -556,7 +556,7 @@ ${reasonsText}
             if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++;
             if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
 
-            // UPDATED LOGIC: Score >= 4 AND 2/5 Indicators AND Trend Filter
+            // ✅ OLD LOGIC: Standard Score & Indicator Check (Both BUY & SELL allowed)
             let isValidBuy = (score >= 4) && (buySignals >= 2) && (trend === 'UP');
             let isValidSell = (score <= -4) && (sellSignals >= 2) && (trend === 'DOWN');
 
@@ -565,7 +565,7 @@ ${reasonsText}
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -629,7 +629,7 @@ ${reasonsText}
                 let isWin = (currentSignal.type === 'SELL') ? (currentPrice < entryPrice) : (currentPrice > entryPrice);
                 const result = { ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2), timestamp: Date.now() };
                 historyRef.push(result).catch(e => console.error("Firebase history error:", e));
-                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تةواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
             }
         } catch(e) { console.error('Error evaluating result:', e); }
         currentSignal = null;
@@ -647,8 +647,8 @@ ${reasonsText}
         historyList.innerHTML = history.map(h => `
             <div class="history-item ${h.result.toLowerCase()}">
                 <div>
-                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
-                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '️ SELL'}</div>
+                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% |  ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
                 </div>
                 <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
             </div>
@@ -682,7 +682,7 @@ ${reasonsText}
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
