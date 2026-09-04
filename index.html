@@ -4,55 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Gold Sniper Pro</title>
+
 <link rel="icon" type="image/png" href="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png">
 <link rel="manifest" href='data:application/manifest+json,{"name":"Gold Sniper Pro","short_name":"GoldSniper","start_url":".","display":"standalone","background_color":"#0a0a0f","theme_color":"#d4af37","icons":[{"src":"https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png","sizes":"512x512","type":"image/png"}]}'>
 <meta name="theme-color" content="#d4af37">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
-    :root { --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; --red: #ff4444; --text: #e0e0e0; --blue: #007bff; --border: #2a2a35; --ind-bg: rgba(255,255,255,0.03); --log-bg: rgba(0,0,0,0.2); --auto-bg: rgba(0,123,255,0.1); --reasons-bg: rgba(0,0,0,0.3); }
+    :root { 
+        --bg: #0a0a0f; --card: #12121a; --gold: #d4af37; --green: #00ff88; 
+        --red: #ff4444; --text: #e0e0e0; --blue: #007bff; --border: #2a2a35;
+        --ind-bg: rgba(255,255,255,0.03); --log-bg: rgba(0,0,0,0.2);
+        --auto-bg: rgba(0,123,255,0.1); --reasons-bg: rgba(0,0,0,0.3);
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
     body { background: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; }
-    #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    .login-card { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 40px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 40px rgba(212,175,55,0.2); }
+    
+    #loginScreen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+        background: var(--card); border: 2px solid var(--gold); border-radius: 20px;
+        padding: 40px; width: 90%; max-width: 400px; text-align: center;
+        box-shadow: 0 0 40px rgba(212,175,55,0.2);
+    }
     .login-title { font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .app-logo { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .app-logo { 
+        width: 50px; height: 50px; 
+        border-radius: 10px; 
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+    }
     .app-logo img { width: 100%; height: 100%; object-fit: cover; }
-    .login-input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; border: 2px solid var(--border); background: var(--ind-bg); color: var(--text); font-size: 16px; outline: none; }
+    .login-input {
+        width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px;
+        border: 2px solid var(--border); background: var(--ind-bg); color: var(--text);
+        font-size: 16px; outline: none;
+    }
     .login-input:focus { border-color: var(--gold); }
-    .login-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 8px; }
+    .login-btn {
+        width: 100%; padding: 14px; border: none; border-radius: 10px;
+        background: linear-gradient(135deg, var(--gold), #f2d06b);
+        color: #000; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 8px;
+    }
     .login-error { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
     .register-link { color: var(--blue); font-size: 13px; margin-top: 15px; cursor: pointer; }
+    
     #mainApp { display: none; }
     .container { max-width: 800px; margin: 0 auto; }
     .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
     .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
+    
     .signal-box { text-align: center; padding: 20px; border: 2px solid var(--border); border-radius: 12px; position: relative; }
     .signal-box.buy { border-color: var(--green); background: rgba(0,255,136,0.05); }
     .signal-box.sell { border-color: var(--red); background: rgba(255,68,68,0.05); }
     .signal-box.wait { border-color: var(--gold); }
     .signal-box.auto { border-color: var(--blue); box-shadow: 0 0 20px rgba(0,123,255,0.3); animation: pulse 2s infinite; }
     .signal-box.news-warning { border-color: var(--red); box-shadow: 0 0 30px rgba(255,68,68,0.5); animation: newsPulse 1.5s infinite; }
+    
     @keyframes pulse { 0%,100% { box-shadow: 0 0 20px rgba(0,123,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,123,255,0.6); } }
     @keyframes newsPulse { 0%,100% { box-shadow: 0 0 30px rgba(255,68,68,0.5); } 50% { box-shadow: 0 0 60px rgba(255,68,68,0.8); } }
+    
     .price { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
     .arrow { font-size: 80px; margin: 5px 0; }
     .status-text { font-size: 26px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
     .buy .status-text { color: var(--green); }
     .sell .status-text { color: var(--red); }
     .wait .status-text { color: var(--gold); }
+    
     .conf-circle { width: 110px; height: 110px; border-radius: 50%; border: 5px solid var(--border); margin: 12px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--reasons-bg); }
     .conf-circle.high { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
     .conf-circle.med { border-color: var(--gold); }
     .conf-val { font-size: 30px; font-weight: bold; }
     .conf-label { font-size: 11px; color: #888; margin-top: 4px; }
+    
     .timer { font-size: 40px; font-family: monospace; color: var(--gold); margin: 12px 0; display: none; font-weight: bold; }
     .timer.active { display: block; animation: pulse 1s infinite; }
+    
     .auto-status { background: var(--auto-bg); border: 2px solid var(--blue); border-radius: 10px; padding: 10px; margin: 12px 0; text-align: center; display: none; }
     .auto-status.active { display: block; }
     .auto-status .next-check { font-size: 22px; font-weight: bold; color: var(--blue); margin-top: 6px; }
+    
     .info-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    
     .news-widget { padding: 8px; border-radius: 8px; border: 2px solid var(--green); background: rgba(0,255,136,0.1); text-align: center; }
     .news-widget.warning { border-color: #ff4444; background: rgba(255,0,0,0.1); }
     .news-title { font-size: 12px; font-weight: bold; color: var(--green); margin-bottom: 3px; }
@@ -61,25 +98,41 @@
     .news-status { font-size: 9px; font-weight: bold; color: var(--green); background: rgba(0,255,136,0.2); padding: 2px 6px; border-radius: 3px; display: inline-block; }
     .news-warning .news-title { color: #ff4444; }
     .news-warning .news-status { color: #fff; background: #ff4444; }
+    
     .reasons { text-align: right; background: var(--reasons-bg); padding: 8px; border-radius: 8px; border-right: 3px solid var(--gold); display: flex; flex-direction: column; justify-content: flex-start; }
     .reasons-title { font-weight: bold; color: var(--gold); margin-bottom: 4px; font-size: 11px; }
     .reason-item { margin-bottom: 3px; font-size: 10px; display: flex; align-items: center; }
     .reason-icon { margin-left: 4px; font-size: 11px; }
+    
     .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f2d06b); color: #000; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 6px; }
     .btn:hover { transform: scale(1.02); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; color: #fff; }
     .btn-auto { background: linear-gradient(135deg, var(--blue), #0056b3); color: #fff; }
     .btn-auto.active { background: linear-gradient(135deg, var(--red), #cc0000); animation: pulse 1.5s infinite; }
+    
     .indicators { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; margin-top: 10px; }
-    .ind-item { background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid var(--border); transition: all 0.3s ease; }
-    .ind-item.up { background: rgba(0, 255, 136, 0.15); border-color: var(--green); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
-    .ind-item.down { background: rgba(255, 68, 68, 0.15); border-color: var(--red); box-shadow: 0 0 10px rgba(255,68,68,0.2); }
+    
+    .ind-item { 
+        background: var(--ind-bg); padding: 8px; border-radius: 8px; text-align: center; 
+        border: 1px solid var(--border); transition: all 0.3s ease; 
+    }
+    .ind-item.up { 
+        background: rgba(0, 255, 136, 0.15); border-color: var(--green); 
+        box-shadow: 0 0 10px rgba(0,255,136,0.2); 
+    }
+    .ind-item.down { 
+        background: rgba(255, 68, 68, 0.15); border-color: var(--red); 
+        box-shadow: 0 0 10px rgba(255,68,68,0.2); 
+    }
     .ind-item.up .ind-val { color: var(--green); font-weight: bold; }
     .ind-item.down .ind-val { color: var(--red); font-weight: bold; }
+    
     .ind-name { font-size: 10px; color: #aaa; margin-bottom: 3px; }
     .ind-val { font-weight: bold; font-size: 13px; color: var(--text); }
+    
     .error-msg { color: var(--red); text-align: center; margin-top: 6px; font-size: 12px; display: none; }
     .log { font-size: 11px; color: #666; text-align: center; margin-top: 6px; padding: 6px; background: var(--log-bg); border-radius: 8px; }
+    
     .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
     .win-rate { font-size: 16px; font-weight: bold; }
     .history-list { max-height: 250px; overflow-y: auto; }
@@ -91,18 +144,23 @@
     .h-result { font-weight: bold; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: var(--log-bg); }
     .h-result.win { color: var(--green); }
     .h-result.loss { color: var(--red); }
+    
     .mode-badge { position: absolute; top: 6px; left: 6px; font-size: 10px; color: var(--blue); font-weight: bold; }
     .sync-status { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--green); }
     .user-info { position: absolute; top: 6px; right: 6px; font-size: 10px; color: var(--gold); display: flex; align-items: center; gap: 8px; }
     .logout-btn { background: none; border: 1px solid var(--red); color: var(--red); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+    
     @media (max-width: 600px) { .info-columns { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
+
 <div id="loginScreen">
     <div class="login-card">
         <div class="login-title">
-            <div class="app-logo"><img src="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png" alt="Gold Sniper"></div>
+            <div class="app-logo">
+                <img src="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png" alt="Gold Sniper">
+            </div>
             <span>Gold Sniper Pro</span>
         </div>
         <input type="email" id="loginEmail" class="login-input" placeholder="ئیمەیڵ">
@@ -112,24 +170,52 @@
         <div class="register-link" onclick="toggleRegisterMode()">حسابی نوێ دروست بکە ←</div>
     </div>
 </div>
+
 <div id="mainApp">
     <div class="container">
-        <div class="card" style="padding: 8px;"><div id="tv_chart_container" class="chart-box"></div></div>
+        <div class="card" style="padding: 8px;">
+            <div id="tv_chart_container" class="chart-box"></div>
+        </div>
+
         <div class="card signal-box wait" id="signalCard">
             <div class="mode-badge" id="modeBadge">AUTO MODE</div>
-            <div class="user-info" id="userInfo"><span id="userEmail"></span><button class="logout-btn" onclick="handleLogout()">دەرچوون</button></div>
+            <div class="user-info" id="userInfo">
+                <span id="userEmail"></span>
+                <button class="logout-btn" onclick="handleLogout()">دەرچوون</button>
+            </div>
             <div class="sync-status" id="syncStatus">️ Synced</div>
             <div class="price" id="priceDisplay">--</div>
             <div class="arrow" id="arrow"></div>
             <div class="status-text" id="statusText">چاوەڕێبە...</div>
-            <div class="conf-circle med" id="confCircle"><div class="conf-val" id="confVal">0%</div><div class="conf-label">ئاستی دڵنیایی</div></div>
+            
+            <div class="conf-circle med" id="confCircle">
+                <div class="conf-val" id="confVal">0%</div>
+                <div class="conf-label">ئاستی دڵنیایی</div>
+            </div>
+            
             <div class="timer" id="timer">05:00</div>
-            <div class="auto-status" id="autoStatus"><div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div><div class="next-check" id="nextCheck">٠:٠٠</div><div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div></div>
+            
+            <div class="auto-status" id="autoStatus">
+                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠٠:٠٠</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div>
+            </div>
+            
             <div class="info-columns">
-                <div class="reasons" id="reasonsBox" style="display:none;"><div class="reasons-title"> هۆکارەکان:</div><div id="reasonsList"></div></div>
-                <div class="news-widget" id="newsWidget"><div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div><div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div><div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div><div class="news-status" id="newsStatus">کاتی گونجاوە</div></div>
+                <div class="reasons" id="reasonsBox" style="display:none;">
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
+                    <div id="reasonsList"></div>
+                </div>
+                
+                <div class="news-widget" id="newsWidget">
+                    <div class="news-title" id="newsTitle">✅ هەواڵی گرنگ نییە</div>
+                    <div class="news-detail" id="newsDetail">بازاڕ ئاساییە</div>
+                    <div class="news-time" id="newsTime">پشکنینی داهاتوو لە ٥ خولەکدا</div>
+                    <div class="news-status" id="newsStatus">کاتی گونجاوە</div>
+                </div>
             </div>
         </div>
+
         <div class="card">
             <div style="font-weight: bold; margin-bottom: 10px; color: var(--gold); text-align: center;">📊 فلتەرە تەکنیکییەکان</div>
             <div class="indicators">
@@ -142,50 +228,193 @@
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <div class="log" id="log">ئامادەیە - دوگمەی AUTO داگرە</div>
+            
             <button class="btn btn-auto" id="autoBtn" onclick="toggleAutoMode()" style="margin-top:10px;">دەستپێکردنی دۆخی خۆکار (AUTO)</button>
             <button class="btn" id="manualBtn" onclick="runAnalysis(true)" style="display:none;">🚀 شیکاری ئێستا</button>
         </div>
+
         <div class="card" id="historyCard" style="display: none;">
-            <div class="stats-header"><div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div><div class="win-rate" id="winRate">سەرکەوتن: 0%</div></div>
+            <div class="stats-header">
+                <div style="font-weight: bold; color: var(--gold); font-size: 14px;">📈 مێژووی سیگناڵەکان</div>
+                <div class="win-rate" id="winRate">سەرکەوتن: 0%</div>
+            </div>
             <div class="history-list" id="historyList"></div>
         </div>
     </div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://s3.tradingview.com/tv.js"></script>
+
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyBURpbco2IQC6_l4nQmQ9TICA4Cy9zPuIc", authDomain: "goldpro-6a79c.firebaseapp.com", databaseURL: "https://goldpro-6a79c-default-rtdb.firebaseio.com", projectId: "goldpro-6a79c", storageBucket: "goldpro-6a79c.firebasestorage.app", messagingSenderId: "875401412444", appId: "1:875401412444:web:2dfd640e841c06f704cb99" };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBURpbco2IQC6_l4nQmQ9TICA4Cy9zPuIc",
+        authDomain: "goldpro-6a79c.firebaseapp.com",
+        databaseURL: "https://goldpro-6a79c-default-rtdb.firebaseio.com",
+        projectId: "goldpro-6a79c",
+        storageBucket: "goldpro-6a79c.firebasestorage.app",
+        messagingSenderId: "875401412444",
+        appId: "1:875401412444:web:2dfd640e841c06f704cb99"
+    };
+
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth(); const db = firebase.database();
-    const signalsRef = db.ref('signals'); const historyRef = db.ref('history'); const tsRef = db.ref('lastSignalTimestamp');
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const signalsRef = db.ref('signals');
+    const historyRef = db.ref('history');
+    const tsRef = db.ref('lastSignalTimestamp');
+
     const API_KEY = 'dc1b7bb8236f4158bfe16ae9161dd14e'; 
-    const TELEGRAM_BOT_TOKEN = '8666040478:AAFIY2Ksc5dSY-kLT_Xv1C2xrFmkPhkV2cI'; const TELEGRAM_CHAT_ID = '1961847647';
+    const TELEGRAM_BOT_TOKEN = '8666040478:AAFIY2Ksc5dSY-kLT_Xv1C2xrFmkPhkV2cI';
+    const TELEGRAM_CHAT_ID = '1961847647';
+
     let autoMode = false, autoInterval = null, countdownInterval = null, signalTimer = null;
-    let nextCheckTime = 60, isProcessing = false, isRegisterMode = false, newsPaused = false, newsResumeTimeout = null;
+    let nextCheckTime = 60, isProcessing = false, isRegisterMode = false;
+    let newsPaused = false, newsResumeTimeout = null;
     let history = [], wins = 0, losses = 0, currentSignal = null;
 
     auth.onAuthStateChanged((user) => {
-        if (user) { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; document.getElementById('userEmail').textContent = user.email; initApp(); } 
-        else { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('mainApp').style.display = 'none'; stopAutoMode(); if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval); if(signalTimer) clearInterval(signalTimer); if(newsResumeTimeout) clearTimeout(newsResumeTimeout); history = []; wins = 0; losses = 0; currentSignal = null; isProcessing = false; document.getElementById('signalCard').className = 'card signal-box wait'; document.getElementById('autoStatus').classList.remove('active'); document.getElementById('reasonsBox').style.display = 'none'; document.getElementById('timer').classList.remove('active'); document.getElementById('autoBtn').classList.remove('active'); document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)'; document.getElementById('manualBtn').style.display = 'none'; document.getElementById('modeBadge').textContent = '🔄 AUTO MODE'; alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.'); log('❌ حسابەکە سڕاوەتەوە'); }
+        if (user) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('userEmail').textContent = user.email;
+            initApp();
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            stopAutoMode();
+            if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval);
+            if(signalTimer) clearInterval(signalTimer); if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
+            history = []; wins = 0; losses = 0; currentSignal = null; isProcessing = false;
+            document.getElementById('signalCard').className = 'card signal-box wait';
+            document.getElementById('autoStatus').classList.remove('active');
+            document.getElementById('reasonsBox').style.display = 'none';
+            document.getElementById('timer').classList.remove('active');
+            document.getElementById('autoBtn').classList.remove('active');
+            document.getElementById('autoBtn').textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)';
+            document.getElementById('manualBtn').style.display = 'none';
+            document.getElementById('modeBadge').textContent = '🔄 AUTO MODE';
+            alert('⚠️ حسابەکەت سڕاوەتەوە یان چوونەتە دەرەوە.\nبەرنامەکە ڕاستەوخۆ وەستا.');
+            log('❌ حسابەکە سڕاوەتەوە');
+        }
     });
 
-    function toggleRegisterMode() { isRegisterMode = !isRegisterMode; const btn = document.querySelector('.login-btn'); const link = document.querySelector('.register-link'); const title = document.querySelector('.login-title'); if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.innerHTML = '<div class="app-logo"><img src="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png" alt="Gold Sniper"></div><span>حسابی نوێ</span>'; } else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.innerHTML = '<div class="app-logo"><img src="https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png" alt="Gold Sniper"></div><span>Gold Sniper Pro</span>'; } document.getElementById('loginError').style.display = 'none'; }
-    async function handleLogin() { const email = document.getElementById('loginEmail').value; const password = document.getElementById('loginPassword').value; const errorEl = document.getElementById('loginError'); try { if(isRegisterMode) await auth.createUserWithEmailAndPassword(email, password); else await auth.signInWithEmailAndPassword(email, password); } catch(error) { errorEl.textContent = error.message; errorEl.style.display = 'block'; } }
+    function toggleRegisterMode() {
+        isRegisterMode = !isRegisterMode;
+        const btn = document.querySelector('.login-btn');
+        const link = document.querySelector('.register-link');
+        const title = document.querySelector('.login-title');
+        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ'; } 
+        else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro'; }
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const errorEl = document.getElementById('loginError');
+        try {
+            if(isRegisterMode) await auth.createUserWithEmailAndPassword(email, password);
+            else await auth.signInWithEmailAndPassword(email, password);
+        } catch(error) { errorEl.textContent = error.message; errorEl.style.display = 'block'; }
+    }
+
     function handleLogout() { auth.signOut(); stopAutoMode(); }
 
     function initApp() {
-        new TradingView.widget({ "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "ar", "toolbar_bg": "#12121a", "enable_publishing": false, "hide_top_toolbar": false, "save_image": false, "container_id": "tv_chart_container", "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"] });
-        signalsRef.on('value', (snapshot) => { const data = snapshot.val(); if (!data || !data.timestamp) return; tsRef.once('value').then(tsSnap => { const globalTs = tsSnap.val() || 0; if (data.timestamp > globalTs) { tsRef.set(data.timestamp); applyRemoteSignal(data); } }); });
-        historyRef.on('value', (snapshot) => { const data = snapshot.val(); if(data) { history = Object.values(data).sort((a,b) => b.timestamp - a.timestamp); wins = history.filter(h => h.result === 'WIN').length; losses = history.filter(h => h.result === 'LOSS').length; updateHistoryUI(); } });
-        checkNews(); setInterval(checkNews, 300000); requestNotificationPermission();
+        new TradingView.widget({
+            "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "5", "timezone": "Etc/UTC",
+            "theme": "dark", "style": "1", "locale": "ar", "toolbar_bg": "#12121a",
+            "enable_publishing": false, "hide_top_toolbar": false, "save_image": false,
+            "container_id": "tv_chart_container",
+            "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies", "BB@tv-basicstudies"]
+        });
+
+        signalsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data || !data.timestamp) return;
+            tsRef.once('value').then(tsSnap => {
+                const globalTs = tsSnap.val() || 0;
+                if (data.timestamp > globalTs) { tsRef.set(data.timestamp); applyRemoteSignal(data); }
+            });
+        });
+
+        historyRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                history = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+                wins = history.filter(h => h.result === 'WIN').length;
+                losses = history.filter(h => h.result === 'LOSS').length;
+                updateHistoryUI();
+            }
+        });
+
+        checkNews();
+        setInterval(checkNews, 300000);
+        requestNotificationPermission();
     }
 
-    function requestNotificationPermission() { if ("Notification" in window && Notification.permission !== "granted") Notification.requestPermission(); }
-    function sendBrowserNotification(signalData) { if ("Notification" in window && Notification.permission === "granted") { new Notification(`🔔 Gold Sniper: ${signalData.type} Signal!`, { body: `Price: ${signalData.entryPrice.toFixed(2)} | Confidence: ${signalData.conf}%`, icon: 'https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png', vibrate: [200, 100, 200] }); } }
-    function sendTelegramSignal(signalData) { if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return; const reasonsText = signalData.reasons.map(r => { let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '🔴' : '➖'); return `${icon} ${r.t}`; }).join('\n'); const message = `<b>GOLD SNIPER SIGNAL</b>\n📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}\n💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}\n🎯 <b>Confidence:</b> ${signalData.conf}%\n <b>Time:</b> ${signalData.time}\n📈 <b>Indicators:</b>\n${reasonsText}\n⏳ <b>Duration:</b> 5 minutes`; fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' }) }).then(res => res.json()).then(data => { if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام'); else log(' هەڵەی تێلێگرام: ' + data.description); }).catch(e => log('❌ ناردنی تێلێگرام شکستی هێنا')); }
-    function applyRemoteSignal(data) { const card = document.getElementById('signalCard'); const arrow = document.getElementById('arrow'); const txt = document.getElementById('statusText'); const circle = document.getElementById('confCircle'); const rBox = document.getElementById('reasonsBox'); const rList = document.getElementById('reasonsList'); document.getElementById('confVal').textContent = data.conf + '%'; document.getElementById('priceDisplay').textContent = data.entryPrice.toFixed(2); rBox.style.display = 'block'; rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join(''); if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; } pauseAutoDuringSignal(); startSignalTimer(); log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`); }
+    function requestNotificationPermission() {
+        if ("Notification" in window && Notification.permission !== "granted") Notification.requestPermission();
+    }
+
+    function sendBrowserNotification(signalData) {
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(` Gold Sniper: ${signalData.type} Signal!`, {
+                body: `Price: ${signalData.entryPrice.toFixed(2)} | Confidence: ${signalData.conf}%`,
+                icon: 'https://i.ibb.co/BKZXjbrv/gold-sniper-icon.png', vibrate: [200, 100, 200]
+            });
+        }
+    }
+
+    function sendTelegramSignal(signalData) {
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+        const reasonsText = signalData.reasons.map(r => {
+            let icon = r.d === 'up' ? '✅' : (r.d === 'down' ? '🔴' : '➖');
+            return `${icon} ${r.t}`;
+        }).join('\n');
+
+        const message = `
+<b>GOLD SNIPER SIGNAL</b>
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
+💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
+🎯 <b>Confidence:</b> ${signalData.conf}%
+⏰ <b>Time:</b> ${signalData.time}
+📈 <b>Indicators:</b>
+${reasonsText}
+ <b>Duration:</b> 5 minutes`;
+
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
+        }).then(res => res.json()).then(data => {
+            if(data.ok) log('✅ نامە نێردرا بۆ تێلێگرام'); else log('❌ هەڵەی تێلێگرام: ' + data.description);
+        }).catch(e => log(' ناردنی تێلێگرام شکستی هێنا'));
+    }
+
+    function applyRemoteSignal(data) {
+        const card = document.getElementById('signalCard');
+        const arrow = document.getElementById('arrow');
+        const txt = document.getElementById('statusText');
+        const circle = document.getElementById('confCircle');
+        const rBox = document.getElementById('reasonsBox');
+        const rList = document.getElementById('reasonsList');
+
+        document.getElementById('confVal').textContent = data.conf + '%';
+        document.getElementById('priceDisplay').textContent = data.entryPrice.toFixed(2);
+        rBox.style.display = 'block';
+        rList.innerHTML = data.reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+
+        if(data.type === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; } 
+        else if(data.type === 'SELL') { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; } 
+        else { card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; }
+
+        pauseAutoDuringSignal();
+        startSignalTimer();
+        log(`📡 سیگناڵی ${data.type} لە ئامێرێکی تر وەرگیرا`);
+    }
 
     function rsi(p, n=14) { if(p.length < n+1) return 50; let g=0, l=0; for(let i=p.length-n; i<p.length; i++) { let c=p[i]-p[i-1]; if(c>0) g+=c; else l+=Math.abs(c); } let ag=g/n, al=l/n; return al===0 ? 100 : 100 - (100/(1+ag/al)); }
     function ema(p, n) { if(p.length < n) return p[p.length-1]; let k=2/(n+1), e=p.slice(0,n).reduce((a,b)=>a+b,0)/n; for(let i=n; i<p.length; i++) e = p[i]*k + e*(1-k); return e; }
@@ -194,78 +423,275 @@
     function bb(p, n=20) { let sma=p.slice(-n).reduce((a,b)=>a+b,0)/n; let std=Math.sqrt(p.slice(-n).reduce((s,x)=>s+Math.pow(x-sma,2),0)/n); let c=p[p.length-1], u=sma+2*std, lo=sma-2*std; return { pos: c<=lo?'Lower':c>=u?'Upper':'Mid', d: c<=lo?'up':c>=u?'down':'flat' }; }
     function mom(p, n=10) { let m=p[p.length-1]-p[p.length-1-n]; return { m, d: m>0?'up':m<0?'down':'flat' }; }
 
-    function toggleAutoMode() { if(newsPaused) { log('⚠️ AUTO PAUSED - High Impact News!'); return; } autoMode = !autoMode; const btn = document.getElementById('autoBtn'); const manualBtn = document.getElementById('manualBtn'); const card = document.getElementById('signalCard'); const autoStatus = document.getElementById('autoStatus'); const modeBadge = document.getElementById('modeBadge'); if(autoMode) { btn.textContent = '⏹️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block'; card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = '🤖 AUTO ACTIVE'; log('🔄 دۆخی خۆکار چالاک کرا'); startAutoLoop(); } else { stopAutoMode(); } }
-    function stopAutoMode() { autoMode = false; if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval); const btn = document.getElementById('autoBtn'); const manualBtn = document.getElementById('manualBtn'); const card = document.getElementById('signalCard'); const autoStatus = document.getElementById('autoStatus'); const modeBadge = document.getElementById('modeBadge'); btn.textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)'; btn.classList.remove('active'); manualBtn.style.display = 'none'; card.classList.remove('auto'); autoStatus.classList.remove('active'); modeBadge.textContent = '🔄 AUTO MODE'; log('️ دۆخی خۆکار وەستا'); }
-    function startAutoLoop() { nextCheckTime = 60; if(autoInterval) clearInterval(autoInterval); autoInterval = setInterval(() => { if(!isProcessing && autoMode && !newsPaused) runAnalysis(false); }, 60000); if(countdownInterval) clearInterval(countdownInterval); countdownInterval = setInterval(() => { if(nextCheckTime > 0 && autoMode && !newsPaused) { nextCheckTime--; let m = Math.floor(nextCheckTime / 60); let s = nextCheckTime % 60; document.getElementById('nextCheck').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; } else if(autoMode && !newsPaused) nextCheckTime = 60; }, 1000); }
+    function toggleAutoMode() {
+        if(newsPaused) { log('️ AUTO PAUSED - High Impact News!'); return; }
+        autoMode = !autoMode;
+        const btn = document.getElementById('autoBtn');
+        const manualBtn = document.getElementById('manualBtn');
+        const card = document.getElementById('signalCard');
+        const autoStatus = document.getElementById('autoStatus');
+        const modeBadge = document.getElementById('modeBadge');
+        
+        if(autoMode) {
+            btn.textContent = '️ وەستاندنی دۆخی خۆکار'; btn.classList.add('active'); manualBtn.style.display = 'block';
+            card.classList.add('auto'); autoStatus.classList.add('active'); modeBadge.textContent = '🤖 AUTO ACTIVE';
+            log(' دۆخی خۆکار چالاک کرا'); startAutoLoop();
+        } else { stopAutoMode(); }
+    }
+
+    function stopAutoMode() {
+        autoMode = false;
+        if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval);
+        const btn = document.getElementById('autoBtn'); const manualBtn = document.getElementById('manualBtn');
+        const card = document.getElementById('signalCard'); const autoStatus = document.getElementById('autoStatus');
+        const modeBadge = document.getElementById('modeBadge');
+        btn.textContent = 'دەستپێکردنی دۆخی خۆکار (AUTO)'; btn.classList.remove('active'); manualBtn.style.display = 'none';
+        card.classList.remove('auto'); autoStatus.classList.remove('active'); modeBadge.textContent = '🔄 AUTO MODE';
+        log('⏹️ دۆخی خۆکار وەستا');
+    }
+
+    function startAutoLoop() {
+        nextCheckTime = 60;
+        if(autoInterval) clearInterval(autoInterval);
+        autoInterval = setInterval(() => { if(!isProcessing && autoMode && !newsPaused) runAnalysis(false); }, 60000);
+        if(countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            if(nextCheckTime > 0 && autoMode && !newsPaused) {
+                nextCheckTime--;
+                let m = Math.floor(nextCheckTime / 60); let s = nextCheckTime % 60;
+                document.getElementById('nextCheck').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            } else if(autoMode && !newsPaused) nextCheckTime = 60;
+        }, 1000);
+    }
 
     async function runAnalysis(manual = false) {
         if(isProcessing || newsPaused) return;
         isProcessing = true;
-        const logEl = document.getElementById('log'); const err = document.getElementById('errorMsg'); err.style.display = 'none';
-        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...'; else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        const logEl = document.getElementById('log');
+        const err = document.getElementById('errorMsg');
+        err.style.display = 'none';
+        
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+
         try {
-            const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
             const res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=250&apikey=${API_KEY}`, { signal: controller.signal });
-            clearTimeout(timeoutId); if(!res.ok) throw new Error(`API Error: ${res.status}`);
-            const data = await res.json(); if(data.status !== 'ok' || !data.values) throw new Error('داتای نادروست');
-            let prices = data.values.map(v => parseFloat(v.close)).reverse(); let price = prices[prices.length-1];
+            clearTimeout(timeoutId);
+            if(!res.ok) throw new Error(`API Error: ${res.status}`);
+            const data = await res.json();
+            if(data.status !== 'ok' || !data.values) throw new Error('داتای نادروست');
+
+            let prices = data.values.map(v => parseFloat(v.close)).reverse();
+            let price = prices[prices.length-1];
             document.getElementById('priceDisplay').textContent = price.toFixed(2);
+
             let r = rsi(prices), m = macd(prices), s = stoch(prices), b = bb(prices), mo = mom(prices);
             let ema5 = ema(prices, 5); 
             
-            document.getElementById('iRSI').textContent = r.toFixed(1); document.getElementById('boxRSI').className = 'ind-item ' + (r<30?'up':r>70?'down':'');
-            document.getElementById('iMACD').textContent = m.h.toFixed(2); document.getElementById('boxMACD').className = 'ind-item ' + (m.d==='up'?'up':m.d==='down'?'down':'');
-            document.getElementById('iStoch').textContent = s.k.toFixed(1); document.getElementById('boxStoch').className = 'ind-item ' + (s.d==='up'?'up':s.d==='down'?'down':'');
-            document.getElementById('iBB').textContent = b.pos; document.getElementById('boxBB').className = 'ind-item ' + (b.d==='up'?'up':b.d==='down'?'down':'');
-            document.getElementById('iMom').textContent = mo.m.toFixed(2); document.getElementById('boxMom').className = 'ind-item ' + (mo.d==='up'?'up':mo.d==='down'?'down':'');
-            document.getElementById('iEMA').textContent = ema5.toFixed(2); document.getElementById('boxEMA').className = 'ind-item ' + (price > ema5 ? 'up' : 'down');
+            document.getElementById('iRSI').textContent = r.toFixed(1);
+            document.getElementById('boxRSI').className = 'ind-item ' + (r<30?'up':r>70?'down':'');
+            
+            document.getElementById('iMACD').textContent = m.h.toFixed(2);
+            document.getElementById('boxMACD').className = 'ind-item ' + (m.d==='up'?'up':m.d==='down'?'down':'');
+            
+            document.getElementById('iStoch').textContent = s.k.toFixed(1);
+            document.getElementById('boxStoch').className = 'ind-item ' + (s.d==='up'?'up':s.d==='down'?'down':'');
+            
+            document.getElementById('iBB').textContent = b.pos;
+            document.getElementById('boxBB').className = 'ind-item ' + (b.d==='up'?'up':b.d==='down'?'down':'');
+            
+            document.getElementById('iMom').textContent = mo.m.toFixed(2);
+            document.getElementById('boxMom').className = 'ind-item ' + (mo.d==='up'?'up':mo.d==='down'?'down':'');
+            
+            document.getElementById('iEMA').textContent = ema5.toFixed(2);
+            document.getElementById('boxEMA').className = 'ind-item ' + (price > ema5 ? 'up' : 'down');
 
             let trend = price > ema5 ? 'UP' : 'DOWN'; 
             let score = 0, reasons = [];
-            if(trend === 'UP') reasons.push({t:`EMA 5 سەرەوە (Bullish)`, d:'up'}); else reasons.push({t:`EMA 5 خوارەوە (Bearish)`, d:'down'});
-            if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});} else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
-            if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});} else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
-            if(s.d==='up'){score+=2; reasons.push({t:"Stochastic نزمە", d:'up'});} else if(s.d==='down'){score-=2; reasons.push({t:"Stochastic بەرزە", d:'down'});}
-            if(b.d==='up'){score+=1; reasons.push({t:"Bollinger خوارەوە", d:'up'});} else if(b.d==='down'){score-=1; reasons.push({t:"Bollinger سەرەوە", d:'down'});}
-            if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});} else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
+            
+            if(trend === 'UP') reasons.push({t:`EMA 5 سەرەوە (Bullish)`, d:'up'}); 
+            else reasons.push({t:`EMA 5 خوارەوە (Bearish)`, d:'down'});
 
-            let conf = Math.min(99, Math.abs(score)*10); document.getElementById('confVal').textContent = conf+'%';
-            const card = document.getElementById('signalCard'); const arrow = document.getElementById('arrow'); const txt = document.getElementById('statusText'); const circle = document.getElementById('confCircle'); const rBox = document.getElementById('reasonsBox'); const rList = document.getElementById('reasonsList');
-            rBox.style.display = 'block'; rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'🔴':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
+            if(r<30){score+=3; reasons.push({t:`RSI نزمە (${r.toFixed(1)})`, d:'up'});} 
+            else if(r>70){score-=3; reasons.push({t:`RSI بەرزە (${r.toFixed(1)})`, d:'down'});} 
+            else reasons.push({t:`RSI ناوەندی (${r.toFixed(1)})`, d:'neutral'});
+
+            if(m.d==='up'){score+=3; reasons.push({t:"MACD ئەرێنی", d:'up'});} 
+            else if(m.d==='down'){score-=3; reasons.push({t:"MACD نەرێنی", d:'down'});}
+
+            if(s.d==='up'){score+=2; reasons.push({t:"Stochastic نزمە", d:'up'});} 
+            else if(s.d==='down'){score-=2; reasons.push({t:"Stochastic بەرزە", d:'down'});}
+
+            if(b.d==='up'){score+=1; reasons.push({t:"Bollinger خوارەوە", d:'up'});} 
+            else if(b.d==='down'){score-=1; reasons.push({t:"Bollinger سەرەوە", d:'down'});}
+
+            if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});} 
+            else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
+
+            let conf = Math.min(99, Math.abs(score)*10);
+            document.getElementById('confVal').textContent = conf+'%';
+            
+            const card = document.getElementById('signalCard');
+            const arrow = document.getElementById('arrow');
+            const txt = document.getElementById('statusText');
+            const circle = document.getElementById('confCircle');
+            const rBox = document.getElementById('reasonsBox');
+            const rList = document.getElementById('reasonsList');
+
+            rBox.style.display = 'block';
+            rList.innerHTML = reasons.map(x => `<div class="reason-item"><span class="reason-icon">${x.d==='up'?'✅':x.d==='down'?'':''}</span> <span style="color:${x.d==='up'?'var(--green)':x.d==='down'?'var(--red)':'#888'}">${x.t}</span></div>`).join('');
 
             let buySignals = 0, sellSignals = 0;
-            if(r<30) buySignals++; else if(r>70) sellSignals++; if(m.d==='up') buySignals++; else if(m.d==='down') sellSignals++; if(s.d==='up') buySignals++; else if(s.d==='down') sellSignals++; if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++; if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
+            if(r<30) buySignals++; else if(r>70) sellSignals++;
+            if(m.d==='up') buySignals++; else if(m.d==='down') sellSignals++;
+            if(s.d==='up') buySignals++; else if(s.d==='down') sellSignals++;
+            if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++;
+            if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
 
-            // ✅ NEW LOGIC: Removed Trend Filter - BUY and SELL work the same way
+            // ✅ تەنها ئەم بەشە گۆڕدرا - فلتەری Trend لابرا بۆ ئەوەی هەردوو سیگناڵ بکەون
             let isValidBuy = (score >= 4) && (buySignals >= 2);
             let isValidSell = (score <= -4) && (sellSignals >= 2);
 
             if (isValidBuy || isValidSell) {
-                const now = Date.now(); const tsSnap = await tsRef.once('value'); const globalTs = tsSnap.val() || 0;
+                const now = Date.now();
+                const tsSnap = await tsRef.once('value');
+                const globalTs = tsSnap.val() || 0;
+                
                 if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
-                signalsRef.set(currentSignal); tsRef.set(now);
-                sendTelegramSignal(currentSignal); sendBrowserNotification(currentSignal);
+                
+                signalsRef.set(currentSignal);
+                tsRef.set(now);
+                
+                sendTelegramSignal(currentSignal);
+                sendBrowserNotification(currentSignal);
+                
                 if(autoMode && !manual) playNotification();
+                
                 if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - Score: ${score}, Indicators: ${buySignals}/5`); } 
                 else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5`); }
-                pauseAutoDuringSignal(); startSignalTimer();
+                
+                pauseAutoDuringSignal();
+                startSignalTimer();
             } else {
-                if(autoMode) { card.className = 'card signal-box wait auto'; arrow.textContent=''; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; log(` مەرجەکان پڕ نەبوون (Score: ${score}, Trend: ${trend})`); } 
-                else { card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; }
+                if(autoMode) { 
+                    card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
+                    log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Trend: ${trend})`); 
+                } else { 
+                    card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; 
+                }
             }
-        } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } finally { isProcessing = false; }
+        } catch(e) { err.textContent = e.message; err.style.display = 'block'; log(`❌ هەڵە: ${e.message}`); } 
+        finally { isProcessing = false; }
     }
 
-    function pauseAutoDuringSignal() { if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval); document.getElementById('autoStatus').classList.remove('active'); log('️ دۆخی خۆکار وەستا تا ٥ خولەک'); }
-    function resumeAutoAfterSignal() { if(autoMode && !newsPaused) { log('▶️ دۆخی خۆکار دووبارە دەست پێ دەکاتەوە'); startAutoLoop(); } }
-    function startSignalTimer() { let t = 300; const el = document.getElementById('timer'); el.classList.add('active'); if(signalTimer) clearInterval(signalTimer); signalTimer = setInterval(() => { let m = Math.floor(t/60), s = t%60; el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; if(t<=0) { clearInterval(signalTimer); el.classList.remove('active'); evaluateSignalResult(); resumeAutoAfterSignal(); } t--; }, 1000); }
-    async function evaluateSignalResult() { if(!currentSignal) return; try { const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`); const data = await res.json(); if(data.price) { let currentPrice = parseFloat(data.price); let entryPrice = currentSignal.entryPrice; let isWin = (currentSignal.type === 'SELL') ? (currentPrice < entryPrice) : (currentPrice > entryPrice); const result = { ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2), timestamp: Date.now() }; historyRef.push(result).catch(e => console.error("Firebase history error:", e)); log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تەواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`); } } catch(e) { console.error('Error evaluating result:', e); } currentSignal = null; }
-    function updateHistoryUI() { const historyCard = document.getElementById('historyCard'); const historyList = document.getElementById('historyList'); const winRateEl = document.getElementById('winRate'); historyCard.style.display = 'block'; let total = wins + losses; let rate = total > 0 ? Math.round((wins / total) * 100) : 0; winRateEl.textContent = `سەرکەوتن: ${rate}% (${wins}/${total})`; winRateEl.style.color = rate >= 70 ? 'var(--green)' : rate >= 50 ? 'var(--gold)' : 'var(--red)'; historyList.innerHTML = history.map(h => `<div class="history-item ${h.result.toLowerCase()}"><div><div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div><div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div></div><div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div></div>`).join(''); }
-    function playNotification() { const audio = new Audio('data:audio/wav;base64,UklGRnoIAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoIAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE'); audio.loop = true; audio.play().catch(e => console.log('Audio play failed')); setTimeout(() => { audio.pause(); audio.currentTime = 0; audio.loop = false; }, 15000); }
+    function pauseAutoDuringSignal() {
+        if(autoInterval) clearInterval(autoInterval); if(countdownInterval) clearInterval(countdownInterval);
+        document.getElementById('autoStatus').classList.remove('active');
+        log('⏸️ دۆخی خۆکار وەستا تا ٥ خولەک');
+    }
+
+    function resumeAutoAfterSignal() {
+        if(autoMode && !newsPaused) { log('▶️ دۆخی خۆکار دووبارە دەست پێ دەکاتەوە'); startAutoLoop(); }
+    }
+
+    function startSignalTimer() {
+        let t = 300;
+        const el = document.getElementById('timer');
+        el.classList.add('active');
+        if(signalTimer) clearInterval(signalTimer);
+        signalTimer = setInterval(() => {
+            let m = Math.floor(t/60), s = t%60;
+            el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if(t<=0) { clearInterval(signalTimer); el.classList.remove('active'); evaluateSignalResult(); resumeAutoAfterSignal(); }
+            t--;
+        }, 1000);
+    }
+
+    async function evaluateSignalResult() {
+        if(!currentSignal) return;
+        try {
+            const res = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
+            const data = await res.json();
+            if(data.price) {
+                let currentPrice = parseFloat(data.price);
+                let entryPrice = currentSignal.entryPrice;
+                let isWin = (currentSignal.type === 'SELL') ? (currentPrice < entryPrice) : (currentPrice > entryPrice);
+                const result = { ...currentSignal, exitPrice: currentPrice, result: isWin ? 'WIN' : 'LOSS', priceChange: (currentPrice - entryPrice).toFixed(2), timestamp: Date.now() };
+                historyRef.push(result).catch(e => console.error("Firebase history error:", e));
+                log(`${isWin ? '✅' : '❌'} سیگناڵی ${currentSignal.type} تةواو بوو: ${isWin ? 'سەرکەوتوو' : 'هەڵە'}`);
+            }
+        } catch(e) { console.error('Error evaluating result:', e); }
+        currentSignal = null;
+    }
+
+    function updateHistoryUI() {
+        const historyCard = document.getElementById('historyCard');
+        const historyList = document.getElementById('historyList');
+        const winRateEl = document.getElementById('winRate');
+        historyCard.style.display = 'block';
+        let total = wins + losses;
+        let rate = total > 0 ? Math.round((wins / total) * 100) : 0;
+        winRateEl.textContent = `سەرکەوتن: ${rate}% (${wins}/${total})`;
+        winRateEl.style.color = rate >= 70 ? 'var(--green)' : rate >= 50 ? 'var(--gold)' : 'var(--red)';
+        historyList.innerHTML = history.map(h => `
+            <div class="history-item ${h.result.toLowerCase()}">
+                <div>
+                    <div class="h-signal" style="color: ${h.type === 'BUY' ? 'var(--green)' : 'var(--red)'}">${h.type === 'BUY' ? '⬆️ BUY' : '⬇️ SELL'}</div>
+                    <div class="h-details">⏰ ${h.time} | 🎯 ${h.conf}% | 💰 ${h.entryPrice.toFixed(2)} → ${h.exitPrice.toFixed(2)} (${h.priceChange > 0 ? '+' : ''}${h.priceChange})</div>
+                </div>
+                <div class="h-result ${h.result.toLowerCase()}">${h.result === 'WIN' ? '✅ سەرکەوتوو' : '❌ هەڵە'}</div>
+            </div>
+        `).join('');
+    }
+
+    function playNotification() {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoIAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoIAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE');
+        audio.loop = true;
+        audio.play().catch(e => console.log('Audio play failed'));
+        setTimeout(() => { audio.pause(); audio.currentTime = 0; audio.loop = false; }, 15000);
+    }
+
     function log(msg) { document.getElementById('log').textContent = msg; console.log(msg); }
-    async function checkNews() { try { const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json'); const news = await res.json(); const now = new Date(); const upcoming = news.filter(n => { const newsTime = new Date(n.date); const diff = (newsTime - now) / 1000 / 60; return diff > 0 && diff <= 60 && n.impact === 'High' && n.currency === 'USD'; }); const widget = document.getElementById('newsWidget'); const card = document.getElementById('signalCard'); if(upcoming.length > 0) { const newsItem = upcoming[0]; const newsTime = new Date(newsItem.date); const diffMinutes = Math.floor((newsTime - now) / 1000 / 60); const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60; widget.classList.add('warning'); card.classList.add('news-warning'); document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ'; document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`; document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`; document.getElementById('newsStatus').textContent = 'مەترسیدارە'; if(autoMode && !newsPaused) { newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!'); const resumeTime = (newsTime.getTime() + 15 * 60 * 1000); const timeToResume = resumeTime - now.getTime(); if(newsResumeTimeout) clearTimeout(newsResumeTimeout); newsResumeTimeout = setTimeout(() => { newsPaused = false; card.classList.remove('news-warning'); log('✅ News completed'); if(autoMode) toggleAutoMode(); }, timeToResume); } } else { widget.classList.remove('warning'); card.classList.remove('news-warning'); document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە'; document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە'; document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا'; document.getElementById('newsStatus').textContent = 'کاتی گونجاوە'; } } catch(e) { console.log('News check failed:', e); } }
+
+    async function checkNews() {
+        try {
+            const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
+            const news = await res.json();
+            const now = new Date();
+            const upcoming = news.filter(n => { const newsTime = new Date(n.date); const diff = (newsTime - now) / 1000 / 60; return diff > 0 && diff <= 60 && n.impact === 'High' && n.currency === 'USD'; });
+            const widget = document.getElementById('newsWidget');
+            const card = document.getElementById('signalCard');
+            if(upcoming.length > 0) {
+                const newsItem = upcoming[0]; const newsTime = new Date(newsItem.date);
+                const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
+                const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
+                widget.classList.add('warning'); card.classList.add('news-warning');
+                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
+                document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
+                document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
+                document.getElementById('newsStatus').textContent = 'مەترسیدارە';
+                if(autoMode && !newsPaused) {
+                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
+                    const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
+                    const timeToResume = resumeTime - now.getTime();
+                    if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
+                    newsResumeTimeout = setTimeout(() => { newsPaused = false; card.classList.remove('news-warning'); log('✅ News completed'); if(autoMode) toggleAutoMode(); }, timeToResume);
+                }
+            } else {
+                widget.classList.remove('warning'); card.classList.remove('news-warning');
+                document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
+                document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
+                document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
+            }
+        } catch(e) { console.log('News check failed:', e); }
+    }
+
     log('ئامادەیە - دوگمەی AUTO داگرە');
 </script>
 </body>
