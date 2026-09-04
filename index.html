@@ -39,11 +39,7 @@
         display: flex; align-items: center; justify-content: center;
         overflow: hidden;
     }
-    .app-logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    .app-logo img { width: 100%; height: 100%; object-fit: cover; }
     .login-input {
         width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px;
         border: 2px solid var(--border); background: var(--ind-bg); color: var(--text);
@@ -59,7 +55,6 @@
     .register-link { color: var(--blue); font-size: 13px; margin-top: 15px; cursor: pointer; }
     
     #mainApp { display: none; }
-    
     .container { max-width: 800px; margin: 0 auto; }
     .card { background: var(--card); border-radius: 16px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
     .chart-box { height: 300px; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 12px; }
@@ -202,9 +197,9 @@
             <div class="timer" id="timer">05:00</div>
             
             <div class="auto-status" id="autoStatus">
-                <div> دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠٠:٠٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 4, 2/5 Ind)...</div>
+                <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
+                <div class="next-check" id="nextCheck">٠٠:٠</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 5, 3/5 Ind)...</div>
             </div>
             
             <div class="info-columns">
@@ -384,13 +379,13 @@
 
         const message = `
 <b>GOLD SNIPER SIGNAL</b>
-📊 <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '⬆️' : '⬇️'}
+ <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
 💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
- <b>Time:</b> ${signalData.time}
+⏰ <b>Time:</b> ${signalData.time}
 📈 <b>Indicators:</b>
 ${reasonsText}
- <b>Duration:</b> 5 minutes`;
+⏳ <b>Duration:</b> 5 minutes`;
 
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -477,8 +472,8 @@ ${reasonsText}
         const err = document.getElementById('errorMsg');
         err.style.display = 'none';
         
-        if(manual) logEl.textContent = ' شیکاری دەستپێکرد...';
-        else logEl.textContent = ` شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
+        if(manual) logEl.textContent = '🚀 شیکاری دەستپێکرد...';
+        else logEl.textContent = `🤖 شیکاری خۆکار (${new Date().toLocaleTimeString('ku')})`;
 
         try {
             const controller = new AbortController();
@@ -536,7 +531,11 @@ ${reasonsText}
             if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});} 
             else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
 
-            let conf = Math.min(99, Math.abs(score)*10);
+            // ✅ NEW: Minimum 60% confidence
+            let conf = Math.abs(score) * 10;
+            if (conf < 60) conf = 60; // Minimum 60%
+            if (conf > 99) conf = 99; // Maximum 99%
+            
             document.getElementById('confVal').textContent = conf+'%';
             
             const card = document.getElementById('signalCard');
@@ -556,16 +555,16 @@ ${reasonsText}
             if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++;
             if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
 
-            // UPDATED LOGIC: Score >= 4 AND 2/5 Indicators AND Trend Filter
-            let isValidBuy = (score >= 4) && (buySignals >= 2) && (trend === 'UP');
-            let isValidSell = (score <= -4) && (sellSignals >= 2) && (trend === 'DOWN');
+            // ✅ UPDATED LOGIC: Score >= 5 AND 3/5 Indicators (Stronger Signals)
+            let isValidBuy = (score >= 5) && (buySignals >= 3);
+            let isValidSell = (score <= -5) && (sellSignals >= 3);
 
             if (isValidBuy || isValidSell) {
                 const now = Date.now();
                 const tsSnap = await tsRef.once('value');
                 const globalTs = tsSnap.val() || 0;
                 
-                if (now - globalTs < 60000) { log(' سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
+                if (now - globalTs < 60000) { log('⏳ سیگناڵی هاوشێوە پێشتر تۆمار کراوە'); isProcessing = false; return; }
                 
                 let direction = score > 0 ? 'BUY' : 'SELL';
                 currentSignal = { type: direction, entryPrice: price, time: new Date().toLocaleTimeString('ku'), conf: conf, timestamp: now, reasons: reasons };
@@ -578,15 +577,15 @@ ${reasonsText}
                 
                 if(autoMode && !manual) playNotification();
                 
-                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - Score: ${score}, Indicators: ${buySignals}/5`); } 
-                else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5`); }
+                if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - Score: ${score}, Indicators: ${buySignals}/5, Confidence: ${conf}%`); } 
+                else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5, Confidence: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
                 if(autoMode) { 
                     card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
-                    log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Trend: ${trend})`); 
+                    log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Need: ≥5, Indicators: ${buySignals}/${sellSignals}/5, Need: 3/5)`); 
                 } else { 
                     card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; 
                 }
@@ -677,12 +676,12 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
                 if(autoMode && !newsPaused) {
-                    newsPaused = true; stopAutoMode(); log('️ AUTO PAUSED - High Impact News!');
+                    newsPaused = true; stopAutoMode(); log('⚠️ AUTO PAUSED - High Impact News!');
                     const resumeTime = (newsTime.getTime() + 15 * 60 * 1000);
                     const timeToResume = resumeTime - now.getTime();
                     if(newsResumeTimeout) clearTimeout(newsResumeTimeout);
