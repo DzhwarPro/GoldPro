@@ -198,13 +198,13 @@
             
             <div class="auto-status" id="autoStatus">
                 <div>🤖 دۆخی خۆکار چالاکە - هەر ١ خولەک جارێک شیکاری دەکات</div>
-                <div class="next-check" id="nextCheck">٠٠:٠</div>
-                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 5, 3/5 Ind)...</div>
+                <div class="next-check" id="nextCheck">٠٠:٠٠</div>
+                <div style="font-size: 10px; margin-top: 3px; color: #888;">چاوەڕوانی سیگناڵی بەهێز (Score ≥ 6, 4/5 Ind)...</div>
             </div>
             
             <div class="info-columns">
                 <div class="reasons" id="reasonsBox" style="display:none;">
-                    <div class="reasons-title"> هۆکارەکان:</div>
+                    <div class="reasons-title">🔍 هۆکارەکان:</div>
                     <div id="reasonsList"></div>
                 </div>
                 
@@ -307,7 +307,7 @@
         const btn = document.querySelector('.login-btn');
         const link = document.querySelector('.register-link');
         const title = document.querySelector('.login-title');
-        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = ' حسابی نوێ'; } 
+        if(isRegisterMode) { btn.textContent = 'دروستکردنی حساب'; link.textContent = '← چوونەژوورەوە'; title.textContent = '📝 حسابی نوێ'; } 
         else { btn.textContent = 'چوونەژوورەوە'; link.textContent = 'حسابی نوێ دروست بکە ←'; title.textContent = '🔐 Gold Sniper Pro'; }
         document.getElementById('loginError').style.display = 'none';
     }
@@ -380,9 +380,9 @@
         const message = `
 <b>GOLD SNIPER SIGNAL</b>
  <b>Type:</b> ${signalData.type} ${signalData.type === 'BUY' ? '️' : '⬇️'}
-💰 <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
+ <b>Price:</b> ${signalData.entryPrice.toFixed(2)}
 🎯 <b>Confidence:</b> ${signalData.conf}%
-⏰ <b>Time:</b> ${signalData.time}
+ <b>Time:</b> ${signalData.time}
 📈 <b>Indicators:</b>
 ${reasonsText}
 ⏳ <b>Duration:</b> 5 minutes`;
@@ -531,9 +531,9 @@ ${reasonsText}
             if(mo.d==='up'){score+=1; reasons.push({t:"Momentum ئەرێنی", d:'up'});} 
             else if(mo.d==='down'){score-=1; reasons.push({t:"Momentum نەرێنی", d:'down'});}
 
-            // ✅ NEW: Minimum 60% confidence
+            // ✅ NEW: Minimum 70% confidence (STRONGER)
             let conf = Math.abs(score) * 10;
-            if (conf < 60) conf = 60; // Minimum 60%
+            if (conf < 70) conf = 70; // Minimum 70%
             if (conf > 99) conf = 99; // Maximum 99%
             
             document.getElementById('confVal').textContent = conf+'%';
@@ -555,9 +555,9 @@ ${reasonsText}
             if(b.d==='up') buySignals++; else if(b.d==='down') sellSignals++;
             if(mo.d==='up') buySignals++; else if(mo.d==='down') sellSignals++;
 
-            // ✅ UPDATED LOGIC: Score >= 5 AND 3/5 Indicators (Stronger Signals)
-            let isValidBuy = (score >= 5) && (buySignals >= 3);
-            let isValidSell = (score <= -5) && (sellSignals >= 3);
+            // ✅ UPDATED LOGIC: Score >= 6 AND 4/5 Indicators (VERY STRONG SIGNALS)
+            let isValidBuy = (score >= 6) && (buySignals >= 4);
+            let isValidSell = (score <= -6) && (sellSignals >= 4);
 
             if (isValidBuy || isValidSell) {
                 const now = Date.now();
@@ -578,14 +578,14 @@ ${reasonsText}
                 if(autoMode && !manual) playNotification();
                 
                 if(direction === 'BUY') { card.className = 'card signal-box buy'; arrow.textContent='⬆️'; txt.textContent='BUY (کڕین)'; circle.className='conf-circle high'; log(`✅ سیگناڵی BUY - Score: ${score}, Indicators: ${buySignals}/5, Confidence: ${conf}%`); } 
-                else { card.className = 'card signal-box sell'; arrow.textContent='️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5, Confidence: ${conf}%`); }
+                else { card.className = 'card signal-box sell'; arrow.textContent='⬇️'; txt.textContent='SELL (فرۆشتن)'; circle.className='conf-circle high'; log(`✅ سیگناڵی SELL - Score: ${score}, Indicators: ${sellSignals}/5, Confidence: ${conf}%`); }
                 
                 pauseAutoDuringSignal();
                 startSignalTimer();
             } else {
                 if(autoMode) { 
                     card.className = 'card signal-box wait auto'; arrow.textContent='🔄'; txt.textContent='چاوەڕێ...'; circle.className='conf-circle med'; 
-                    log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Need: ≥5, Indicators: ${buySignals}/${sellSignals}/5, Need: 3/5)`); 
+                    log(`⏳ مەرجەکان پڕ نەبوون (Score: ${score}, Need: ≥6, Indicators: ${buySignals}/${sellSignals}/5, Need: 4/5)`); 
                 } else { 
                     card.className = 'card signal-box wait'; arrow.textContent='✋'; txt.textContent='WAIT (چاوەڕێ)'; circle.className='conf-circle low'; 
                 }
@@ -676,7 +676,7 @@ ${reasonsText}
                 const diffMinutes = Math.floor((newsTime - now) / 1000 / 60);
                 const hours = Math.floor(diffMinutes / 60); const mins = diffMinutes % 60;
                 widget.classList.add('warning'); card.classList.add('news-warning');
-                document.getElementById('newsTitle').textContent = '️ هەواڵی گرنگ';
+                document.getElementById('newsTitle').textContent = '⚠️ هەواڵی گرنگ';
                 document.getElementById('newsDetail').textContent = `${newsItem.country} - ${newsItem.title}`;
                 document.getElementById('newsTime').textContent = `ماوە: ${hours > 0 ? hours + 'کاتژمێر و ' : ''}${mins} خولەک`;
                 document.getElementById('newsStatus').textContent = 'مەترسیدارە';
@@ -691,7 +691,7 @@ ${reasonsText}
                 widget.classList.remove('warning'); card.classList.remove('news-warning');
                 document.getElementById('newsTitle').textContent = '✅ هەواڵی گرنگ نییە';
                 document.getElementById('newsDetail').textContent = 'بازاڕ ئاساییە';
-                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە ٥ خولەکدا';
+                document.getElementById('newsTime').textContent = 'پشکنینی داهاتوو لە  خولەکدا';
                 document.getElementById('newsStatus').textContent = 'کاتی گونجاوە';
             }
         } catch(e) { console.log('News check failed:', e); }
